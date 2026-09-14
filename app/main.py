@@ -5,7 +5,7 @@ import uuid
 from typing import Optional, Dict, Any, List
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -557,13 +557,12 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 @app.get("/index.html")
 def serve_index():
     index_file = os.path.join(static_dir, "index.html")
+    if not os.path.exists(index_file):
+        index_file = os.path.join(os.path.dirname(APP_DIR), "public", "index.html")
     if os.path.exists(index_file):
-        return FileResponse(
-            index_file,
-            headers={
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                "Pragma": "no-cache",
-                "Expires": "0"
-            }
-        )
-    return {"message": "GDKTPL Exam Studio API running. Static frontend not yet compiled."}
+        try:
+            with open(index_file, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read())
+        except Exception:
+            return FileResponse(index_file)
+    return HTMLResponse("<h1>GDKTPL Exam Studio API running.</h1>")
