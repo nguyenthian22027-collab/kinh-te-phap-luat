@@ -1,0 +1,29 @@
+{
+  "PRO1Y-DEMO-2026-VIP1": {
+    "plan": "1year",
+    "created_at": "2026-09-14",
+    "used_by": null
+  },
+  "PRO2Y-DEMO-2026-VIP2": {
+    "plan": "2year",
+    "created_at": "2026-09-14",
+    "used_by": null
+  },
+  "PROLIFE-DEMO-2026-VIP3": {
+    "plan": "lifetime",
+    "created_at": "2026-09-14",
+    "used_by": null
+  },
+  "PROLIFE-KIMTUYEN-2026": {
+    "plan": "lifetime",
+    "created_at": "2026-09-14",
+    "used_by": null,
+    "used_at": null
+  },
+  "PROLIFE-9655-6FDE-F0420C": {
+    "plan": "lifetime",
+    "created_at": "2026-09-14 17:16:01",
+    "used_by": "test_user_quota_demo",
+    "used_at": "2026-09-14 17:16:01"
+  }
+}

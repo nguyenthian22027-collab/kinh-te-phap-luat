@@ -1,0 +1,101 @@
+{
+  "topics": [
+    {
+      "id": "pl_10",
+      "name": "Giáo dục Pháp luật 10: Pháp luật nước CHXHCN Việt Nam",
+      "grade": 10,
+      "core_concepts": [
+        {
+          "title": "Khái niệm, đặc điểm và vai trò của pháp luật",
+          "content": "Pháp luật là hệ thống quy tắc xử sự chung do Nhà nước ban hành hoặc thừa nhận và bảo đảm thực hiện bằng quyền lực nhà nước nhằm điều chỉnh các quan hệ xã hội. Đặc điểm: (1) Tính quy phạm phổ biến; (2) Tính quyền lực, bắt buộc chung; (3) Tính xác định chặt chẽ về hình thức. Vai trò: Là phương tiện để Nhà nước quản lý xã hội và là phương tiện để công dân bảo vệ quyền, lợi ích hợp pháp của mình."
+        },
+        {
+          "title": "Hệ thống pháp luật Việt Nam",
+          "content": "Cấu trúc bên trong gồm: Quy phạm pháp luật -> Chế định pháp luật -> Ngành luật. Cấu trúc bên ngoài: Hệ thống các văn bản quy phạm pháp luật (gồm Văn bản luật do Quốc hội ban hành và Văn bản dưới luật do các cơ quan nhà nước khác ban hành: Nghị định, Thông tư, Quyết định...)."
+        },
+        {
+          "title": "Các hình thức thực hiện pháp luật",
+          "content": "1. Tuân thủ pháp luật: Kiềm chế không làm những việc pháp luật cấm.\n2. Thi hành pháp luật: Thực hiện nghĩa vụ, chủ động làm những việc pháp luật quy định phải làm.\n3. Sử dụng pháp luật: Sử dụng đúng đắn các quyền của mình, làm những việc pháp luật cho phép làm.\n4. Áp dụng pháp luật: Do cơ quan, công chức nhà nước có thẩm quyền thực hiện theo trình tự luật định."
+        }
+      ]
+    },
+    {
+      "id": "pl_11",
+      "name": "Giáo dục Pháp luật 11: Bình đẳng, Dân chủ và Tự do cơ bản",
+      "grade": 11,
+      "core_concepts": [
+        {
+          "title": "Quyền bình đẳng của công dân trước pháp luật",
+          "content": "Bình đẳng về quyền, nghĩa vụ và trách nhiệm pháp lý. Bao gồm: Bình đẳng giới trong các lĩnh vực (chính trị, kinh tế, lao động, giáo dục, gia đình); Bình đẳng giữa các dân tộc (chính trị, kinh tế, văn hóa, giáo dục - lưu ý chính sách ưu tiên phát triển vùng DTTS không mâu thuẫn với bình đẳng mà nhằm tạo điều kiện công bằng thực chất); Bình đẳng giữa các tôn giáo."
+        },
+        {
+          "title": "Một số quyền dân chủ cơ bản của công dân",
+          "content": "1. Quyền bầu cử và ứng cử: Công dân từ đủ 18 tuổi có quyền bầu cử, từ đủ 21 tuổi có quyền ứng cử. Nguyên tắc bầu cử: Phổ thông, Bình đẳng, Trực tiếp, Bỏ phiếu kín.\n2. Quyền khiếu nại và tố cáo: Khiếu nại là đề nghị xem xét lại quyết định/hành vi hành chính xâm phạm quyền của mình; Tố cáo là báo cho cơ quan biết hành vi vi phạm pháp luật gây thiệt hại lợi ích nhà nước hoặc người khác.\n3. Quyền tham gia quản lý nhà nước và xã hội: Cơ chế dân chủ trực tiếp và đại diện (phương châm 'Dân biết, dân bàn, dân làm, dân kiểm tra, dân giám sát, dân thụ hưởng').\n4. Quyền và nghĩa vụ bảo vệ Tổ quốc: Nghĩa vụ quân sự vẻ vang."
+        },
+        {
+          "title": "Một số quyền tự do cơ bản của công dân",
+          "content": "1. Quyền bất khả xâm phạm về thân thể: Không ai bị bắt nếu không có quyết định của Tòa án, quyết định hoặc phê chuẩn của Viện kiểm sát (trừ trường hợp phạm tội quả tang hoặc đang bị truy nã).\n2. Quyền được pháp luật bảo hộ về tính mạng, sức khoẻ, danh dự và nhân phẩm.\n3. Quyền bất khả xâm phạm về chỗ ở: Không ai được tự ý vào chỗ ở của người khác nếu không được người đó đồng ý, việc khám xét chỗ ở phải đúng trình tự luật định.\n4. Quyền được bảo đảm an toàn và bí mật thư tín, điện thoại, điện tín.\n5. Quyền tự do ngôn luận, tự do báo chí và tiếp cận thông tin trong khuôn khổ pháp luật.\n6. Quyền tự do tín ngưỡng, tôn giáo."
+        }
+      ]
+    },
+    {
+      "id": "kt_12",
+      "name": "Giáo dục Kinh tế 12: Tăng trưởng, Hội nhập và An sinh xã hội",
+      "grade": 12,
+      "core_concepts": [
+        {
+          "title": "Tăng trưởng và phát triển kinh tế",
+          "content": "Tăng trưởng kinh tế là sự gia tăng về quy mô và tốc độ của tổng sản phẩm trong một thời kỳ. Các chỉ tiêu: GDP (Tổng sản phẩm quốc nội), GNI (Tổng thu nhập quốc dân), GDP/người, GNI/người. Phát triển kinh tế là sự tăng trưởng kinh tế gắn liền với chuyển dịch cơ cấu kinh tế tiến bộ và tiến bộ, công bằng xã hội (thước đo HDI). Phát triển bền vững kết hợp hài hòa 3 trụ cột: Kinh tế - Xã hội - Môi trường."
+        },
+        {
+          "title": "Hội nhập kinh tế quốc tế",
+          "content": "Các cấp độ hội nhập: Song phương, Khu vực, Toàn cầu. Các mức độ hội nhập: Thỏa thuận thương mại ưu đãi (PTA) -> Khu vực mậu dịch tự do (FTA) -> Liên minh thuế quan -> Thị trường chung -> Liên minh kinh tế - tiền tệ. Việt Nam tham gia các tổ chức: WTO, ASEAN, APEC và các FTA thế hệ mới: CPTPP, EVFTA, RCEP. Hoạt động kinh tế đối ngoại: Thương mại quốc tế, Đầu tư quốc tế (FDI, đầu tư ra nước ngoài), Dịch vụ thu ngoại tệ."
+        },
+        {
+          "title": "Bảo hiểm và An sinh xã hội (Cập nhật Luật BHXH 2024)",
+          "content": "Các loại hình bảo hiểm: Bảo hiểm xã hội (bắt buộc, tự nguyện), Bảo hiểm y tế, Bảo hiểm thất nghiệp, Bảo hiểm thương mại.\n4 Trụ cột chính sách An sinh xã hội: (1) Hỗ trợ việc làm và giảm nghèo; (2) Bảo hiểm (trụ cột xương sống); (3) Trợ giúp xã hội; (4) Dịch vụ xã hội cơ bản (giáo dục, y tế, nhà ở, nước sạch, thông tin)."
+        }
+      ]
+    }
+  ],
+  "bhxh_2024_new_points": [
+    "1. Mở rộng đối tượng tham gia BHXH bắt buộc: bổ sung chủ hộ kinh doanh của hộ có ĐKKD, người làm việc bán thời gian có mức lương từ mức lương tối thiểu làm căn cứ đóng BHXH trở lên, người hoạt động không chuyên trách cấp thôn/tổ dân phố.",
+    "2. Rút ngắn thời gian đóng BHXH tối thiểu để hưởng lương hưu: từ 20 năm xuống còn 15 năm.",
+    "3. Chế độ thai sản mở rộng: quy định rõ chế độ thai sản khi nghỉ việc do sẩy thai, phá thai, thai chết lưu.",
+    "4. Nghỉ ốm nửa ngày: được giải quyết chế độ ốm đau theo quy định mới.",
+    "5. Bổ sung chế độ trợ cấp hưu trí xã hội cho người cao tuổi không có lương hưu.",
+    "6. Chế tài xử lý nghiêm hành vi chậm đóng, trốn đóng BHXH bắt buộc: tính tiền lãi chậm đóng 0,03%/ngày, áp dụng ngừng sử dụng hóa đơn, hoãn xuất cảnh, hoặc truy cứu trách nhiệm hình sự theo Điều 216 BLHS."
+  ],
+  "penalties_reference": [
+    {
+      "category": "Bình đẳng giới & Lao động",
+      "law": "Nghị định 125/2021/NĐ-CP",
+      "violation": "Từ chối tuyển dụng hoặc phân biệt đối xử vì lí do giới tính; ép buộc nghỉ học vì giới tính",
+      "fine": "Phạt tiền từ 10.000.000đ đến 15.000.000đ đối với hành vi từ chối tuyển dụng vì giới tính; từ 2.000.000đ đến 3.000.000đ đối với ép buộc nghỉ học"
+    },
+    {
+      "category": "Bầu cử, ứng cử",
+      "law": "Điều 160, 161 Bộ luật Hình sự 2015",
+      "violation": "Lừa gạt, mua chuộc, cản trở quyền bầu cử, ứng cử hoặc làm sai lệch kết quả bầu cử",
+      "fine": "Cảnh cáo, phạt cải tạo không giam giữ đến 01 năm hoặc phạt tù từ 03 tháng đến 02 năm (nặng từ 01 năm đến 02 năm tù)"
+    },
+    {
+      "category": "Khiếu nại, tố cáo",
+      "law": "Điều 166 Bộ luật Hình sự 2015",
+      "violation": "Dùng vũ lực, đe dọa dùng vũ lực cản trở hoặc trả thù người khiếu nại, tố cáo",
+      "fine": "Phạt cải tạo không giam giữ đến 03 năm hoặc phạt tù từ 06 tháng đến 07 năm"
+    },
+    {
+      "category": "Thân thể, tính mạng, sức khỏe, danh dự",
+      "law": "Điều 157, 134, 156 Bộ luật Hình sự 2015",
+      "violation": "Bắt, giữ, giam người trái pháp luật (Đ157); Cố ý gây thương tích (Đ134); Vu khống bịa đặt xúc phạm danh dự (Đ156)",
+      "fine": "Điều 157: tù từ 6 tháng đến 7 năm; Điều 156: phạt tiền từ 10 - 50 triệu hoặc tù từ 3 tháng đến 7 năm"
+    },
+    {
+      "category": "Bảo hiểm xã hội",
+      "law": "Điều 216 Bộ luật Hình sự 2015",
+      "violation": "Trốn đóng BHXH, BHYT, BHTN cho người lao động",
+      "fine": "Phạt tiền từ 50.000.000đ đến 1 tỷ đồng hoặc phạt tù từ 03 tháng đến 07 năm đối với cá nhân; phạt tiền đến 3 tỷ đồng đối với pháp nhân"
+    }
+  ]
+}

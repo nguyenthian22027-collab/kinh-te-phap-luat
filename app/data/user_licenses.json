@@ -1,0 +1,43 @@
+{
+  "test_user_quota_demo": {
+    "uid": "test_user_quota_demo",
+    "email": "test@gmail.com",
+    "display_name": "Thầy Giáo Viên Mẫu",
+    "photo_url": "",
+    "trial_used": 10,
+    "trial_limit": 10,
+    "is_pro": true,
+    "pro_plan": "lifetime",
+    "pro_activated_at": "2026-09-14 17:16:01",
+    "pro_expires_at": null,
+    "created_at": "2026-09-14 17:16:01",
+    "last_action": "Sinh đề thi lần 10 (2026-09-14 17:16:01)",
+    "pro_key": "PROLIFE-9655-6FDE-F0420C"
+  },
+  "guest_vnzpc3vn": {
+    "uid": "guest_vnzpc3vn",
+    "email": "",
+    "display_name": "Khách dùng thử",
+    "photo_url": "",
+    "trial_used": 0,
+    "trial_limit": 10,
+    "is_pro": false,
+    "pro_plan": null,
+    "pro_activated_at": null,
+    "pro_expires_at": null,
+    "created_at": "2026-09-14 17:38:07"
+  },
+  "user_Z2lhb3ZpZW4uZ2Rr": {
+    "uid": "user_Z2lhb3ZpZW4uZ2Rr",
+    "email": "giaovien.gdktpl@gmail.com",
+    "display_name": "Cô Kim Tuyền (GDKT&PL)",
+    "photo_url": "https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png",
+    "trial_used": 0,
+    "trial_limit": 10,
+    "is_pro": false,
+    "pro_plan": null,
+    "pro_activated_at": null,
+    "pro_expires_at": null,
+    "created_at": "2026-09-14 17:38:21"
+  }
+}
