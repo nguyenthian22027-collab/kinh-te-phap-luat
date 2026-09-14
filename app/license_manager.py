@@ -31,6 +31,25 @@ VALID_KEYS_PATH = os.path.join(DATA_DIR, "valid_keys.json")
 SECRET_SALT = "GDKTPL_HSG_PRO_LICENSE_2026_SECURE_SALT"
 TRIAL_LIMIT = 10
 
+ADMIN_EMAILS = [
+    "nguyenvanthien1812@gmail.com",
+    "kimtuyen@gmail.com",
+    "admin@gmail.com",
+    "nguyenthian22027@gmail.com",
+    "hoathinh6966@gmail.com"
+]
+
+def is_admin_email(email: str) -> bool:
+    if not email:
+        return False
+    email_clean = email.strip().lower()
+    if email_clean in [a.lower() for a in ADMIN_EMAILS]:
+        return True
+    if "admin" in email_clean:
+        return True
+    return False
+
+
 PLAN_PRICING = {
     "1year": {
         "name": "Gói 1 Năm",
@@ -157,7 +176,26 @@ def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url
     now = datetime.now()
 
     user = users_db.get(clean_uid)
+
+    # Nếu chưa có theo clean_uid nhưng có email, kiểm tra xem đã được pre-approve theo email chưa
+    if not user and email:
+        for ex_uid, ex_u in list(users_db.items()):
+            if ex_u.get("email", "").lower() == email.lower():
+                # Gán lại sang clean_uid mới
+                user = ex_u
+                user["uid"] = clean_uid
+                if display_name:
+                    user["display_name"] = display_name
+                if photo_url:
+                    user["photo_url"] = photo_url
+                users_db[clean_uid] = user
+                if ex_uid != clean_uid and ex_uid.startswith("pre_"):
+                    del users_db[ex_uid]
+                save_json(USER_LICENSES_PATH, users_db)
+                break
+
     if not user:
+        is_admin = is_admin_email(email)
         user = {
             "uid": clean_uid,
             "email": email or "",
@@ -169,6 +207,8 @@ def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url
             "pro_plan": None,
             "pro_activated_at": None,
             "pro_expires_at": None,
+            "status": "active",
+            "is_admin": is_admin,
             "created_at": now.strftime("%Y-%m-%d %H:%M:%S")
         }
         users_db[clean_uid] = user
@@ -186,6 +226,11 @@ def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url
             user["photo_url"] = photo_url
             updated = True
 
+        # Đảm bảo có trường status
+        if "status" not in user:
+            user["status"] = "active"
+            updated = True
+
         # Kiểm tra hạn sử dụng nếu là tài khoản PRO có thời hạn
         if user.get("is_pro") and user.get("pro_expires_at"):
             try:
@@ -201,17 +246,24 @@ def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url
             users_db[clean_uid] = user
             save_json(USER_LICENSES_PATH, users_db)
 
+    user_email = user.get("email", email or "")
+    is_admin = is_admin_email(user_email)
     trial_used = user.get("trial_used", 0)
     trial_limit = user.get("trial_limit", TRIAL_LIMIT)
     trial_remaining = max(0, trial_limit - trial_used)
     is_pro = user.get("is_pro", False)
+    user_status = user.get("status", "active")
+    is_blocked = (user_status == "blocked")
 
     return {
         "uid": clean_uid,
-        "email": user.get("email", ""),
+        "email": user_email,
         "display_name": user.get("display_name", "Giáo viên"),
         "photo_url": user.get("photo_url", ""),
-        "is_pro": is_pro,
+        "is_pro": is_pro and not is_blocked,
+        "is_admin": is_admin,
+        "status": user_status,
+        "is_blocked": is_blocked,
         "pro_plan": user.get("pro_plan"),
         "pro_plan_name": PLAN_PRICING.get(user.get("pro_plan", ""), {}).get("name", "Gói PRO") if is_pro else None,
         "pro_activated_at": user.get("pro_activated_at"),
@@ -219,9 +271,10 @@ def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url
         "trial_used": trial_used,
         "trial_limit": trial_limit,
         "trial_remaining": 999999 if is_pro else trial_remaining,
-        "can_use": is_pro or (trial_remaining > 0),
+        "can_use": (not is_blocked) and (is_pro or trial_remaining > 0),
         "plan_pricing": PLAN_PRICING
     }
+
 
 def consume_user_quota(uid: str, action_name: str = "Tác vụ") -> dict:
     """Trừ 1 lượt dùng thử của người dùng nếu chưa phải PRO."""
@@ -328,3 +381,216 @@ def activate_user_pro(uid: str, license_key: str) -> dict:
         "expires_at": expires_at or "Vĩnh viễn (Trọn đời)",
         "user": updated_status
     }
+
+# --- BẢNG QUẢN TRỊ VIÊN — PHÊ DUYỆT REALTIME CLOUD FUNCTIONS ---
+
+def list_all_users() -> Dict[str, Any]:
+    """Lấy danh sách toàn bộ giáo viên cùng số liệu thống kê cho Bảng Quản Trị."""
+    users_db = load_json(USER_LICENSES_PATH, {})
+    now = datetime.now()
+
+    user_list = []
+    total_count = 0
+    trial_count = 0
+    pro_expiring_count = 0
+    pro_lifetime_count = 0
+    blocked_count = 0
+
+    for uid, u in users_db.items():
+        total_count += 1
+        status = u.get("status", "active")
+        is_blocked = (status == "blocked")
+        is_pro = u.get("is_pro", False) and not is_blocked
+        plan = u.get("pro_plan")
+        expires_at = u.get("pro_expires_at")
+        trial_used = u.get("trial_used", 0)
+        trial_limit = u.get("trial_limit", TRIAL_LIMIT)
+
+        # Tính toán ngày còn lại
+        days_left = None
+        if is_pro and expires_at:
+            try:
+                exp_dt = datetime.strptime(expires_at, "%Y-%m-%d %H:%M:%S")
+                delta = exp_dt - now
+                days_left = max(0, delta.days)
+                if delta.total_seconds() <= 0:
+                    is_pro = False
+            except Exception:
+                pass
+
+        if is_blocked:
+            blocked_count += 1
+        elif is_pro:
+            if plan == "lifetime":
+                pro_lifetime_count += 1
+            else:
+                pro_expiring_count += 1
+        else:
+            trial_count += 1
+
+        user_list.append({
+            "uid": uid,
+            "email": u.get("email", ""),
+            "display_name": u.get("display_name", "Giáo viên"),
+            "photo_url": u.get("photo_url", ""),
+            "is_pro": is_pro,
+            "pro_plan": plan,
+            "pro_plan_name": PLAN_PRICING.get(plan, {}).get("name", "Gói PRO") if is_pro else None,
+            "pro_expires_at": expires_at,
+            "days_left": days_left,
+            "trial_used": trial_used,
+            "trial_limit": trial_limit,
+            "trial_remaining": max(0, trial_limit - trial_used),
+            "status": status,
+            "created_at": u.get("created_at", now.strftime("%Y-%m-%d %H:%M:%S")),
+            "last_action": u.get("last_action", "")
+        })
+
+    # Sắp xếp giáo viên mới nhất lên đầu
+    user_list.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+
+    return {
+        "status": "success",
+        "stats": {
+            "total": total_count,
+            "trial": trial_count,
+            "pro_expiring": pro_expiring_count,
+            "pro_lifetime": pro_lifetime_count,
+            "blocked": blocked_count
+        },
+        "users": user_list
+    }
+
+def admin_approve_user(uid: str, action: str, custom_days: Optional[int] = None, custom_quota: Optional[int] = None) -> dict:
+    """Xử lý thao tác phê duyệt của Admin: +Lượt, 1 Năm, 2 Năm, Vĩnh Viễn, Khóa."""
+    clean_uid = (uid or "").strip()
+    users_db = load_json(USER_LICENSES_PATH, {})
+
+    user = users_db.get(clean_uid)
+    if not user:
+        # Thử tìm theo email nếu uid là email
+        found = False
+        for k, v in users_db.items():
+            if v.get("email", "").lower() == clean_uid.lower():
+                clean_uid = k
+                user = v
+                found = True
+                break
+        if not found:
+            # Tạo mới user
+            user = {
+                "uid": clean_uid,
+                "email": clean_uid if "@" in clean_uid else "",
+                "display_name": "Giáo viên",
+                "photo_url": "",
+                "trial_used": 0,
+                "trial_limit": TRIAL_LIMIT,
+                "is_pro": False,
+                "pro_plan": None,
+                "status": "active",
+                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            users_db[clean_uid] = user
+
+    now = datetime.now()
+    action_clean = (action or "").strip().lower()
+
+    if action_clean in ["quota_10", "add_quota", "quota_5"]:
+        inc = custom_quota or (5 if action_clean == "quota_5" else 10)
+        curr_limit = user.get("trial_limit", TRIAL_LIMIT)
+        curr_used = user.get("trial_used", 0)
+        user["trial_limit"] = max(curr_limit, curr_used) + inc
+        user["status"] = "active"
+        msg = f"Đã cộng thêm +{inc} lượt dùng thử thành công!"
+
+    elif action_clean == "1year":
+        user["is_pro"] = True
+        user["pro_plan"] = "1year"
+        user["pro_activated_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
+        user["pro_expires_at"] = (now + timedelta(days=365)).strftime("%Y-%m-%d %H:%M:%S")
+        user["status"] = "active"
+        msg = "Đã phê duyệt Gói 1 Năm (365 ngày) thành công!"
+
+    elif action_clean == "2year":
+        user["is_pro"] = True
+        user["pro_plan"] = "2year"
+        user["pro_activated_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
+        user["pro_expires_at"] = (now + timedelta(days=730)).strftime("%Y-%m-%d %H:%M:%S")
+        user["status"] = "active"
+        msg = "Đã phê duyệt Gói 2 Năm (730 ngày) thành công!"
+
+    elif action_clean == "lifetime":
+        user["is_pro"] = True
+        user["pro_plan"] = "lifetime"
+        user["pro_activated_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
+        user["pro_expires_at"] = None
+        user["status"] = "active"
+        msg = "Đã phê duyệt Gói Vĩnh Viễn (Trọn đời) thành công!"
+
+    elif action_clean == "custom":
+        days = custom_days or 30
+        user["is_pro"] = True
+        user["pro_plan"] = "custom"
+        user["pro_activated_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
+        user["pro_expires_at"] = (now + timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
+        user["status"] = "active"
+        msg = f"Đã phê duyệt Gói Tùy Chọn ({days} ngày) thành công!"
+
+    elif action_clean in ["toggle_block", "block"]:
+        current_status = user.get("status", "active")
+        if current_status == "blocked":
+            user["status"] = "active"
+            msg = "Đã mở khóa tài khoản giáo viên."
+        else:
+            user["status"] = "blocked"
+            msg = "Đã tạm khóa tài khoản giáo viên."
+
+    elif action_clean == "delete":
+        if clean_uid in users_db:
+            del users_db[clean_uid]
+        save_json(USER_LICENSES_PATH, users_db)
+        return {"status": "success", "message": "Đã xóa tài khoản khỏi danh sách."}
+
+    else:
+        return {"status": "error", "message": f"Hành động không hợp lệ: {action}"}
+
+    users_db[clean_uid] = user
+    save_json(USER_LICENSES_PATH, users_db)
+
+    return {
+        "status": "success",
+        "message": msg,
+        "user": get_user_status(clean_uid)
+    }
+
+def admin_preapprove_email(email: str, display_name: str, plan: str, custom_days: Optional[int] = None) -> dict:
+    """Tạo trước quyền PRO cho một email trước khi giáo viên đăng nhập."""
+    clean_email = (email or "").strip().lower()
+    if not clean_email or "@" not in clean_email:
+        return {"status": "error", "message": "Email không hợp lệ."}
+
+    users_db = load_json(USER_LICENSES_PATH, {})
+    # Tìm xem đã có user nào mang email này chưa
+    target_uid = None
+    for uid, u in users_db.items():
+        if u.get("email", "").lower() == clean_email:
+            target_uid = uid
+            break
+
+    if not target_uid:
+        target_uid = f"pre_{uuid.uuid4().hex[:8]}"
+        users_db[target_uid] = {
+            "uid": target_uid,
+            "email": clean_email,
+            "display_name": display_name or "Giáo viên",
+            "photo_url": "",
+            "trial_used": 0,
+            "trial_limit": TRIAL_LIMIT,
+            "is_pro": False,
+            "status": "active",
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        save_json(USER_LICENSES_PATH, users_db)
+
+    return admin_approve_user(target_uid, plan, custom_days=custom_days)
+

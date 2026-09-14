@@ -18,8 +18,10 @@ from .importer import import_document_file, import_from_url, import_raw_text
 from .ai_engine import generate_ai_scenario_question, load_knowledge
 from .license_manager import (
     get_user_status, consume_user_quota, activate_user_pro,
-    get_firebase_config, save_firebase_config, generate_checksum_key, PLAN_PRICING
+    get_firebase_config, save_firebase_config, generate_checksum_key, PLAN_PRICING,
+    list_all_users, admin_approve_user, admin_preapprove_email, is_admin_email
 )
+
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 if os.environ.get("VERCEL"):
@@ -132,6 +134,20 @@ class ActivateProRequest(BaseModel):
 
 class FirebaseConfigRequest(BaseModel):
     config: dict
+
+class AdminApproveRequest(BaseModel):
+    uid: str
+    action: str
+    days: Optional[int] = None
+    quota: Optional[int] = None
+    admin_email: Optional[str] = None
+
+class AdminPreapproveRequest(BaseModel):
+    email: str
+    display_name: Optional[str] = "Giáo viên"
+    plan: str = "1year"
+    days: Optional[int] = None
+
 
 @app.get("/api/status")
 def get_status():
@@ -547,6 +563,29 @@ def handle_admin_generate_key(plan: str = "1year", secret: str = ""):
         "price": PLAN_PRICING[plan]["price"],
         "license_key": key
     }
+
+@app.get("/api/admin/users")
+def handle_admin_get_users(email: Optional[str] = None):
+    return list_all_users()
+
+@app.post("/api/admin/approve-user")
+def handle_admin_approve_user(req: AdminApproveRequest):
+    return admin_approve_user(
+        uid=req.uid,
+        action=req.action,
+        custom_days=req.days,
+        custom_quota=req.quota
+    )
+
+@app.post("/api/admin/preapprove-user")
+def handle_admin_preapprove_user(req: AdminPreapproveRequest):
+    return admin_preapprove_email(
+        email=req.email,
+        display_name=req.display_name or "Giáo viên",
+        plan=req.plan,
+        custom_days=req.days
+    )
+
 
 # Mount static frontend
 static_dir = os.path.join(APP_DIR, "static")

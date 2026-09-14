@@ -58,12 +58,7 @@
           <span>Bản Quyền PRO</span>
           <span class="counter-badge" style="background: #eab308; color: #000; font-weight: 700; font-size: 11px;">VIP</span>
         </button>
-        <button class="nav-item" id="nav-item-firebase-btn" onclick="window.AuthManager.openFirebaseConfigModal()" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); margin-top: 4px;">
-          <span class="icon">🔥</span>
-          <span>Cấu Hình Firebase</span>
-          <span class="counter-badge" style="background: #ef4444; color: #fff; font-size: 11px;">Auth</span>
-        </button>
-      </nav>
+        </nav>
 
       <div class="bank-stats-card">
         <div class="stats-header">
@@ -964,24 +959,13 @@
           </div>
         </div>
 
-        <!-- NHẬP MÃ KÍCH HOẠT LICENSE KEY -->
-        <div class="activation-input-section">
-          <label style="font-weight: 600; color: #f8fafc; font-size: 14px; display: block; margin-bottom: 8px;">
-            🔑 Đã có mã kích hoạt? Nhập mã vào đây để mở khóa PRO ngay:
-          </label>
-          <div class="activation-input-group">
-            <input type="text" id="input-license-key" class="form-control key-input" placeholder="Ví dụ: PROLIFE-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
-            <button class="btn btn-gold btn-large" id="btn-submit-activate-key" onclick="window.AuthManager.activateLicenseKey()">
-              <span>🚀</span> KÍCH HOẠT NGAY
-            </button>
-          </div>
-
-          <!-- KEY TEST MẪU NHANH CHO QUẢN TRỊ / DEMO -->
-          <div class="demo-keys-hint">
-            <span>Mã kích hoạt mẫu (Click để điền nhanh):</span>
-            <span class="key-chip" onclick="window.AuthManager.fillDemoKey('PROLIFE-KIMTUYEN-2026')" title="Gói Vĩnh Viễn VIP">PROLIFE-KIMTUYEN-2026</span>
-            <span class="key-chip" onclick="window.AuthManager.fillDemoKey('PRO1Y-DEMO-2026-VIP1')" title="Gói 1 Năm VIP">PRO1Y-DEMO-2026-VIP1</span>
-            <span class="key-chip" onclick="window.AuthManager.fillDemoKey('PRO2Y-DEMO-2026-VIP2')" title="Gói 2 Năm VIP">PRO2Y-DEMO-2026-VIP2</span>
+        <!-- THÔNG BÁO DUYỆT TỰ ĐỘNG QUA GMAIL ADMIN (KHÔNG CẦN NHẬP MÃ) -->
+        <div class="direct-activation-banner">
+          <div class="direct-banner-icon">⚡</div>
+          <div class="direct-banner-text">
+            <strong>KÍCH HOẠT TỰ ĐỘNG QUA GMAIL — KHÔNG CẦN NHẬP MÃ:</strong>
+            Thầy/cô chỉ cần đăng nhập Google và quét VietQR chuyển khoản theo đúng nội dung trên (nội dung có mã tài khoản riêng biệt).<br>
+            Quản trị viên sẽ trực tiếp phê duyệt và kích hoạt bản quyền PRO vào tài khoản Gmail: <em><span id="pay-user-email">Chưa đăng nhập</span></em> trong vòng 1-3 phút. Thầy/cô chỉ cần giữ nguyên trang hoặc tải lại trang là có thể sử dụng trọn gói ngay!
           </div>
         </div>
 
@@ -993,68 +977,97 @@
     </div>
   </div>
 
-  <!-- MODAL: CẤU HÌNH KẾT NỐI GOOGLE FIREBASE THẬT -->
-  <div class="modal-overlay" id="firebase-config-modal">
-    <div class="modal-dialog" style="max-width: 640px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #1e293b, #0f172a); border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 26px;">🔥</span>
+  <!-- MODAL: BẢNG QUẢN TRỊ VIÊN — PHÊ DUYỆT BẢN QUYỀN REALTIME CLOUD -->
+  <div class="modal-overlay" id="admin-approval-modal">
+    <div class="admin-modal-container">
+      <div class="admin-modal-header">
+        <div class="admin-header-left">
+          <div class="admin-shield-icon">🛡️</div>
           <div>
-            <h3 style="margin: 0; color: #f87171; font-family: 'Outfit', sans-serif;">KẾT NỐI GOOGLE FIREBASE AUTHENTICATION THẬT</h3>
-            <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #94a3b8;">Xác thực tài khoản Google trực tiếp qua máy chủ Google OAuth 2.0</p>
+            <div class="admin-title-row">
+              <h3>BẢNG QUẢN TRỊ VIÊN — PHÊ DUYỆT BẢN QUYỀN</h3>
+              <span class="badge-realtime-cloud">REALTIME CLOUD</span>
+            </div>
+            <p class="admin-subtitle">Phê duyệt Dùng thử (10 lượt), Gói Pro (1 Năm / 2 Năm / Tùy chọn ngày) và Gói Vĩnh Viễn trực tiếp từ xa</p>
           </div>
         </div>
-        <button class="modal-close" onclick="window.AuthManager.closeFirebaseConfigModal()">&times;</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn btn-secondary" onclick="window.AdminManager.promptPreapproveEmail()" style="font-size: 12px; padding: 6px 12px; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fde047; cursor: pointer; border-radius: 6px;">
+            ➕ Kích Hoạt Gmail Khác
+          </button>
+          <button class="modal-close" onclick="window.AdminManager.closeModal()" style="color: #ffffff;">&times;</button>
+        </div>
       </div>
-      <div class="modal-body" style="padding: 20px 24px; max-height: calc(85vh - 120px); overflow-y: auto;">
-        
-        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
-          <div style="font-weight: 600; color: #fca5a5; font-size: 13.5px; margin-bottom: 6px;">
-            ⚠️ Yêu cầu để mở cửa sổ Đăng nhập Google thật:
+
+      <div class="admin-modal-body">
+        <!-- 4 THẺ THỐNG KÊ -->
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <div class="stat-info">
+              <span class="stat-label">Tổng Giáo Viên</span>
+              <h2 class="stat-value" id="stat-total-users">0</h2>
+            </div>
+            <div class="stat-icon-wrap bg-total">👥</div>
           </div>
-          <div style="font-size: 12.5px; color: #cbd5e1; line-height: 1.5;">
-            Google bắt buộc mỗi ứng dụng web phải có mã định danh <strong>Firebase Project</strong> để cấp quyền mở cửa sổ đăng nhập <code>accounts.google.com</code>. Thầy/cô chỉ cần dán đoạn mã cấu hình vào ô dưới đây (hoàn toàn miễn phí 100% từ Google).
+          <div class="admin-stat-card">
+            <div class="stat-info">
+              <span class="stat-label">Đang Dùng Thử</span>
+              <h2 class="stat-value stat-trial" id="stat-trial-users">0</h2>
+            </div>
+            <div class="stat-icon-wrap bg-trial">⏰</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-info">
+              <span class="stat-label">Bản Pro Có Hạn</span>
+              <h2 class="stat-value stat-pro" id="stat-pro-users">0</h2>
+            </div>
+            <div class="stat-icon-wrap bg-pro">📅</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-info">
+              <span class="stat-label">Gói Vĩnh Viễn</span>
+              <h2 class="stat-value stat-lifetime" id="stat-lifetime-users">0</h2>
+            </div>
+            <div class="stat-icon-wrap bg-lifetime">👑</div>
           </div>
         </div>
 
-        <!-- HƯỚNG DẪN 3 BƯỚC -->
-        <div style="margin-bottom: 16px;">
-          <div style="font-weight: 600; color: #38bdf8; font-size: 13px; margin-bottom: 8px;">
-            📋 Hướng dẫn lấy cấu hình Firebase trong 1 phút:
+        <!-- THANH CÔNG CỤ: TÌM KIẾM & BỘ LỌC -->
+        <div class="admin-toolbar">
+          <div class="admin-search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="admin-search-input" placeholder="Tìm theo Email hoặc Tên giáo viên..." oninput="window.AdminManager.filterUsers()">
           </div>
-          <ol style="margin: 0; padding-left: 20px; font-size: 12.5px; color: #cbd5e1; line-height: 1.6;">
-            <li>Truy cập <a href="https://console.firebase.google.com" target="_blank" style="color: #38bdf8; text-decoration: underline;">Firebase Console (console.firebase.google.com)</a> và đăng nhập Gmail.</li>
-            <li>Bấm <strong>"Add project"</strong> (Tạo dự án mới, ví dụ: <code>gdktpl-exam</code>) và làm theo hướng dẫn.</li>
-            <li>Vào mục <strong>Build &gt; Authentication &gt; Sign-in method</strong>, chọn <strong>Google</strong> và gạt bật <strong>Enable</strong>.</li>
-            <li>Bấm vào biểu tượng ⚙️ (Cài đặt) &gt; <strong>Project settings</strong>, cuộn xuống mục <strong>"Your apps"</strong>, chọn biểu tượng Web <strong><code>&lt;/&gt;</code></strong> và sao chép đoạn <code>firebaseConfig = { ... }</code> dán vào ô bên dưới.</li>
-          </ol>
+          <div class="admin-filter-tabs">
+            <button class="filter-tab active" data-filter="all" onclick="window.AdminManager.setFilter('all')">Tất cả</button>
+            <button class="filter-tab" data-filter="trial" onclick="window.AdminManager.setFilter('trial')">Dùng thử</button>
+            <button class="filter-tab" data-filter="pro" onclick="window.AdminManager.setFilter('pro')">1 Năm / Pro</button>
+            <button class="filter-tab" data-filter="lifetime" onclick="window.AdminManager.setFilter('lifetime')">Vĩnh viễn</button>
+            <button class="filter-tab" data-filter="blocked" onclick="window.AdminManager.setFilter('blocked')">Đã khóa</button>
+          </div>
         </div>
 
-        <!-- TEXTAREA NHẬP CONFIG -->
-        <div class="form-group">
-          <label style="font-weight: 600; color: #f8fafc; font-size: 13px;">
-            Dán đoạn mã cấu hình Firebase (dạng JSON hoặc const firebaseConfig = { ... }):
-          </label>
-          <textarea id="firebase-config-json" class="form-control" rows="8" style="font-family: monospace; font-size: 12px; background: rgba(0, 0, 0, 0.4); border-color: rgba(239, 68, 68, 0.3); color: #fecaca;" placeholder='const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
-};'></textarea>
+        <!-- BẢNG DANH SÁCH GIÁO VIÊN -->
+        <div class="admin-users-table-container">
+          <table class="admin-users-table">
+            <thead>
+              <tr>
+                <th style="width: 28%;">Giáo viên</th>
+                <th style="width: 15%;">Gói Bản Quyền</th>
+                <th style="width: 20%;">Lượt / Hạn Dùng</th>
+                <th style="width: 12%;">Ngày Tham Gia</th>
+                <th style="width: 25%;">Phê Duyệt Nhanh</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 30px; color: #94a3b8;">
+                  Đang đồng bộ danh sách giáo viên từ Cloud...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-
-        <small style="color: #94a3b8; font-size: 11.5px; display: block; margin-top: 4px;">
-          🔒 Cấu hình được lưu trữ an toàn trong tệp <code>app/data/firebase_config.json</code> cục bộ trên máy tính của thầy/cô.
-        </small>
-      </div>
-      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;">
-        <button class="btn btn-secondary" onclick="window.AuthManager.closeFirebaseConfigModal()">Đóng</button>
-        <button class="btn btn-primary" onclick="window.AuthManager.saveFirebaseConfigAndLogin()" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444; font-weight: 700;">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="16" height="16" alt="G" style="background: #fff; border-radius: 50%; padding: 1px;">
-          💾 Lưu Cấu Hình &amp; Đăng Nhập Google Ngay
-        </button>
       </div>
     </div>
   </div>
@@ -1062,7 +1075,8 @@
   <!-- Firebase App & Auth SDK (v10 compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="/static/firebase-auth.js?v=2.2"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="/static/firebase-auth.js?v=3.0"></script>
   <script src="/static/gemini-api.js?v=2.1"></script>
   <script src="/static/app.js?v=2.2"></script>
 </body>
