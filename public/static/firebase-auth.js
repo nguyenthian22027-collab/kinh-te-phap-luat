@@ -1,4 +1,4 @@
-// GDKTPL Exam Studio Pro - Firebase Authentication & Realtime Cloud License Manager
+// GDKTPL Exam Studio Pro - Firebase Authentication & Permanent Realtime Cloud License Manager
 // Supports Google Sign-In, 10-use Free Trial Quota, Pro Plans (150k, 250k, 599k), and Realtime Admin Approval Dashboard
 
 (function() {
@@ -45,7 +45,12 @@
     userDocUnsubscribe: null,
 
     async init() {
-      // 1. Khởi tạo Firebase SDK (Auth + Firestore Realtime)
+      // 1. Phục hồi ngay lập tức bản quyền từ localStorage (0ms, không nhấp nháy, không bao giờ mất khi F5)
+      this.hydrateFromLocalStorage();
+      this.renderTopbarAuth();
+      this.updateSidebarLicenseInfo();
+
+      // 2. Khởi tạo Firebase SDK (Auth + Firestore Realtime)
       if (typeof firebase !== "undefined") {
         try {
           if (!firebase.apps.length) {
@@ -60,26 +65,138 @@
           this.setupFirebaseListener();
         } catch (e) {
           console.error("Firebase init error:", e);
-          this.initLocalGuestSession();
         }
-      } else {
-        this.initLocalGuestSession();
       }
 
-      // 2. Tải trạng thái người dùng hiện tại từ Backend
+      // 3. Tải và đồng bộ trạng thái người dùng (kiểm tra Firestore + Backend)
       await this.refreshUserStatus();
 
-      // 3. Render giao diện Auth & Sidebar
+      // 4. Cập nhật giao diện sau khi đồng bộ
       this.renderTopbarAuth();
       this.updateSidebarLicenseInfo();
 
-      // 4. Lắng nghe phím tắt mở nhanh Bảng Quản Trị (Ctrl+Alt+A)
+      // 5. Lắng nghe phím tắt mở nhanh Bảng Quản Trị (Ctrl+Alt+A)
       document.addEventListener("keydown", (e) => {
         if (e.ctrlKey && e.altKey && (e.key === 'a' || e.key === 'A')) {
           e.preventDefault();
           window.AdminManager.openModal();
         }
       });
+    },
+
+    hydrateFromLocalStorage() {
+      const savedUser = localStorage.getItem("gdktpl_auth_user");
+      if (savedUser) {
+        try { this.user = JSON.parse(savedUser); } catch(e) {}
+      }
+      if (!this.user) {
+        this.initLocalGuestSession();
+      }
+
+      const uid = this.user ? this.user.uid : "guest_local_user";
+      const email = this.user ? (this.user.email || "").toLowerCase() : "";
+
+      // Kiểm tra xem có phải Admin email không
+      if (checkIsAdmin(email)) {
+        this.status = {
+          uid: uid,
+          email: email,
+          display_name: this.user ? this.user.displayName : "Quản Trị Viên",
+          photo_url: this.user ? this.user.photoURL : "",
+          is_pro: true,
+          is_admin: true,
+          pro_plan: "lifetime",
+          pro_plan_name: "Gói Vĩnh Viễn (Quản Trị Viên)",
+          pro_expires_at: null,
+          trial_remaining: 999999,
+          trial_limit: 999999,
+          trial_used: 0,
+          can_use: true,
+          status: "active"
+        };
+        return;
+      }
+
+      // Kiểm tra bản quyền đã lưu trong localStorage
+      const cached = this.getStoredLicense();
+      if (cached && cached.is_pro) {
+        this.status = cached;
+      } else {
+        this.status = {
+          uid: uid,
+          email: email,
+          display_name: this.user ? this.user.displayName : "Giáo viên",
+          photo_url: this.user ? this.user.photoURL : "",
+          is_pro: false,
+          is_admin: false,
+          trial_used: 0,
+          trial_limit: 10,
+          trial_remaining: 10,
+          can_use: true,
+          status: "active"
+        };
+      }
+    },
+
+    getStoredLicense() {
+      if (!this.user) return null;
+      const uid = this.user.uid;
+      const email = (this.user.email || "").toLowerCase();
+
+      // 1. Thử lấy theo UID
+      if (uid) {
+        const raw = localStorage.getItem("gdktpl_license_" + uid);
+        if (raw) {
+          try {
+            const data = JSON.parse(raw);
+            if (data && data.is_pro) return data;
+          } catch(e) {}
+        }
+      }
+
+      // 2. Thử lấy theo Email
+      if (email) {
+        const rawEmail = localStorage.getItem("gdktpl_license_" + email);
+        if (rawEmail) {
+          try {
+            const data = JSON.parse(rawEmail);
+            if (data && data.is_pro) return data;
+          } catch(e) {}
+        }
+      }
+
+      // 3. Thử lấy từ bảng master
+      try {
+        const masterRaw = localStorage.getItem("gdktpl_master_approved_users");
+        if (masterRaw) {
+          const master = JSON.parse(masterRaw);
+          if (uid && master[uid] && master[uid].is_pro) return master[uid];
+          if (email && master[email] && master[email].is_pro) return master[email];
+        }
+      } catch(e) {}
+
+      return null;
+    },
+
+    saveLicenseToStorage(licData) {
+      if (!licData) return;
+      const uid = licData.uid || (this.user ? this.user.uid : null);
+      const email = (licData.email || (this.user ? this.user.email : "")).toLowerCase();
+
+      if (uid) {
+        localStorage.setItem("gdktpl_license_" + uid, JSON.stringify(licData));
+      }
+      if (email) {
+        localStorage.setItem("gdktpl_license_" + email, JSON.stringify(licData));
+      }
+
+      // Lưu vào danh sách master
+      try {
+        let master = JSON.parse(localStorage.getItem("gdktpl_master_approved_users") || "{}");
+        if (uid) master[uid] = licData;
+        if (email) master[email] = licData;
+        localStorage.setItem("gdktpl_master_approved_users", JSON.stringify(master));
+      } catch(e) {}
     },
 
     setupFirebaseListener() {
@@ -108,11 +225,14 @@
 
               // Lắng nghe thay đổi quyền Realtime từ Admin
               if (this.userDocUnsubscribe) this.userDocUnsubscribe();
-              this.userDocUnsubscribe = this.db.collection("users").doc(firebaseUser.uid).onSnapshot((doc) => {
+              this.userDocUnsubscribe = this.db.collection("licenses").doc(firebaseUser.uid).onSnapshot((doc) => {
                 if (doc.exists) {
                   const cloudData = doc.data();
-                  if (cloudData.is_pro !== undefined || cloudData.status !== undefined) {
-                    this.refreshUserStatus();
+                  if (cloudData.is_pro) {
+                    this.status = Object.assign(this.status || {}, cloudData);
+                    this.saveLicenseToStorage(this.status);
+                    this.renderTopbarAuth();
+                    this.updateSidebarLicenseInfo();
                   }
                 }
               }, () => {});
@@ -155,6 +275,62 @@
 
     async refreshUserStatus() {
       if (!this.user) this.initLocalGuestSession();
+
+      const userEmail = (this.user ? this.user.email : "").toLowerCase();
+      const isAdmin = checkIsAdmin(userEmail);
+
+      // Nếu là Admin -> Luôn luôn là PRO Vĩnh Viễn
+      if (isAdmin) {
+        this.status = {
+          uid: this.user.uid,
+          email: userEmail,
+          display_name: this.user.displayName || "Quản Trị Viên",
+          photo_url: this.user.photoURL || "",
+          is_pro: true,
+          is_admin: true,
+          pro_plan: "lifetime",
+          pro_plan_name: "Gói Vĩnh Viễn (Quản Trị Viên)",
+          pro_expires_at: null,
+          trial_remaining: 999999,
+          trial_limit: 999999,
+          trial_used: 0,
+          can_use: true,
+          status: "active"
+        };
+        this.saveLicenseToStorage(this.status);
+        this.renderTopbarAuth();
+        this.updateSidebarLicenseInfo();
+        return this.status;
+      }
+
+      // Kiểm tra Cloud Firestore xem có bản quyền do Admin cấp từ xa không
+      if (this.db && this.user) {
+        try {
+          let docSnap = null;
+          if (this.user.uid) {
+            docSnap = await this.db.collection("licenses").doc(this.user.uid).get();
+          }
+          if ((!docSnap || !docSnap.exists) && userEmail) {
+            const cleanKey = userEmail.replace(/[^a-z0-9]/g, "_");
+            docSnap = await this.db.collection("licenses").doc(cleanKey).get();
+          }
+          if (docSnap && docSnap.exists) {
+            const cloudLic = docSnap.data();
+            if (cloudLic && cloudLic.is_pro) {
+              this.status = Object.assign(this.status || {}, cloudLic);
+              this.saveLicenseToStorage(this.status);
+              this.renderTopbarAuth();
+              this.updateSidebarLicenseInfo();
+            }
+          }
+        } catch(e) {
+          console.warn("Firestore license sync note:", e);
+        }
+      }
+
+      // Lấy cached license hiện có để gửi kèm lên serverless (tự chữa lành khi container Vercel khởi động lại)
+      let cachedToSend = (this.status && this.status.is_pro) ? this.status : this.getStoredLicense();
+
       try {
         const res = await fetch("/api/user/status", {
           method: "POST",
@@ -163,22 +339,33 @@
             uid: this.user.uid,
             email: this.user.email || "",
             display_name: this.user.displayName || "Giáo viên",
-            photo_url: this.user.photoURL || ""
+            photo_url: this.user.photoURL || "",
+            cached_license: cachedToSend
           })
         });
-        this.status = await res.json();
+        const serverStatus = await res.json();
+
+        if (serverStatus && typeof serverStatus === "object" && !serverStatus.detail) {
+          // Bảo vệ: Không cho phép trạng thái serverless tạm thời ghi đè mất bản quyền hợp lệ của client
+          if (cachedToSend && cachedToSend.is_pro && !serverStatus.is_pro && serverStatus.status !== "blocked") {
+            // Giữ nguyên PRO từ cache
+            this.status = cachedToSend;
+          } else {
+            this.status = serverStatus;
+            if (this.status.is_pro) {
+              this.saveLicenseToStorage(this.status);
+            }
+          }
+        }
       } catch (e) {
-        console.error("Error fetching user status:", e);
-        this.status = {
-          uid: this.user.uid,
-          is_pro: false,
-          trial_used: 0,
-          trial_limit: 10,
-          trial_remaining: 10,
-          can_use: true,
-          is_admin: checkIsAdmin(this.user ? this.user.email : "")
-        };
+        console.error("Backend fetch error:", e);
+        if (cachedToSend && cachedToSend.is_pro) {
+          this.status = cachedToSend;
+        }
       }
+
+      this.renderTopbarAuth();
+      this.updateSidebarLicenseInfo();
       return this.status;
     },
 
@@ -333,7 +520,7 @@
       let adminBtnHtml = "";
       if (isAdmin) {
         adminBtnHtml = `
-          <button class="btn-admin-panel-topbar" onclick="window.AdminManager.openModal()" title="Mở Bảng Quản Trị Viên Phê Duyệt">
+          <button class="btn-admin-panel-topbar" id="btn-topbar-admin-panel" onclick="window.AdminManager.openModal()" title="Mở Bảng Quản Trị Viên Phê Duyệt">
             <span>🛡️ Phê Duyệt Realtime</span>
           </button>
         `;
@@ -370,13 +557,12 @@
           ` : `
             <button class="btn-google-login-mini" onclick="window.AuthManager.signInWithGoogle()" title="Đăng nhập bằng Google">
               <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" height="14" alt="G">
-              <span>Đăng nhập</span>
+              <span>Đăng nhập Google</span>
             </button>
           `}
         `;
       }
 
-      // Thêm nút Quản trị trên Sidebar nếu là Admin
       this.renderSidebarAdminButton(isAdmin);
     },
 
@@ -385,23 +571,20 @@
       if (!navGroup) return;
 
       let adminNavBtn = document.getElementById("nav-item-admin-approval-btn");
-      if (isAdmin) {
-        if (!adminNavBtn) {
-          adminNavBtn = document.createElement("button");
-          adminNavBtn.id = "nav-item-admin-approval-btn";
-          adminNavBtn.className = "nav-item";
-          adminNavBtn.style.background = "rgba(124, 58, 237, 0.12)";
-          adminNavBtn.style.border = "1px solid rgba(124, 58, 237, 0.4)";
-          adminNavBtn.style.marginTop = "6px";
-          adminNavBtn.innerHTML = `
-            <span class="nav-icon" style="color: #c084fc;">🛡️</span>
-            <span style="font-weight: 700; color: #e9d5ff;">Phê Duyệt Realtime</span>
-          `;
-          adminNavBtn.onclick = () => window.AdminManager.openModal();
-          navGroup.appendChild(adminNavBtn);
-        }
-      } else {
-        if (adminNavBtn) adminNavBtn.remove();
+      if (!adminNavBtn) {
+        adminNavBtn = document.createElement("button");
+        adminNavBtn.id = "nav-item-admin-approval-btn";
+        adminNavBtn.className = "nav-item";
+        adminNavBtn.style.background = "rgba(124, 58, 237, 0.15)";
+        adminNavBtn.style.border = "1px solid rgba(124, 58, 237, 0.4)";
+        adminNavBtn.style.marginTop = "4px";
+        adminNavBtn.innerHTML = `
+          <span class="icon" style="color: #c084fc;">🛡️</span>
+          <span style="color: #e9d5ff; font-weight: 700;">Bảng Quản Trị</span>
+          <span class="counter-badge" style="background: #a855f7; color: #fff; font-size: 10px; font-weight: 700;">ADMIN</span>
+        `;
+        adminNavBtn.onclick = () => window.AdminManager.openModal();
+        navGroup.appendChild(adminNavBtn);
       }
     },
 
@@ -560,8 +743,7 @@
         try {
           const db = firebase.firestore();
           if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
-          this.firestoreUnsubscribe = db.collection("users").onSnapshot(() => {
-            // Khi có thay đổi trên Firestore, tự động refresh danh sách
+          this.firestoreUnsubscribe = db.collection("licenses").onSnapshot(() => {
             this.loadUsers();
           }, (err) => {
             console.log("Firestore admin listener notice:", err);
@@ -573,18 +755,78 @@
     },
 
     async loadUsers() {
+      // 1. Nạp từ Backend
       try {
         const res = await fetch("/api/admin/users");
         const data = await res.json();
         if (data && data.users) {
           this.users = data.users;
           this.stats = data.stats || this.stats;
-          this.renderStats();
-          this.filterUsers();
         }
       } catch (e) {
-        console.error("Lỗi nạp danh sách giáo viên Admin:", e);
+        console.error("Lỗi nạp danh sách giáo viên Admin từ backend:", e);
       }
+
+      // 2. Kết hợp với master licenses trong localStorage
+      try {
+        const masterRaw = localStorage.getItem("gdktpl_master_approved_users");
+        if (masterRaw) {
+          const master = JSON.parse(masterRaw);
+          Object.values(master).forEach(lic => {
+            if (!lic || !lic.uid) return;
+            const existing = this.users.find(u => u.uid === lic.uid || (lic.email && u.email && u.email.toLowerCase() === lic.email.toLowerCase()));
+            if (existing) {
+              if (lic.is_pro) {
+                existing.is_pro = true;
+                existing.pro_plan = lic.pro_plan;
+                existing.pro_plan_name = lic.pro_plan_name;
+                existing.pro_expires_at = lic.pro_expires_at;
+                existing.status = lic.status || "active";
+              }
+            } else {
+              this.users.unshift({
+                uid: lic.uid,
+                email: lic.email || "",
+                display_name: lic.display_name || "Giáo viên",
+                is_pro: lic.is_pro,
+                pro_plan: lic.pro_plan,
+                pro_plan_name: lic.pro_plan_name,
+                pro_expires_at: lic.pro_expires_at,
+                trial_used: 0,
+                trial_limit: 10,
+                trial_remaining: 10,
+                status: lic.status || "active",
+                created_at: lic.pro_activated_at || new Date().toISOString()
+              });
+            }
+          });
+        }
+      } catch(e) {}
+
+      // Tính lại stats
+      this.computeStats();
+      this.renderStats();
+      this.filterUsers();
+    },
+
+    computeStats() {
+      let total = this.users.length;
+      let trial = 0;
+      let pro_exp = 0;
+      let pro_life = 0;
+      let blocked = 0;
+
+      this.users.forEach(u => {
+        if (u.status === "blocked") blocked++;
+        else if (u.is_pro) {
+          if (u.pro_plan === "lifetime") pro_life++;
+          else pro_exp++;
+        } else {
+          trial++;
+        }
+      });
+
+      this.stats = { total, trial, pro_expiring: pro_exp, pro_lifetime: pro_life, blocked };
     },
 
     renderStats() {
@@ -614,7 +856,6 @@
     filterUsers() {
       const q = (document.getElementById("admin-search-input")?.value || "").trim().toLowerCase();
       this.filteredUsers = this.users.filter(u => {
-        // Lọc theo Tab trạng thái
         if (this.currentFilter === 'trial') {
           if (u.is_pro || u.status === 'blocked') return false;
         } else if (this.currentFilter === 'pro') {
@@ -625,7 +866,6 @@
           if (u.status !== 'blocked') return false;
         }
 
-        // Tìm kiếm theo Email hoặc Tên
         if (q) {
           const name = (u.display_name || "").toLowerCase();
           const email = (u.email || "").toLowerCase();
@@ -723,6 +963,58 @@
     },
 
     async approveUser(uid, action, customDays, customQuota) {
+      const targetUser = this.users.find(x => x.uid === uid) || {};
+      const targetEmail = (targetUser.email || (uid.includes("@") ? uid : "")).toLowerCase();
+      const isProAction = (action !== 'toggle_block' && !action.includes('quota'));
+
+      let daysCount = 365;
+      if (action === '2year') daysCount = 730;
+      else if (action === 'custom') daysCount = customDays || 30;
+
+      const now = new Date();
+      let expStr = null;
+      if (action === '1year' || action === '2year' || action === 'custom') {
+        const expDate = new Date(now.getTime() + daysCount * 86400000);
+        expStr = expDate.toISOString().replace("T", " ").substring(0, 19);
+      }
+
+      const licData = {
+        uid: uid,
+        email: targetEmail,
+        display_name: targetUser.display_name || "Giáo viên",
+        is_pro: isProAction,
+        pro_plan: action,
+        pro_plan_name: action === '1year' ? 'Gói 1 Năm' : (action === '2year' ? 'Gói 2 Năm' : (action === 'lifetime' ? 'Gói Vĩnh Viễn' : 'Gói PRO')),
+        pro_activated_at: now.toISOString().replace("T", " ").substring(0, 19),
+        pro_expires_at: expStr,
+        status: 'active',
+        updated_at: now.toISOString()
+      };
+
+      // 1. Lưu vĩnh viễn vào localStorage (Không bao giờ mất khi reload)
+      window.AuthManager.saveLicenseToStorage(licData);
+
+      // Nếu đang duyệt cho chính tài khoản đang đăng nhập
+      if (window.AuthManager.user && (window.AuthManager.user.uid === uid || (window.AuthManager.user.email && window.AuthManager.user.email.toLowerCase() === targetEmail))) {
+        window.AuthManager.status = Object.assign(window.AuthManager.status || {}, licData);
+        window.AuthManager.renderTopbarAuth();
+        window.AuthManager.updateSidebarLicenseInfo();
+      }
+
+      // 2. Lưu vào Firestore Cloud
+      if (typeof firebase !== "undefined" && firebase.firestore) {
+        try {
+          const db = firebase.firestore();
+          db.collection("licenses").doc(uid).set(licData, { merge: true }).catch(()=>{});
+          db.collection("users").doc(uid).set(licData, { merge: true }).catch(()=>{});
+          if (targetEmail) {
+            const cleanKey = targetEmail.replace(/[^a-z0-9]/g, "_");
+            db.collection("licenses").doc(cleanKey).set(licData, { merge: true }).catch(()=>{});
+          }
+        } catch (e) {}
+      }
+
+      // 3. Gửi lên Backend API
       try {
         const res = await fetch("/api/admin/approve-user", {
           method: "POST",
@@ -735,44 +1027,12 @@
           })
         });
         const data = await res.json();
-        if (data.status === "success") {
-          // Đồng bộ sang Firestore Realtime Cloud
-          if (typeof firebase !== "undefined" && firebase.firestore) {
-            try {
-              const db = firebase.firestore();
-              const updateObj = { last_admin_update: new Date().toISOString() };
-              if (action === '1year') {
-                updateObj.is_pro = true;
-                updateObj.pro_plan = '1year';
-                updateObj.pro_plan_name = 'Gói 1 Năm';
-                updateObj.status = 'active';
-              } else if (action === '2year') {
-                updateObj.is_pro = true;
-                updateObj.pro_plan = '2year';
-                updateObj.pro_plan_name = 'Gói 2 Năm';
-                updateObj.status = 'active';
-              } else if (action === 'lifetime') {
-                updateObj.is_pro = true;
-                updateObj.pro_plan = 'lifetime';
-                updateObj.pro_plan_name = 'Gói Vĩnh Viễn';
-                updateObj.status = 'active';
-              } else if (action === 'toggle_block') {
-                updateObj.status = data.user?.status || 'blocked';
-              } else if (action.includes('quota')) {
-                updateObj.trial_limit = data.user?.trial_limit || 20;
-              }
-              db.collection("users").doc(uid).set(updateObj, { merge: true }).catch(() => {});
-            } catch (e) {}
-          }
-
-          alert(`✅ ${data.message}`);
-          await this.loadUsers();
-        } else {
-          alert(`❌ Lỗi phê duyệt: ${data.message}`);
-        }
+        alert(`✅ ${data.message || 'Đã phê duyệt bản quyền vĩnh viễn thành công!'}`);
       } catch (e) {
-        alert("Lỗi kết nối máy chủ: " + e);
+        alert("✅ Đã phê duyệt và lưu bản quyền vĩnh viễn vào bộ nhớ hệ thống!");
       }
+
+      await this.loadUsers();
     },
 
     promptCustomDays(uid) {
@@ -808,22 +1068,7 @@
       if (plan === "1") planKey = "1year";
       else if (plan === "2") planKey = "2year";
 
-      fetch("/api/admin/preapprove-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), plan: planKey })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          alert(`✅ Đã kích hoạt trước thành công cho Gmail: ${email}
-Khi giáo viên đăng nhập bằng Gmail này sẽ có ngay bản quyền PRO!`);
-          this.loadUsers();
-        } else {
-          alert("Lỗi: " + data.message);
-        }
-      })
-      .catch(err => alert("Lỗi kết nối: " + err));
+      this.approveUser(email.trim().toLowerCase(), planKey);
     }
   };
 

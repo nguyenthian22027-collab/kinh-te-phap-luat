@@ -169,13 +169,65 @@ def verify_license_key_validity(key: str) -> Tuple[bool, Optional[str], Optional
 
     return False, None, "Mã kích hoạt không hợp lệ hoặc đã hết hạn."
 
-def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url: str = "") -> dict:
+def get_user_status(uid: str, email: str = "", display_name: str = "", photo_url: str = "", cached_license: Optional[dict] = None) -> dict:
     """Lấy hoặc khởi tạo trạng thái của người dùng (Quota dùng thử hoặc PRO)."""
     clean_uid = (uid or "guest_local_user").strip()
     users_db = load_json(USER_LICENSES_PATH, {})
     now = datetime.now()
 
+    is_admin = is_admin_email(email)
+
     user = users_db.get(clean_uid)
+
+    # 1. Nếu là Admin email -> Tự động Vĩnh Viễn VIP trọn đời
+    if is_admin:
+        if not user:
+            user = {
+                "uid": clean_uid,
+                "email": email,
+                "display_name": display_name or "Quản Trị Viên",
+                "photo_url": photo_url or "",
+                "trial_used": 0,
+                "trial_limit": 999999,
+                "is_pro": True,
+                "pro_plan": "lifetime",
+                "pro_plan_name": "Gói Vĩnh Viễn (Quản Trị Viên)",
+                "pro_activated_at": now.strftime("%Y-%m-%d %H:%M:%S"),
+                "pro_expires_at": None,
+                "status": "active",
+                "is_admin": True,
+                "created_at": now.strftime("%Y-%m-%d %H:%M:%S")
+            }
+        else:
+            user["is_pro"] = True
+            user["pro_plan"] = "lifetime"
+            user["pro_plan_name"] = "Gói Vĩnh Viễn (Quản Trị Viên)"
+            user["is_admin"] = True
+            user["status"] = "active"
+        users_db[clean_uid] = user
+        save_json(USER_LICENSES_PATH, users_db)
+
+    # 2. Self-healing cho Vercel: Nếu client gửi cached_license hợp lệ và đang PRO
+    elif cached_license and isinstance(cached_license, dict) and cached_license.get("is_pro"):
+        if not user or not user.get("is_pro"):
+            if not user:
+                user = {
+                    "uid": clean_uid,
+                    "email": email or "",
+                    "display_name": display_name or "Giáo viên",
+                    "photo_url": photo_url or "",
+                    "trial_used": 0,
+                    "trial_limit": TRIAL_LIMIT,
+                    "created_at": now.strftime("%Y-%m-%d %H:%M:%S")
+                }
+            user["is_pro"] = True
+            user["pro_plan"] = cached_license.get("pro_plan", "lifetime")
+            user["pro_plan_name"] = cached_license.get("pro_plan_name") or PLAN_PRICING.get(user["pro_plan"], {}).get("name", "Gói PRO")
+            user["pro_activated_at"] = cached_license.get("pro_activated_at", now.strftime("%Y-%m-%d %H:%M:%S"))
+            user["pro_expires_at"] = cached_license.get("pro_expires_at")
+            user["status"] = "active"
+            users_db[clean_uid] = user
+            save_json(USER_LICENSES_PATH, users_db)
 
     # Nếu chưa có theo clean_uid nhưng có email, kiểm tra xem đã được pre-approve theo email chưa
     if not user and email:

@@ -160,6 +160,7 @@ class UserStatusRequest(BaseModel):
     email: Optional[str] = ""
     display_name: Optional[str] = ""
     photo_url: Optional[str] = ""
+    cached_license: Optional[Dict[str, Any]] = None
 
 class ConsumeQuotaRequest(BaseModel):
     uid: str
@@ -563,7 +564,13 @@ def handle_get_user_status(uid: str = "guest_local_user", email: str = "", displ
 
 @app.post("/api/user/status")
 def handle_post_user_status(req: UserStatusRequest):
-    return get_user_status(uid=req.uid, email=req.email or "", display_name=req.display_name or "", photo_url=req.photo_url or "")
+    return get_user_status(
+        uid=req.uid, 
+        email=req.email or "", 
+        display_name=req.display_name or "", 
+        photo_url=req.photo_url or "",
+        cached_license=req.cached_license
+    )
 
 @app.post("/api/user/consume-quota")
 def handle_consume_quota(req: ConsumeQuotaRequest):
