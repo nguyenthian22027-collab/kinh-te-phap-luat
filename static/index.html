@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GDKTPL Exam Studio Pro - Hệ Thống Tạo Đề Thi HSG Quốc Gia & Tỉnh/Thành Phố</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=2.1">
+</head>
+<body>
+  <div class="app-container">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">⚖️</div>
+        <div class="brand-text">
+          <h2>GDKT&PL Studio</h2>
+          <span class="badge-tag">Chuẩn GDPT 2018</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="tab-generator">
+          <span class="icon">🎯</span>
+          <span>Tạo Đề Thi</span>
+        </button>
+        <button class="nav-item" data-tab="tab-preview">
+          <span class="icon">📝</span>
+          <span>Xem Trước & Sửa</span>
+          <span class="counter-badge" id="exam-badge-count">48</span>
+        </button>
+        <button class="nav-item" data-tab="tab-resources">
+          <span class="icon">📥</span>
+          <span>Nạp Ngữ Liệu Mới</span>
+        </button>
+        <button class="nav-item" data-tab="tab-bank">
+          <span class="icon">📚</span>
+          <span>Ngân Hàng Câu Hỏi</span>
+          <span class="counter-badge" id="bank-nav-count">--</span>
+        </button>
+        <button class="nav-item" data-tab="tab-knowledge">
+          <span class="icon">⚖️</span>
+          <span>Tra Cứu & Luật 2024</span>
+        </button>
+        <button class="nav-item" data-tab="tab-export">
+          <span class="icon">📤</span>
+          <span>Xuất File Word</span>
+        </button>
+        <button class="nav-item" id="nav-item-api-btn" onclick="openApiSettingsModal()" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15)); border: 1px solid rgba(56, 189, 248, 0.4); margin-top: 6px;">
+          <span class="icon">🔑</span>
+          <span>Cài Đặt Gemini API</span>
+          <span class="counter-badge" id="nav-api-badge" style="background: #0284c7; color: #fff; font-size: 11px;">Mở</span>
+        </button>
+        <button class="nav-item" id="nav-item-pro-btn" onclick="window.AuthManager.openProModal()" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(245, 158, 11, 0.15)); border: 1px solid rgba(234, 179, 8, 0.4); margin-top: 4px;">
+          <span class="icon">⭐</span>
+          <span>Bản Quyền PRO</span>
+          <span class="counter-badge" style="background: #eab308; color: #000; font-weight: 700; font-size: 11px;">VIP</span>
+        </button>
+        <button class="nav-item" id="nav-item-firebase-btn" onclick="window.AuthManager.openFirebaseConfigModal()" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); margin-top: 4px;">
+          <span class="icon">🔥</span>
+          <span>Cấu Hình Firebase</span>
+          <span class="counter-badge" style="background: #ef4444; color: #fff; font-size: 11px;">Auth</span>
+        </button>
+      </nav>
+
+      <div class="bank-stats-card">
+        <div class="stats-header">
+          <span>Kho Ngữ Liệu</span>
+          <span class="live-dot"></span>
+        </div>
+        <div class="stats-row">
+          <span>Trắc nghiệm 4 PA:</span>
+          <strong id="stat-p1-count">--</strong>
+        </div>
+        <div class="stats-row">
+          <span>Câu Đúng / Sai:</span>
+          <strong id="stat-p2-count">--</strong>
+        </div>
+        <div class="stats-row">
+          <span>Tổng số câu:</span>
+          <strong id="stat-total-count" class="text-highlight">--</strong>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-fill" id="bank-progress"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <small>© 2026 GDKT&PL HSG Studio</small>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="page-heading">Tạo Đề Thi Học Sinh Giỏi</h1>
+          <p class="subtitle">Đề chuẩn 90 phút - 48 câu (Phần I: 40 câu trắc nghiệm, Phần II: 8 câu Đúng/Sai)</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-secondary btn-sm" id="btn-open-api-modal" onclick="openApiSettingsModal()" title="Cài đặt Google Gemini API Keys" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 13px; border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(14, 165, 233, 0.12); cursor: pointer;">
+            <span id="topbar-api-icon">🔑</span> <strong style="color: #e2e8f0;">Gemini API</strong>: <span id="topbar-api-status" style="font-weight: 600; color: #f87171;">Chưa cài</span>
+          </button>
+          <div class="current-code-tag">
+            <span>Mã Đề:</span>
+            <strong id="current-code-display">097</strong>
+          </div>
+          <button class="btn btn-secondary" id="btn-shuffle-codes">
+            <span>🔀</span> Trộn 4 Mã Đề
+          </button>
+          <button class="btn btn-primary" id="btn-quick-export">
+            <span>📥</span> Tải File Word
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: TẠO ĐỀ THI -->
+      <section class="tab-pane active" id="tab-generator">
+        <div class="grid-2-col">
+          <!-- CẤU HÌNH TẠO ĐỀ -->
+          <div class="card glass-card">
+            <div class="card-header">
+              <h3>⚙️ Chọn Cấu Trúc Đề Thi (Preset Ma Trận)</h3>
+              <span class="badge-info">Theo công văn Sở/Bộ GD&ĐT</span>
+            </div>
+            <div class="card-body">
+              <div class="preset-cards">
+                <label class="preset-option active">
+                  <input type="radio" name="preset-select" value="city_hsg" checked>
+                  <div class="preset-content">
+                    <div class="preset-title">🏛️ Đề HSG Cấp Thành Phố (Chuẩn Hải Phòng)</div>
+                    <div class="preset-desc">48 câu chuẩn ma trận 100%: 40 câu TN 4 lựa chọn + 8 câu Đúng/Sai (32 lệnh hỏi). Phân bố lớp 10 (6 câu P1 + 2 câu P2), lớp 11 (17 câu P1 + 3 câu P2), lớp 12 (17 câu P1 + 3 câu P2).</div>
+                    <div class="preset-tags">
+                      <span class="tag">7 Biết</span>
+                      <span class="tag">16 Hiểu</span>
+                      <span class="tag tag-gold">17 Vận dụng</span>
+                    </div>
+                  </div>
+                </label>
+
+                <label class="preset-option">
+                  <input type="radio" name="preset-select" value="school_hsg">
+                  <div class="preset-content">
+                    <div class="preset-title">🏫 Đề Chọn Đội Tuyển HSG Cấp Trường</div>
+                    <div class="preset-desc">48 câu chuẩn theo đề thi chọn HSG cấp trường (Lần 1, Lần 2). Đề có tính phân hóa mạnh mẽ với các bài tập tính toán GDP, GNI và xử lý tình huống vi phạm pháp luật.</div>
+                    <div class="preset-tags">
+                      <span class="tag">90 Phút</span>
+                      <span class="tag tag-blue">Đầy đủ 3 lớp</span>
+                    </div>
+                  </div>
+                </label>
+
+                <label class="preset-option">
+                  <input type="radio" name="preset-select" value="review_grade_12">
+                  <div class="preset-content">
+                    <div class="preset-title">📈 Chuyên Đề Trọng Tâm Lớp 12</div>
+                    <div class="preset-desc">Ôn luyện chuyên sâu: Tăng trưởng & Phát triển kinh tế, Hội nhập kinh tế quốc tế, Bảo hiểm xã hội & Điểm mới Luật BHXH 2024.</div>
+                  </div>
+                </label>
+
+                <label class="preset-option">
+                  <input type="radio" name="preset-select" value="review_grade_11">
+                  <div class="preset-content">
+                    <div class="preset-title">⚖️ Chuyên Đề Pháp Luật Lớp 11</div>
+                    <div class="preset-desc">Ôn luyện chuyên sâu: Quyền bình đẳng công dân, Các quyền dân chủ cơ bản (Bầu cử, Khiếu nại, Tố cáo, Tham gia quản lý NN) và Các quyền tự do cơ bản.</div>
+                  </div>
+                </label>
+
+                <label class="preset-option">
+                  <input type="radio" name="preset-select" value="review_grade_10">
+                  <div class="preset-content">
+                    <div class="preset-title">📘 Chuyên Đề Pháp Luật Lớp 10</div>
+                    <div class="preset-desc">Pháp luật nước CHXHCN Việt Nam, Đặc trưng pháp luật, Hệ thống văn bản QPPL, 4 Hình thức thực hiện pháp luật (Tuân thủ, Thi hành, Sử dụng, Áp dụng).</div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- THÔNG TIN TIÊU ĐỀ ĐỀ THI -->
+              <div class="form-group-box">
+                <h4>Thông tin hiển thị trên đầu đề thi:</h4>
+                <div class="input-grid">
+                  <div>
+                    <label>Đơn vị ra đề (Header trái):</label>
+                    <input type="text" id="cfg-header-left" class="form-control" value="SỞ GIÁO DỤC VÀ ĐÀO TẠO&#10;THÀNH PHỐ HẢI PHÒNG">
+                  </div>
+                  <div>
+                    <label>Tên kỳ thi:</label>
+                    <input type="text" id="cfg-title" class="form-control" value="KỲ THI CHỌN HỌC SINH GIỎI CẤP THÀNH PHỐ">
+                  </div>
+                  <div>
+                    <label>Năm học:</label>
+                    <input type="text" id="cfg-year" class="form-control" value="2026 - 2027">
+                  </div>
+                  <div>
+                    <label>Thời gian làm bài:</label>
+                    <input type="text" id="cfg-duration" class="form-control" value="90 phút">
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-action-row">
+                <button class="btn btn-primary btn-large" id="btn-generate-exam">
+                  <span>✨</span> BẮT ĐẦU SINH ĐỀ THI THEO MA TRẬN
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- BẢNG MA TRẬN VÀ THỐNG KÊ THỜI GIAN THỰC -->
+          <div class="card glass-card">
+            <div class="card-header">
+              <h3>📊 Kiểm Soát Ma Trận Thời Gian Thực</h3>
+              <span class="badge-status-ok" id="matrix-status-tag">Đang tải ma trận</span>
+            </div>
+            <div class="card-body">
+              <div class="matrix-table-wrapper">
+                <table class="data-table" id="matrix-spec-table">
+                  <thead>
+                    <tr>
+                      <th rowspan="2">Mạch Kiến Thức</th>
+                      <th colspan="3">Phần I (Trắc nghiệm 4 PA)</th>
+                      <th colspan="3">Phần II (Đúng / Sai)</th>
+                      <th rowspan="2">Tổng</th>
+                    </tr>
+                    <tr>
+                      <th>Biết</th>
+                      <th>Hiểu</th>
+                      <th>VD</th>
+                      <th>Biết</th>
+                      <th>Hiểu</th>
+                      <th>VD</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Pháp luật 10</strong></td>
+                      <td>2</td><td>3</td><td>1</td>
+                      <td>2</td><td>4</td><td>2</td>
+                      <td><strong>14</strong></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Pháp luật 11</strong></td>
+                      <td>3</td><td>7</td><td>7</td>
+                      <td>3</td><td>5</td><td>4</td>
+                      <td><strong>29</strong></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Kinh tế 12</strong></td>
+                      <td>2</td><td>6</td><td>9</td>
+                      <td>2</td><td>4</td><td>6</td>
+                      <td><strong>29</strong></td>
+                    </tr>
+                    <tr class="highlight-total-row">
+                      <td><strong>TỔNG CỘNG</strong></td>
+                      <td><strong>7</strong></td>
+                      <td><strong>16</strong></td>
+                      <td><strong>17</strong></td>
+                      <td><strong>7</strong></td>
+                      <td><strong>13</strong></td>
+                      <td><strong>12</strong></td>
+                      <td><strong>72 ý / 48 câu</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="distribution-cards">
+                <div class="dist-card">
+                  <div class="dist-val" id="disp-p1-count">40</div>
+                  <div class="dist-lbl">Câu hỏi Phần I (6.0đ)</div>
+                </div>
+                <div class="dist-card">
+                  <div class="dist-val" id="disp-p2-count">8</div>
+                  <div class="dist-lbl">Câu hỏi Phần II (4.0đ)</div>
+                </div>
+                <div class="dist-card">
+                  <div class="dist-val" id="disp-total-count">48</div>
+                  <div class="dist-lbl">Tổng câu hỏi toàn đề</div>
+                </div>
+              </div>
+
+              <div class="tip-box">
+                <strong>💡 Lưu ý sư phạm khi ra đề HSG:</strong>
+                <ul>
+                  <li>Phần II gồm 8 câu tình huống thực tế, mỗi câu gồm 4 lệnh hỏi a, b, c, d với điểm số tăng dần theo số lượng ý đúng (1 ý: 0.1đ, 2 ý: 0.25đ, 3 ý: 0.5đ, 4 ý: 1.0đ).</li>
+                  <li>Các câu hỏi Vận dụng cao Lớp 12 tập trung tích hợp cập nhật mới nhất của <strong>Luật BHXH 2024</strong> và các mức xử phạt vi phạm kinh doanh, thuế, bảo hiểm.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: XEM TRƯỚC & BIÊN TẬP ĐỀ THI -->
+      <section class="tab-pane" id="tab-preview">
+        <div class="preview-toolbar">
+          <div class="preview-filters">
+            <span class="toolbar-label">Hiển thị:</span>
+            <button class="btn btn-chip active" data-filter="all">Tất cả (48)</button>
+            <button class="btn btn-chip" data-filter="part1">Phần I (40 câu TN)</button>
+            <button class="btn btn-chip" data-filter="part2">Phần II (8 câu Đúng/Sai)</button>
+          </div>
+          <div class="preview-actions">
+            <button class="btn btn-outline" id="btn-toggle-answers">
+              <span>👁️</span> <span id="toggle-ans-text">Hiện Đáp Án & Căn Cứ</span>
+            </button>
+            <button class="btn btn-primary" id="btn-export-from-preview">
+              <span>📥</span> Xuất Word (.docx)
+            </button>
+          </div>
+        </div>
+
+        <div class="exam-paper-container" id="exam-render-area">
+          <!-- Rendered questions will be injected here -->
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Đang chuẩn bị đề thi...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: NẠP NGỮ LIỆU & TÀI LIỆU MỚI -->
+      <section class="tab-pane" id="tab-resources">
+        <div class="grid-2-col">
+          <!-- UPLOAD FILE & PASTE TEXT -->
+          <div class="card glass-card">
+            <div class="card-header">
+              <h3>📂 Tải Lên Tài Liệu / Đề Thi Bên Ngoài</h3>
+              <span class="badge-tag">Hỗ trợ .docx, .txt, .pdf</span>
+            </div>
+            <div class="card-body">
+              <div style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 6px; padding: 9px 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 9px;">
+                <input type="checkbox" id="cb-use-ai-solver" checked style="width: 17px; height: 17px; accent-color: #0284c7; cursor: pointer;">
+                <label for="cb-use-ai-solver" style="color: #bae6fd; font-size: 13px; font-weight: 500; cursor: pointer; margin: 0;">
+                  🤖 <strong>Dùng AI thẩm định & giải chi tiết đáp án</strong> (Tự động giải 100% chính xác nếu đề chưa có đáp án, phân loại mức độ Biết/Hiểu/Vận dụng & viện dẫn luật hiện hành)
+                </label>
+              </div>
+              <div class="upload-dropzone" id="upload-zone">
+                <input type="file" id="file-input" accept=".docx,.txt,.json" style="display:none">
+                <div class="dropzone-icon">📤</div>
+                <h4>Kéo thả tệp vào đây hoặc bấm để chọn tệp</h4>
+                <p>Hỗ trợ file Word (.docx), file Text (.txt) chứa đề thi, giáo án, chuyên đề</p>
+                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Chọn tệp từ máy tính</button>
+              </div>
+
+              <div class="divider-text">HOẶC DÁN TRỰC TIẾP CÂU HỎI</div>
+
+              <div class="form-group">
+                <label>Dán nội dung câu hỏi hoặc tình huống thời sự:</label>
+                <textarea id="paste-text-area" class="form-control" rows="6" placeholder="Câu 1: ...&#10;A. ...&#10;B. ...&#10;C. ...&#10;D. ..."></textarea>
+              </div>
+              <button class="btn btn-outline" id="btn-import-paste">
+                <span>➕</span> Nhận Diện & Nạp Vào Ngân Hàng
+              </button>
+            </div>
+          </div>
+
+          <!-- TỰ ĐỘNG LẤY TÀI LIỆU TỪ WEB & AI GENERATOR -->
+          <div class="card glass-card">
+            <div class="card-header">
+              <h3>🌐 Tự Động Lấy Ngữ Liệu Từ Internet & AI</h3>
+              <span class="badge-gold">Thu nạp trực tuyến</span>
+            </div>
+            <div class="card-body">
+              <!-- WEB URL FETCHER -->
+              <div class="feature-box">
+                <h4>🔗 Trích xuất ngữ liệu từ đường link bài báo / web pháp luật:</h4>
+                <p class="small-desc">Nhập link bài viết (Báo Tuổi Trẻ, Báo Lao Động, Cổng thông tin Chính phủ, Thư viện pháp luật), ứng dụng sẽ tự động tải nội dung và tạo ngữ liệu tình huống.</p>
+                <div class="input-with-btn">
+                  <input type="url" id="input-web-url" class="form-control" placeholder="https://tuoitre.vn/bai-viet-ve-kinh-te-hoac-phap-luat...">
+                  <button class="btn btn-secondary" id="btn-fetch-url">Tải Về & Nạp</button>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+                  <label style="font-size: 13px; color: #cbd5e1;">🎯 Số câu muốn tạo:</label>
+                  <select id="url-num-questions" class="form-control" style="width: auto; padding: 4px 10px; font-size: 12px;">
+                    <option value="3">3 câu (2 Trắc nghiệm + 1 Đúng/Sai)</option>
+                    <option value="5" selected>5 câu (3 Trắc nghiệm + 2 Đúng/Sai - Khuyên dùng)</option>
+                    <option value="8">8 câu (5 Trắc nghiệm + 3 Đúng/Sai)</option>
+                    <option value="10">10 câu (Toàn diện nội dung bài viết)</option>
+                  </select>
+                  <small style="color: #94a3b8; font-size: 11px;">(Nếu link chứa sẵn đề thi, hệ thống sẽ tự nạp đầy đủ tất cả câu)</small>
+                </div>
+                <div id="url-fetch-result" class="result-box"></div>
+              </div>
+
+              <div class="divider-line"></div>
+
+              <!-- AI SCENARIO GENERATOR -->
+              <div class="feature-box">
+                <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 22px;">🔑</span>
+                    <div>
+                      <strong style="color: #38bdf8; font-size: 13px;">Cài Đặt Google Gemini API (Multi-Key)</strong>
+                      <div id="tab-api-status-desc" style="color: #cbd5e1; font-size: 11px;">Quản lý danh sách Key, kiểm tra Ping Test độ trễ, tự động Failover.</div>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary btn-sm" onclick="openApiSettingsModal()" style="padding: 6px 14px; font-size: 12px; white-space: nowrap; font-weight: 600;">⚙️ Mở Cài Đặt</button>
+                </div>
+                <h4>🤖 Trí Tuệ Nhân Tạo Sinh Tình Huống Thời Sự:</h4>
+                <div id="ai-gen-api-status" style="margin-bottom: 10px;"></div>
+                <p class="small-desc">Tự động sáng tạo câu hỏi tình huống mới bám sát các sự kiện kinh tế - xã hội nóng hổi và văn bản pháp luật hiện hành theo chuẩn thi HSG.</p>
+                
+                <div class="input-grid-2" style="margin-top: 10px;">
+                  <div>
+                    <label>🎓 Khối lớp:</label>
+                    <select id="ai-grade-select" class="form-control">
+                      <option value="12" selected>Lớp 12 (Kinh tế & An sinh xã hội)</option>
+                      <option value="11">Lớp 11 (Bình đẳng, Dân chủ, Tự do)</option>
+                      <option value="10">Lớp 10 (Pháp luật nước CHXHCN Việt Nam)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>📝 Dạng câu hỏi:</label>
+                    <select id="ai-type-select" class="form-control">
+                      <option value="part1" selected>Phần I (Trắc nghiệm 4 lựa chọn A, B, C, D)</option>
+                      <option value="part2">Phần II (Đúng / Sai 4 lệnh hỏi a, b, c, d)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="input-grid-2" style="margin-top: 10px;">
+                  <div>
+                    <label>Chuyên đề kiến thức:</label>
+                    <select id="ai-topic-select" class="form-control">
+                      <option value="Bảo hiểm và an sinh xã hội">Bảo hiểm và an sinh xã hội (BHXH 2024)</option>
+                      <option value="Tăng trưởng và phát triển kinh tế">Tăng trưởng & Phát triển kinh tế</option>
+                      <option value="Hội nhập kinh tế quốc tế">Hội nhập kinh tế quốc tế (FTA, CPTPP)</option>
+                      <option value="Một số quyền dân chủ cơ bản của công dân">Quyền dân chủ cơ bản (Bầu cử, Khiếu nại, Tố cáo)</option>
+                      <option value="Một số quyền tự do cơ bản của công dân">Quyền tự do cơ bản (Thân thể, Danh dự, Chỗ ở)</option>
+                      <option value="Pháp luật nước CHXHCN Việt Nam">Pháp luật 10: Hình thức thực hiện PL</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>🎯 Mức độ nhận thức:</label>
+                    <select id="ai-level-select" class="form-control">
+                      <option value="van_dung" selected>Vận dụng (Tình huống thực tế)</option>
+                      <option value="hieu">Thông hiểu</option>
+                      <option value="biet">Nhận biết</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 10px;">
+                  <label>Ghi chú ngữ cảnh mong muốn (tùy chọn):</label>
+                  <input type="text" id="ai-custom-prompt" class="form-control" placeholder="Ví dụ: Tình huống công ty trốn đóng BHXH cho lao động mùa vụ...">
+                </div>
+
+                <button class="btn btn-primary" id="btn-ai-generate">
+                  <span>✨</span> Sinh Câu Hỏi Mới Bằng AI
+                </button>
+                <div id="ai-gen-result" class="result-box"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: NGÂN HÀNG CÂU HỎI & NGỮ LIỆU ĐÃ NẠP -->
+      <section class="tab-pane" id="tab-bank">
+        <div class="card glass-card">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3>📚 Ngân Hàng Câu Hỏi & Ngữ Liệu Đã Nạp</h3>
+              <span class="badge-tag">Quản lý toàn bộ câu hỏi trong kho & tài liệu đã nạp</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span id="bank-view-count" class="badge-info" style="font-size: 13px; padding: 6px 12px; font-weight: 600;">Đang tải dữ liệu...</span>
+              <button class="btn btn-secondary btn-sm" id="btn-refresh-bank">🔄 Tải Lại</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- FILTER TOOLBAR -->
+            <div class="bank-filters-grid">
+              <div class="form-group">
+                <label>📁 Nguồn tài liệu (File đã nạp / AI):</label>
+                <select id="bank-filter-source" class="form-control">
+                  <option value="">-- Tất cả nguồn tài liệu --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>🎓 Khối lớp:</label>
+                <select id="bank-filter-grade" class="form-control">
+                  <option value="">-- Tất cả các lớp --</option>
+                  <option value="10">Lớp 10 (Pháp luật)</option>
+                  <option value="11">Lớp 11 (Bình đẳng, Dân chủ, Tự do)</option>
+                  <option value="12">Lớp 12 (Kinh tế & An sinh xã hội)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>📝 Dạng câu hỏi:</label>
+                <select id="bank-filter-type" class="form-control">
+                  <option value="">-- Tất cả dạng câu --</option>
+                  <option value="part1">Phần I (Trắc nghiệm 4 PA)</option>
+                  <option value="part2">Phần II (Đúng / Sai 4 ý)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>🎯 Mức độ nhận thức:</label>
+                <select id="bank-filter-level" class="form-control">
+                  <option value="">-- Tất cả mức độ --</option>
+                  <option value="biet">Nhận biết</option>
+                  <option value="hieu">Thông hiểu</option>
+                  <option value="van_dung">Vận dụng</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 14px;">
+              <div class="input-with-btn">
+                <input type="text" id="bank-search-query" class="form-control" placeholder="🔍 Nhập từ khóa tìm kiếm trong câu hỏi, chuyên đề hoặc tên nguồn...">
+                <button class="btn btn-primary" id="btn-search-bank"><span>🔍</span> Tìm Kiếm</button>
+                <button class="btn btn-secondary" id="btn-reset-bank-filter">Đặt Lại</button>
+              </div>
+            </div>
+
+            <!-- QUESTIONS CONTAINER -->
+            <div id="bank-questions-list" class="bank-questions-container" style="margin-top: 20px;">
+              <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Đang tải danh sách câu hỏi...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: TRA CỨU CHUYÊN SÂU & MỨC PHẠT -->
+      <section class="tab-pane" id="tab-knowledge">
+        <div class="knowledge-tabs-wrapper">
+          <div class="tab-pill-menu">
+            <button class="pill-btn active" data-subtab="subtab-bhxh">📜 Điểm Mới Luật BHXH 2024 (Áp dụng 01/07/2025)</button>
+            <button class="pill-btn" data-subtab="subtab-penalties">⚖️ Bảng Tổng Hợp Mức Phạt & Trách Nhiệm Pháp Lý</button>
+            <button class="pill-btn" data-subtab="subtab-theory">📖 Lý Thuyết Trọng Tâm 7 Chuyên Đề HSG</button>
+          </div>
+
+          <!-- SUBTAB BHXH 2024 -->
+          <div class="subtab-content active" id="subtab-bhxh">
+            <div class="card glass-card">
+              <div class="card-header">
+                <h3>8 Điểm Mới Cốt Lõi Của Luật Bảo Hiểm Xã Hội 2024 (Hiệu lực từ 01/07/2025)</h3>
+                <span class="badge-tag">Cực kỳ quan trọng thi HSG 2026-2027</span>
+              </div>
+              <div class="card-body">
+                <div class="points-grid" id="bhxh-points-list">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB PENALTIES -->
+          <div class="subtab-content" id="subtab-penalties">
+            <div class="card glass-card">
+              <div class="card-header">
+                <h3>Bảng Tra Cứu Căn Cứ Định Lượng: Mức Phạt Hành Chính & Trách Nhiệm Hình Sự</h3>
+                <span class="badge-info">Căn cứ giải quyết các câu hỏi vận dụng tình huống</span>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="data-table" id="penalties-table">
+                    <thead>
+                      <tr>
+                        <th>Lĩnh vực / Nhóm quyền</th>
+                        <th>Cơ sở pháp lý</th>
+                        <th>Hành vi vi phạm cụ thể</th>
+                        <th>Khung xử phạt / Chế tài áp dụng</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Injected via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBTAB THEORY -->
+          <div class="subtab-content" id="subtab-theory">
+            <div class="card glass-card">
+              <div class="card-header">
+                <h3>Hệ Thống Kiến Thức Trọng Tâm Bồi Dưỡng Học Sinh Giỏi Môn GDKT&PL</h3>
+              </div>
+              <div class="card-body" id="theory-topics-container">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: XUẤT BẢN FILE WORD (.DOCX) -->
+      <section class="tab-pane" id="tab-export">
+        <div class="export-grid">
+          <div class="export-card">
+            <div class="export-icon">📄</div>
+            <h3>1. Đề Thi Học Sinh (Bản Làm Bài)</h3>
+            <p>File Word (.docx) được định dạng chuẩn thi cử: Khung tiêu đề Sở GD&ĐT / Trường THPT, khung thông tin thí sinh, ô phách, phân trang chuẩn xác, không chứa đáp án.</p>
+            <button class="btn btn-primary btn-block" onclick="triggerExport('student')">
+              <span>📥</span> Tải Đề Thi Cho Học Sinh (.docx)
+            </button>
+          </div>
+
+          <div class="export-card highlight-card">
+            <div class="export-icon">📑</div>
+            <h3>2. Hướng Dẫn Chấm & Đáp Án Chi Tiết</h3>
+            <p>Bản đầy đủ dành cho giám khảo & giáo viên: Bảng đáp án nhanh Phần I, bảng ma trận Đúng/Sai Phần II, cùng trích dẫn điều luật và phân tích phương án nhiễu chi tiết.</p>
+            <button class="btn btn-success btn-block" onclick="triggerExport('teacher')">
+              <span>✅</span> Tải Bản Đáp Án & Lời Giải (.docx)
+            </button>
+          </div>
+
+          <div class="export-card">
+            <div class="export-icon">📊</div>
+            <h3>3. Ma Trận & Bản Đặc Tả Đề Thi</h3>
+            <p>Bảng tổng hợp phân bố số câu theo các mức độ Biết, Hiểu, Vận dụng cho từng chuyên đề lớp 10, 11, 12 để nộp lưu trữ chuyên môn hoặc tổ bộ môn duyệt đề.</p>
+            <button class="btn btn-outline btn-block" onclick="triggerExport('matrix')">
+              <span>📋</span> Tải Bản Đặc Tả Ma Trận (.docx)
+            </button>
+          </div>
+
+          <div class="export-card">
+            <div class="export-icon">🔀</div>
+            <h3>4. Trọn Bộ 4 Mã Đề (Xáo Trộn Ngẫu Nhiên)</h3>
+            <p>Tự động xuất 4 mã đề (097, 098, 099, 100) với thứ tự câu hỏi và phương án A, B, C, D được hoán đổi khoa học, phục vụ tổ chức thi chính thức.</p>
+            <button class="btn btn-secondary btn-block" id="btn-export-all-codes">
+              <span>📦</span> Tải Trọn Bộ 4 Mã Đề (.zip/.docx)
+            </button>
+          </div>
+        </div>
+
+        <div id="export-download-links" class="download-container" style="display:none;">
+          <h4>Các tệp đã sẵn sàng tải xuống:</h4>
+          <div id="download-buttons-list" class="download-btns-row"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL CHỈNH SỬA CÂU HỎI -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Chỉnh Sửa Câu Hỏi</h3>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-q-id">
+        <input type="hidden" id="edit-q-type">
+        <input type="hidden" id="edit-q-mode" value="exam">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="form-group">
+            <label>🎓 Khối lớp:</label>
+            <select id="edit-q-grade" class="form-control">
+              <option value="10">Lớp 10 (Pháp luật)</option>
+              <option value="11">Lớp 11 (Bình đẳng, Dân chủ, Tự do)</option>
+              <option value="12">Lớp 12 (Kinh tế & An sinh xã hội)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>🎯 Mức độ nhận thức:</label>
+            <select id="edit-q-level" class="form-control">
+              <option value="biet">Nhận biết</option>
+              <option value="hieu">Thông hiểu</option>
+              <option value="van_dung">Vận dụng</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nội dung câu hỏi / Tình huống (Stem):</label>
+          <textarea id="edit-q-stem" class="form-control" rows="5"></textarea>
+        </div>
+
+        <div id="edit-part1-options">
+          <label>Các phương án lựa chọn:</label>
+          <div class="opt-edit-row">
+            <span class="opt-letter">A:</span>
+            <input type="text" id="edit-opt-A" class="form-control">
+          </div>
+          <div class="opt-edit-row">
+            <span class="opt-letter">B:</span>
+            <input type="text" id="edit-opt-B" class="form-control">
+          </div>
+          <div class="opt-edit-row">
+            <span class="opt-letter">C:</span>
+            <input type="text" id="edit-opt-C" class="form-control">
+          </div>
+          <div class="opt-edit-row">
+            <span class="opt-letter">D:</span>
+            <input type="text" id="edit-opt-D" class="form-control">
+          </div>
+
+          <div class="form-group" style="margin-top: 12px;">
+            <label>Đáp án đúng:</label>
+            <select id="edit-q-ans" class="form-control" style="width: 120px;">
+              <option value="A">Phương án A</option>
+              <option value="B">Phương án B</option>
+              <option value="C">Phương án C</option>
+              <option value="D">Phương án D</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="edit-part2-statements" style="display:none;">
+          <label>Các lệnh hỏi a, b, c, d:</label>
+          <div id="p2-statements-editor"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 12px;">
+          <label>Căn cứ pháp lý & Lời giải chi tiết:</label>
+          <textarea id="edit-q-explanation" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEditModal()">Hủy</button>
+        <button class="btn btn-primary" onclick="saveQuestionEdit()">Lưu Thay Đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHỌN CÂU HỎI THAY THẾ -->
+  <div class="modal-overlay" id="replace-modal">
+    <div class="modal-card modal-lg" style="max-width: 900px; width: 95%;">
+      <div class="modal-header">
+        <div>
+          <h3 id="replace-modal-title">🎯 Chọn Câu Hỏi Thay Thế</h3>
+          <p class="small-desc" id="replace-modal-subtitle" style="margin: 4px 0 0 0; color: #94a3b8; font-size: 13px;">
+            Chọn một câu hỏi phù hợp từ ngân hàng để thay thế trực tiếp vào đề thi.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeReplacementModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- CURRENT QUESTION BANNER -->
+        <div id="replace-current-q-box" class="current-q-banner" style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;"></div>
+
+        <!-- REPLACEMENT FILTER / SEARCH -->
+        <div class="modal-filter-bar">
+          <div class="tab-pill-menu" style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="pill-btn active" id="pill-exact-matches" onclick="switchCandidateTab('exact')">✨ Chuẩn Ma Trận (Cùng Lớp & Mức)</button>
+            <button class="pill-btn" id="pill-same-grade" onclick="switchCandidateTab('same_grade')">📚 Cùng Khối Lớp</button>
+            <button class="pill-btn" id="pill-all-cands" onclick="switchCandidateTab('all')">🌐 Tất Cả Khác Trong Kho</button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="replace-search-input" class="form-control" placeholder="🔍 Lọc nhanh theo từ khóa trong danh sách này..." oninput="filterCandidateList()">
+            <button class="btn btn-secondary" onclick="rerollItemFromModal()">🎲 Chọn Ngẫu Nhiên</button>
+          </div>
+        </div>
+
+        <!-- CANDIDATES LIST -->
+        <div id="replace-candidates-list" class="candidates-container" style="max-height: 480px; overflow-y: auto; margin-top: 14px; padding-right: 4px;">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeReplacementModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CÀI ĐẶT GEMINI API (MULTI-KEY & AUTO-FAILOVER) -->
+  <div class="modal-overlay" id="api-settings-modal">
+    <div class="modal-card modal-lg" style="max-width: 780px; width: 95%;">
+      <div class="modal-header">
+        <div>
+          <h3 style="display: flex; align-items: center; gap: 8px;">
+            <span>🔑</span> Cài Đặt Google Gemini API Key
+          </h3>
+          <p class="small-desc" style="margin: 4px 0 0 0; color: #94a3b8; font-size: 13px;">
+            Hỗ trợ nạp nhiều Key & Tự động xoay vòng (Auto-Failover 2 lớp) khi chạm giới hạn 429 Quota Exceeded.
+          </p>
+        </div>
+        <button class="modal-close" onclick="closeApiSettingsModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- INSTRUCTION BANNER -->
+        <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; color: #bae6fd;">
+          💡 <strong>Mẹo cho giáo viên:</strong> Bạn có thể nạp từ <strong>2 - 5 API Key miễn phí</strong> từ các tài khoản Google khác nhau. Khi một key chạm giới hạn (15 lượt/phút), hệ thống sẽ tự động dùng tiếp key kế tiếp mà không ngắt quãng quá trình làm việc.
+          <div style="margin-top: 6px;">
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
+              ↗ Lấy API Key miễn phí tại Google AI Studio
+            </a>
+          </div>
+        </div>
+
+        <!-- MODEL SELECTION -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label style="font-weight: 600; color: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+            <span>🤖 Chọn Model Gemini Sử Dụng:</span>
+            <span id="model-desc-badge" class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Khuyên dùng: 3.5 & 3.6</span>
+          </label>
+          <select id="api-modal-model-select" class="form-control" style="margin-top: 6px;" onchange="onModelSelectChange()">
+            <option value="gemini-3.6">Gemini 3.6 Flash / Pro ⭐ Thế Hệ 3.6 Mới Nhất (Tối Ưu & Siêu Nhanh)</option>
+            <option value="gemini-3.5" selected>Gemini 3.5 Flash / Pro ⭐ Thế Hệ 3.5 Tiên Tiến (Khuyên dùng ra đề HSG)</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash ⭐ Thế hệ 2.5 ổn định</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash ⭐ Bản Flash siêu tốc</option>
+            <option value="auto">Tự động xoay vòng Model (Auto) 🔄 (3.6 → 3.5 → 2.5 → 2.0)</option>
+          </select>
+        </div>
+
+        <!-- TEXTAREA FOR KEYS -->
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="font-weight: 600; color: #f8fafc;">
+              📋 Danh sách Gemini API Keys:
+            </label>
+            <span id="api-key-detected-count" class="badge-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">
+              0 Key được nhận diện
+            </span>
+          </div>
+          <textarea id="api-modal-keys-textarea" class="form-control" rows="5" placeholder="Dán một hoặc nhiều API Key tại đây...&#10;Mỗi key một dòng, hoặc cách nhau bởi dấu phẩy (,) hoặc chấm phẩy (;)&#10;Ví dụ:&#10;AIzaSyA123456789abcdef...&#10;AIzaSyB987654321fedcba..." oninput="onKeysTextareaInput()"></textarea>
+          <small style="color: #94a3b8; font-size: 12px; display: block; margin-top: 4px;">
+            🔒 Các key được lưu cục bộ trên máy của bạn và được che mờ (AIzaSy...xxxx) để bảo mật khi trình chiếu hoặc chụp ảnh.
+          </small>
+        </div>
+
+        <!-- PING TEST BUTTON & STATUS -->
+        <div style="margin: 16px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button class="btn btn-secondary" id="btn-ping-test-keys" onclick="runPingTestAllKeys()">
+            <span>⚡</span> Kiểm Tra Kết Nối (Ping Test Tất Cả Key)
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="clearAllApiKeys()">
+            🗑️ Xóa Tất Cả
+          </button>
+          <span id="ping-test-summary" style="font-size: 13px; color: #94a3b8;"></span>
+        </div>
+
+        <!-- PING TEST RESULTS LIST -->
+        <div id="api-keys-health-list" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="color: #64748b; font-size: 12px;">
+          Độ trễ tiêu chuẩn: ~250ms - 500ms
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" onclick="closeApiSettingsModal()">Đóng</button>
+          <button class="btn btn-primary" onclick="saveApiSettingsFromModal()">💾 Lưu Cấu Hình</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NÂNG CẤP BẢN QUYỀN PRO -->
+  <div class="modal-overlay" id="pro-license-modal">
+    <div class="modal-dialog modal-lg" style="max-width: 820px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e293b, #0f172a); border-bottom: 1px solid rgba(234, 179, 8, 0.3);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px;">⭐</span>
+          <div>
+            <h3 style="margin: 0; color: #fde047; font-family: 'Outfit', sans-serif;">NÂNG CẤP BẢN QUYỀN PRO - GDKT&PL STUDIO</h3>
+            <p style="margin: 2px 0 0 0; font-size: 13px; color: #94a3b8;">Hệ thống tạo đề thi HSG & bồi dưỡng đội tuyển Quốc gia - Tỉnh/Thành phố</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="window.AuthManager.closeProModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px 24px; max-height: calc(85vh - 120px); overflow-y: auto;">
+        
+        <!-- BẢNG CHỌN GÓI BẢN QUYỀN -->
+        <div style="margin-bottom: 20px;">
+          <h4 style="color: #e2e8f0; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>💎</span> Chọn Gói Bản Quyền Thích Hợp:
+          </h4>
+          <div class="pricing-grid">
+            <!-- Gói 1 Năm -->
+            <div class="pricing-card" data-plan="1year" onclick="window.AuthManager.selectPlan('1year')">
+              <div class="pricing-header">
+                <span class="plan-badge">1 Năm Học</span>
+                <h4>Gói 1 Năm</h4>
+                <div class="plan-price">150.000 <span class="currency">VNĐ</span></div>
+              </div>
+              <div class="pricing-features">
+                <div class="feature-item">✓ 365 ngày sử dụng không giới hạn</div>
+                <div class="feature-item">✓ Sinh đề HSG chuẩn ma trận 100%</div>
+                <div class="feature-item">✓ Trộn 4 mã đề & xuất Word chuẩn</div>
+                <div class="feature-item">✓ Cập nhật đề thi suốt năm học</div>
+              </div>
+              <button class="btn-select-plan">Chọn Gói 1 Năm</button>
+            </div>
+
+            <!-- Gói 2 Năm -->
+            <div class="pricing-card" data-plan="2year" onclick="window.AuthManager.selectPlan('2year')">
+              <div class="pricing-header">
+                <span class="plan-badge badge-save">Tiết kiệm 50k</span>
+                <h4>Gói 2 Năm</h4>
+                <div class="plan-price">250.000 <span class="currency">VNĐ</span></div>
+              </div>
+              <div class="pricing-features">
+                <div class="feature-item">✓ 730 ngày (2 năm học)</div>
+                <div class="feature-item">✓ Tiết kiệm 50.000đ so với gói lẻ</div>
+                <div class="feature-item">✓ Ưu tiên cập nhật đề mới nhất</div>
+                <div class="feature-item">✓ Hỗ trợ kỹ thuật 24/7 trực tiếp</div>
+              </div>
+              <button class="btn-select-plan">Chọn Gói 2 Năm</button>
+            </div>
+
+            <!-- Gói Vĩnh Viễn -->
+            <div class="pricing-card selected" data-plan="lifetime" onclick="window.AuthManager.selectPlan('lifetime')">
+              <div class="pricing-ribbon">⭐ KHUYÊN DÙNG</div>
+              <div class="pricing-header">
+                <span class="plan-badge badge-vip">Trọn Đời VIP</span>
+                <h4>Gói Vĩnh Viễn</h4>
+                <div class="plan-price">599.000 <span class="currency">VNĐ</span></div>
+              </div>
+              <div class="pricing-features">
+                <div class="feature-item">✓ Sử dụng trọn đời (Vĩnh viễn)</div>
+                <div class="feature-item">✓ Cập nhật mọi văn bản luật mới 2024+</div>
+                <div class="feature-item">✓ Bổ sung đề thi HSG Quốc gia liên tục</div>
+                <div class="feature-item">✓ Không cần gia hạn, đầu tư 1 lần duy nhất</div>
+              </div>
+              <button class="btn-select-plan">Chọn Gói Vĩnh Viễn</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KHUNG THANH TOÁN VIETQR & THÔNG TIN CHUYỂN KHOẢN -->
+        <div class="payment-checkout-box">
+          <div class="payment-left">
+            <h5 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 14px;">📱 Quét Mã VietQR Chuyển Khoản Tự Động</h5>
+            <div class="qr-container">
+              <img id="pay-qr-code" src="https://img.vietqr.io/image/970422-0969888999-compact2.png?amount=599000&addInfo=GDKTPL%20PROLIFE&accountName=GDKTPL%20EXAM%20STUDIO" alt="VietQR Thanh Toán">
+            </div>
+            <small style="color: #94a3b8; display: block; margin-top: 6px; text-align: center;">Hỗ trợ tất cả ứng dụng Ngân hàng & Ví điện tử</small>
+          </div>
+
+          <div class="payment-right">
+            <h5 style="color: #fde047; margin: 0 0 12px 0; font-size: 14px;">📋 Thông Tin Chuyển Khoản Trực Tiếp:</h5>
+            <div class="transfer-info-rows">
+              <div class="transfer-row">
+                <span class="label">Gói kích hoạt:</span>
+                <strong id="pay-plan-name" style="color: #38bdf8;">Gói Vĩnh Viễn</strong>
+              </div>
+              <div class="transfer-row">
+                <span class="label">Số tiền thanh toán:</span>
+                <strong id="pay-plan-amount" style="color: #fde047; font-size: 16px;">599.000 VNĐ</strong>
+              </div>
+              <div class="transfer-row">
+                <span class="label">Ngân hàng:</span>
+                <strong>MBBank (Ngân Hàng Quân Đội)</strong>
+              </div>
+              <div class="transfer-row">
+                <span class="label">Số tài khoản:</span>
+                <strong class="highlight-copy" onclick="navigator.clipboard.writeText('0969888999'); alert('Đã sao chép STK: 0969888999');" title="Bấm để sao chép">0969888999 📋</strong>
+              </div>
+              <div class="transfer-row">
+                <span class="label">Chủ tài khoản:</span>
+                <strong>NGUYEN THI KIM TUYEN</strong>
+              </div>
+              <div class="transfer-row">
+                <span class="label">Nội dung CK:</span>
+                <strong id="pay-plan-content" class="highlight-copy" onclick="navigator.clipboard.writeText(this.textContent); alert('Đã sao chép nội dung chuyển khoản!');" title="Bấm để sao chép" style="color: #4ade80;">GDKTPL PROLIFE 📋</strong>
+              </div>
+            </div>
+            <small style="color: #cbd5e1; display: block; margin-top: 10px; line-height: 1.5; font-size: 12px;">
+              💡 <em>Sau khi chuyển khoản, hệ thống sẽ kích hoạt hoặc gửi mã qua Zalo trong vòng 1-3 phút. Thầy/cô cũng có thể nhắn Zalo: <strong>0969.888.999</strong> để nhận mã kích hoạt ngay lập tức.</em>
+            </small>
+          </div>
+        </div>
+
+        <!-- NHẬP MÃ KÍCH HOẠT LICENSE KEY -->
+        <div class="activation-input-section">
+          <label style="font-weight: 600; color: #f8fafc; font-size: 14px; display: block; margin-bottom: 8px;">
+            🔑 Đã có mã kích hoạt? Nhập mã vào đây để mở khóa PRO ngay:
+          </label>
+          <div class="activation-input-group">
+            <input type="text" id="input-license-key" class="form-control key-input" placeholder="Ví dụ: PROLIFE-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
+            <button class="btn btn-gold btn-large" id="btn-submit-activate-key" onclick="window.AuthManager.activateLicenseKey()">
+              <span>🚀</span> KÍCH HOẠT NGAY
+            </button>
+          </div>
+
+          <!-- KEY TEST MẪU NHANH CHO QUẢN TRỊ / DEMO -->
+          <div class="demo-keys-hint">
+            <span>Mã kích hoạt mẫu (Click để điền nhanh):</span>
+            <span class="key-chip" onclick="window.AuthManager.fillDemoKey('PROLIFE-KIMTUYEN-2026')" title="Gói Vĩnh Viễn VIP">PROLIFE-KIMTUYEN-2026</span>
+            <span class="key-chip" onclick="window.AuthManager.fillDemoKey('PRO1Y-DEMO-2026-VIP1')" title="Gói 1 Năm VIP">PRO1Y-DEMO-2026-VIP1</span>
+            <span class="key-chip" onclick="window.AuthManager.fillDemoKey('PRO2Y-DEMO-2026-VIP2')" title="Gói 2 Năm VIP">PRO2Y-DEMO-2026-VIP2</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #94a3b8; font-size: 12px;">Hotline / Hỗ trợ Zalo: 0969.888.999 (Cô Kim Tuyền)</span>
+        <button class="btn btn-secondary" onclick="window.AuthManager.closeProModal()">Đóng Cửa Sổ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CẤU HÌNH KẾT NỐI GOOGLE FIREBASE THẬT -->
+  <div class="modal-overlay" id="firebase-config-modal">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e293b, #0f172a); border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 26px;">🔥</span>
+          <div>
+            <h3 style="margin: 0; color: #f87171; font-family: 'Outfit', sans-serif;">KẾT NỐI GOOGLE FIREBASE AUTHENTICATION THẬT</h3>
+            <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #94a3b8;">Xác thực tài khoản Google trực tiếp qua máy chủ Google OAuth 2.0</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="window.AuthManager.closeFirebaseConfigModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px 24px; max-height: calc(85vh - 120px); overflow-y: auto;">
+        
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+          <div style="font-weight: 600; color: #fca5a5; font-size: 13.5px; margin-bottom: 6px;">
+            ⚠️ Yêu cầu để mở cửa sổ Đăng nhập Google thật:
+          </div>
+          <div style="font-size: 12.5px; color: #cbd5e1; line-height: 1.5;">
+            Google bắt buộc mỗi ứng dụng web phải có mã định danh <strong>Firebase Project</strong> để cấp quyền mở cửa sổ đăng nhập <code>accounts.google.com</code>. Thầy/cô chỉ cần dán đoạn mã cấu hình vào ô dưới đây (hoàn toàn miễn phí 100% từ Google).
+          </div>
+        </div>
+
+        <!-- HƯỚNG DẪN 3 BƯỚC -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-weight: 600; color: #38bdf8; font-size: 13px; margin-bottom: 8px;">
+            📋 Hướng dẫn lấy cấu hình Firebase trong 1 phút:
+          </div>
+          <ol style="margin: 0; padding-left: 20px; font-size: 12.5px; color: #cbd5e1; line-height: 1.6;">
+            <li>Truy cập <a href="https://console.firebase.google.com" target="_blank" style="color: #38bdf8; text-decoration: underline;">Firebase Console (console.firebase.google.com)</a> và đăng nhập Gmail.</li>
+            <li>Bấm <strong>"Add project"</strong> (Tạo dự án mới, ví dụ: <code>gdktpl-exam</code>) và làm theo hướng dẫn.</li>
+            <li>Vào mục <strong>Build &gt; Authentication &gt; Sign-in method</strong>, chọn <strong>Google</strong> và gạt bật <strong>Enable</strong>.</li>
+            <li>Bấm vào biểu tượng ⚙️ (Cài đặt) &gt; <strong>Project settings</strong>, cuộn xuống mục <strong>"Your apps"</strong>, chọn biểu tượng Web <strong><code>&lt;/&gt;</code></strong> và sao chép đoạn <code>firebaseConfig = { ... }</code> dán vào ô bên dưới.</li>
+          </ol>
+        </div>
+
+        <!-- TEXTAREA NHẬP CONFIG -->
+        <div class="form-group">
+          <label style="font-weight: 600; color: #f8fafc; font-size: 13px;">
+            Dán đoạn mã cấu hình Firebase (dạng JSON hoặc const firebaseConfig = { ... }):
+          </label>
+          <textarea id="firebase-config-json" class="form-control" rows="8" style="font-family: monospace; font-size: 12px; background: rgba(0, 0, 0, 0.4); border-color: rgba(239, 68, 68, 0.3); color: #fecaca;" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
+};'></textarea>
+        </div>
+
+        <small style="color: #94a3b8; font-size: 11.5px; display: block; margin-top: 4px;">
+          🔒 Cấu hình được lưu trữ an toàn trong tệp <code>app/data/firebase_config.json</code> cục bộ trên máy tính của thầy/cô.
+        </small>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px;">
+        <button class="btn btn-secondary" onclick="window.AuthManager.closeFirebaseConfigModal()">Đóng</button>
+        <button class="btn btn-primary" onclick="window.AuthManager.saveFirebaseConfigAndLogin()" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444; font-weight: 700;">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="16" height="16" alt="G" style="background: #fff; border-radius: 50%; padding: 1px;">
+          💾 Lưu Cấu Hình &amp; Đăng Nhập Google Ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase App & Auth SDK (v10 compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="/static/firebase-auth.js?v=2.2"></script>
+  <script src="/static/gemini-api.js?v=2.1"></script>
+  <script src="/static/app.js?v=2.2"></script>
+</body>
+</html>
