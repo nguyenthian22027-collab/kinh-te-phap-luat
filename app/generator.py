@@ -4,7 +4,20 @@ import copy
 import os
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-BANK_PATH = os.path.join(APP_DIR, "data", "question_bank.json")
+if os.environ.get("VERCEL"):
+    DATA_DIR = os.path.join("/tmp", "data")
+    os.makedirs(DATA_DIR, exist_ok=True)
+    BANK_PATH = os.path.join(DATA_DIR, "question_bank.json")
+    if not os.path.exists(BANK_PATH):
+        orig = os.path.join(APP_DIR, "data", "question_bank.json")
+        if os.path.exists(orig):
+            try:
+                import shutil
+                shutil.copy(orig, BANK_PATH)
+            except Exception:
+                pass
+else:
+    BANK_PATH = os.path.join(APP_DIR, "data", "question_bank.json")
 
 # Standard Matrix from 'Cấu trúc MÔN GDKTPL.docx'
 STANDARD_MATRIX = {

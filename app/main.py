@@ -22,7 +22,10 @@ from .license_manager import (
 )
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_DIR = os.path.join(APP_DIR, "output")
+if os.environ.get("VERCEL"):
+    OUTPUT_DIR = os.path.join("/tmp", "output")
+else:
+    OUTPUT_DIR = os.path.join(APP_DIR, "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app = FastAPI(title="GDKTPL Exam Studio Pro", version="2.0")
@@ -551,6 +554,7 @@ os.makedirs(static_dir, exist_ok=True)
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
+@app.get("/index.html")
 def serve_index():
     index_file = os.path.join(static_dir, "index.html")
     if os.path.exists(index_file):

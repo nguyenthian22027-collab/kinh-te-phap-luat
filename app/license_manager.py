@@ -8,8 +8,21 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, Tuple
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(APP_DIR, "data")
-os.makedirs(DATA_DIR, exist_ok=True)
+if os.environ.get("VERCEL"):
+    DATA_DIR = os.path.join("/tmp", "data")
+    os.makedirs(DATA_DIR, exist_ok=True)
+    for fname in ["user_licenses.json", "firebase_config.json", "valid_keys.json"]:
+        src = os.path.join(APP_DIR, "data", fname)
+        dst = os.path.join(DATA_DIR, fname)
+        if not os.path.exists(dst) and os.path.exists(src):
+            try:
+                import shutil
+                shutil.copy(src, dst)
+            except Exception:
+                pass
+else:
+    DATA_DIR = os.path.join(APP_DIR, "data")
+    os.makedirs(DATA_DIR, exist_ok=True)
 
 USER_LICENSES_PATH = os.path.join(DATA_DIR, "user_licenses.json")
 FIREBASE_CONFIG_PATH = os.path.join(DATA_DIR, "firebase_config.json")
