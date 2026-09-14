@@ -21,6 +21,23 @@
         </div>
       </div>
 
+      <!-- KHUNG TÀI KHOẢN GIÁO VIÊN TRÊN SIDEBAR -->
+      <div id="sidebar-user-section">
+        <div class="sidebar-auth-card guest-card" onclick="window.AuthManager && window.AuthManager.signInWithGoogle()">
+          <div class="auth-card-row">
+            <span class="auth-card-icon">🎁</span>
+            <div class="auth-card-text">
+              <strong>10 Lượt Dùng Thử</strong>
+              <span>Đăng nhập Gmail nhận ngay</span>
+            </div>
+          </div>
+          <button class="btn-sidebar-login-action">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" height="14" alt="G">
+            <span>Đăng Nhập Google (+10 Lượt)</span>
+          </button>
+        </div>
+      </div>
+
       <nav class="nav-menu">
         <button class="nav-item active" data-tab="tab-generator">
           <span class="icon">🎯</span>
@@ -102,23 +119,17 @@
         </div>
                 <div class="topbar-right">
           <!-- KHU VỰC TÀI KHOẢN & QUẢN TRỊ VIÊN -->
+                    <!-- KHU VỰC TÀI KHOẢN & QUẢN TRỊ VIÊN -->
           <div id="topbar-auth-container" class="topbar-auth-pill">
-            <button class="btn-admin-panel-topbar" id="btn-topbar-admin-panel" onclick="window.AdminManager ? window.AdminManager.openModal() : alert('Đang mở Bảng Quản trị...')" title="Mở Bảng Quản Trị Viên Phê Duyệt">
+            <button class="btn-admin-panel-topbar" id="btn-topbar-admin-panel" onclick="window.AdminManager ? window.AdminManager.openModal() : alert('Đang mở Bảng Quản trị...')" style="display: none;" title="Mở Bảng Quản Trị Viên Phê Duyệt">
               <span>🛡️ Phê Duyệt Realtime</span>
             </button>
-            <div class="user-profile-badge trial-active" id="topbar-user-badge" onclick="window.AuthManager && window.AuthManager.openProModal()" title="Bấm để nâng cấp bản quyền">
-              <span class="avatar-icon">👤</span>
-              <div class="user-meta">
-                <span class="user-name" id="topbar-user-name">Khách dùng thử</span>
-                <span class="trial-tag" id="topbar-user-quota">🎁 Dùng thử: <strong>10/10</strong></span>
-              </div>
-            </div>
+            <button class="btn-teacher-login-glow" id="btn-topbar-login-glow" onclick="window.AuthManager && window.AuthManager.signInWithGoogle()" title="Đăng nhập Gmail nhận 10 lượt dùng thử miễn phí">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="G">
+              <span>Đăng Nhập Google <strong>(+10 Lượt Free 🎁)</strong></span>
+            </button>
             <button class="btn-upgrade-pro-pulse" id="btn-topbar-upgrade" onclick="window.AuthManager && window.AuthManager.openProModal()" title="Nâng cấp gói bản quyền">
               <span>⭐ NÂNG CẤP PRO</span>
-            </button>
-            <button class="btn-google-login-mini" id="btn-topbar-login" onclick="window.AuthManager && window.AuthManager.signInWithGoogle()" title="Đăng nhập tài khoản Google">
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" height="14" alt="G">
-              <span>Đăng nhập Google</span>
             </button>
           </div>
 
@@ -1093,6 +1104,39 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- MODAL: ĐĂNG NHẬP GIÁO VIÊN NHẬN 10 LƯỢT DÙNG THỬ -->
+  <div class="modal-overlay" id="teacher-login-modal">
+    <div class="modal-dialog" style="max-width: 480px; text-align: center; border-radius: 18px; overflow: hidden; background: #ffffff;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); flex-direction: column; align-items: center; position: relative; padding: 26px 20px 20px 20px; border: none;">
+        <button class="modal-close" onclick="window.AuthManager.closeLoginModal()" style="position: absolute; right: 16px; top: 16px; color: #fff; font-size: 24px;">&times;</button>
+        <div style="font-size: 38px; margin-bottom: 6px;">🎓</div>
+        <h3 style="margin: 0; color: #ffffff; font-size: 19px; font-weight: 800; font-family: 'Outfit', sans-serif;">ĐĂNG NHẬP TÀI KHOẢN GIÁO VIÊN</h3>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #c7d2fe;">Kích hoạt 10 lượt dùng thử & Nhận bản quyền PRO trực tiếp</p>
+      </div>
+      <div class="modal-body" style="padding: 24px 22px; background: #ffffff; color: #1e293b;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; text-align: left;">
+          <div style="font-weight: 700; color: #166534; font-size: 13.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>🎁</span> Quyền Lợi Của Thầy/Cô Khi Đăng Nhập:
+          </div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 12.5px; color: #15803d; line-height: 1.6;">
+            <li>Nhận ngay <strong>10 lượt tạo đề & tải Word</strong> chuẩn đề thi HSG hoàn toàn miễn phí.</li>
+            <li>Địa chỉ Gmail của thầy/cô sẽ được lưu vào hệ thống để <strong>Admin phê duyệt Gói 1 Năm / 2 Năm / Vĩnh Viễn</strong> từ xa không cần nhập mã.</li>
+            <li>Lưu trữ lịch sử ra đề và kho ngữ liệu mọi lúc, mọi nơi.</li>
+          </ul>
+        </div>
+
+        <button onclick="window.AuthManager.signInWithGoogle()" style="width: 100%; padding: 13px 20px; font-size: 14.5px; font-weight: 700; background: #ffffff; color: #1f2937; border: 1.5px solid #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.08); transition: all 0.2s;">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22" height="22" alt="Google">
+          <span>Đăng nhập bằng tài khoản Google</span>
+        </button>
+
+        <div style="margin-top: 14px; font-size: 12px; color: #64748b;">
+          🔒 Đăng nhập bảo mật 100% qua Google OAuth 2.0 (Google accounts).
         </div>
       </div>
     </div>

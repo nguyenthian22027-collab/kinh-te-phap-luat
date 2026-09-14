@@ -498,7 +498,7 @@
       }
     },
 
-    renderTopbarAuth() {
+        renderTopbarAuth() {
       const topbarRight = document.querySelector(".topbar-right");
       if (!topbarRight) return;
 
@@ -512,7 +512,8 @@
 
       const isPro = this.status && this.status.is_pro;
       const remaining = this.status ? this.status.trial_remaining : 10;
-      const userName = (this.user && this.user.displayName) ? this.user.displayName : "Khách";
+      const isLoggedIn = this.user && !this.user.isGuest && this.user.email;
+      const userName = (this.user && this.user.displayName) ? this.user.displayName : "Khách dùng thử";
       const userPhoto = (this.user && this.user.photoURL) ? this.user.photoURL : "";
       const userEmail = (this.user && this.user.email) ? this.user.email : "";
       const isAdmin = checkIsAdmin(userEmail) || (this.status && this.status.is_admin);
@@ -539,31 +540,84 @@
           </div>
           <button class="btn-auth-logout" onclick="window.AuthManager.signOut()" title="Đăng xuất">↪</button>
         `;
-      } else {
+      } else if (isLoggedIn) {
+        // Đã đăng nhập Google nhưng đang dùng thử
         authContainer.innerHTML = `
           ${adminBtnHtml}
           <div class="user-profile-badge trial-active" onclick="window.AuthManager.openProModal()" title="Nhấn để nâng cấp bản quyền">
             ${userPhoto ? `<img src="${userPhoto}" class="user-avatar" alt="Avatar">` : `<span class="avatar-icon">👤</span>`}
             <div class="user-meta">
               <span class="user-name">${escapeHtml(userName)}</span>
-              <span class="trial-tag">🎁 Dùng thử: <strong>${remaining}/10</strong></span>
+              <span class="trial-tag">🎁 Còn: <strong>${remaining}/10 lượt</strong></span>
             </div>
           </div>
           <button class="btn-upgrade-pro-pulse" onclick="window.AuthManager.openProModal()" title="Nâng cấp gói bản quyền">
             <span>⭐ NÂNG CẤP PRO</span>
           </button>
-          ${this.user && !this.user.isGuest ? `
-            <button class="btn-auth-logout" onclick="window.AuthManager.signOut()" title="Đăng xuất">↪</button>
-          ` : `
-            <button class="btn-google-login-mini" onclick="window.AuthManager.signInWithGoogle()" title="Đăng nhập bằng Google">
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" height="14" alt="G">
-              <span>Đăng nhập Google</span>
-            </button>
-          `}
+          <button class="btn-auth-logout" onclick="window.AuthManager.signOut()" title="Đăng xuất">↪</button>
+        `;
+      } else {
+        // CHƯA ĐĂNG NHẬP -> HIỂN THỊ NÚT ĐĂNG NHẬP NHẬN 10 LƯỢT DÙNG THỬ CỰC KỲ NỔI BẬT
+        authContainer.innerHTML = `
+          ${adminBtnHtml}
+          <button class="btn-teacher-login-glow" id="btn-topbar-login-glow" onclick="window.AuthManager.signInWithGoogle()" title="Đăng nhập tài khoản Google nhận 10 lượt tạo đề miễn phí">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="G">
+            <span>Đăng Nhập Google <strong>(+10 Lượt Free 🎁)</strong></span>
+          </button>
+          <button class="btn-upgrade-pro-pulse" onclick="window.AuthManager.openProModal()" title="Nâng cấp gói bản quyền">
+            <span>⭐ NÂNG CẤP PRO</span>
+          </button>
         `;
       }
 
       this.renderSidebarAdminButton(isAdmin);
+      this.renderSidebarUserCard();
+    },
+
+    renderSidebarUserCard() {
+      const section = document.getElementById("sidebar-user-section");
+      if (!section) return;
+
+      const isPro = this.status && this.status.is_pro;
+      const remaining = this.status ? this.status.trial_remaining : 10;
+      const isLoggedIn = this.user && !this.user.isGuest && this.user.email;
+
+      if (isLoggedIn) {
+        const userName = this.user.displayName || "Giáo viên";
+        const userPhoto = this.user.photoURL;
+        const userEmail = this.user.email || "";
+
+        section.innerHTML = `
+          <div class="sidebar-auth-card logged-card">
+            <div class="auth-card-row">
+              ${userPhoto ? `<img src="${userPhoto}" class="auth-card-avatar" alt="Avatar">` : `<span class="auth-card-icon">👤</span>`}
+              <div class="auth-card-text">
+                <strong>${escapeHtml(userName)}</strong>
+                <span>${escapeHtml(userEmail)}</span>
+              </div>
+            </div>
+            <div class="auth-card-status ${isPro ? 'pro' : 'trial'}">
+              ${isPro ? '👑 BẢN QUYỀN PRO' : '⚡ Còn lại: ' + remaining + '/10 lượt'}
+            </div>
+          </div>
+        `;
+      } else {
+        section.innerHTML = `
+          <div class="sidebar-auth-card guest-card" onclick="window.AuthManager.signInWithGoogle()">
+            <div class="auth-card-row">
+              <span class="auth-card-icon">🎁</span>
+              <div class="auth-card-text">
+                <strong>10 Lượt Dùng Thử</strong>
+                <span>Bấm đăng nhập để nhận ngay</span>
+              </div>
+            </div>
+            <button class="btn-sidebar-login-action">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" height="14" alt="G">
+              <span>Đăng Nhập Google (+10 Lượt)</span>
+            </button>
+          </div>
+        `;
+      }
     },
 
     renderSidebarAdminButton(isAdmin) {
@@ -640,6 +694,16 @@
           </div>
         `;
       }
+    },
+
+        openLoginModal() {
+      const modal = document.getElementById("teacher-login-modal");
+      if (modal) modal.classList.add("active");
+    },
+
+    closeLoginModal() {
+      const modal = document.getElementById("teacher-login-modal");
+      if (modal) modal.classList.remove("active");
     },
 
     openProModal(defaultPlan = 'lifetime') {
