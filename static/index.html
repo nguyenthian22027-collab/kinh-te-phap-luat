@@ -58,7 +58,12 @@
           <span>Bản Quyền PRO</span>
           <span class="counter-badge" style="background: #eab308; color: #000; font-weight: 700; font-size: 11px;">VIP</span>
         </button>
-        </nav>
+                <button class="nav-item" id="nav-item-admin-approval-btn" onclick="window.AdminManager ? window.AdminManager.openModal() : alert('Đang tải dữ liệu...')" style="background: rgba(124, 58, 237, 0.15); border: 1px solid rgba(124, 58, 237, 0.4); margin-top: 4px;">
+          <span class="icon" style="color: #c084fc;">🛡️</span>
+          <span style="color: #e9d5ff; font-weight: 700;">Bảng Quản Trị</span>
+          <span class="counter-badge" style="background: #a855f7; color: #fff; font-size: 10px; font-weight: 700;">ADMIN</span>
+        </button>
+      </nav>
 
       <div class="bank-stats-card">
         <div class="stats-header">
@@ -95,7 +100,28 @@
           <h1 id="page-heading">Tạo Đề Thi Học Sinh Giỏi</h1>
           <p class="subtitle">Đề chuẩn 90 phút - 48 câu (Phần I: 40 câu trắc nghiệm, Phần II: 8 câu Đúng/Sai)</p>
         </div>
-        <div class="topbar-right">
+                <div class="topbar-right">
+          <!-- KHU VỰC TÀI KHOẢN & QUẢN TRỊ VIÊN -->
+          <div id="topbar-auth-container" class="topbar-auth-pill">
+            <button class="btn-admin-panel-topbar" id="btn-topbar-admin-panel" onclick="window.AdminManager ? window.AdminManager.openModal() : alert('Đang mở Bảng Quản trị...')" title="Mở Bảng Quản Trị Viên Phê Duyệt">
+              <span>🛡️ Phê Duyệt Realtime</span>
+            </button>
+            <div class="user-profile-badge trial-active" id="topbar-user-badge" onclick="window.AuthManager && window.AuthManager.openProModal()" title="Bấm để nâng cấp bản quyền">
+              <span class="avatar-icon">👤</span>
+              <div class="user-meta">
+                <span class="user-name" id="topbar-user-name">Khách dùng thử</span>
+                <span class="trial-tag" id="topbar-user-quota">🎁 Dùng thử: <strong>10/10</strong></span>
+              </div>
+            </div>
+            <button class="btn-upgrade-pro-pulse" id="btn-topbar-upgrade" onclick="window.AuthManager && window.AuthManager.openProModal()" title="Nâng cấp gói bản quyền">
+              <span>⭐ NÂNG CẤP PRO</span>
+            </button>
+            <button class="btn-google-login-mini" id="btn-topbar-login" onclick="window.AuthManager && window.AuthManager.signInWithGoogle()" title="Đăng nhập tài khoản Google">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="14" height="14" alt="G">
+              <span>Đăng nhập Google</span>
+            </button>
+          </div>
+
           <button class="btn btn-secondary btn-sm" id="btn-open-api-modal" onclick="openApiSettingsModal()" title="Cài đặt Google Gemini API Keys" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 13px; border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(14, 165, 233, 0.12); cursor: pointer;">
             <span id="topbar-api-icon">🔑</span> <strong style="color: #e2e8f0;">Gemini API</strong>: <span id="topbar-api-status" style="font-weight: 600; color: #f87171;">Chưa cài</span>
           </button>

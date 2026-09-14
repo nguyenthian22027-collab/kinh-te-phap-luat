@@ -803,10 +803,7 @@
         if (email) alert("Email không hợp lệ.");
         return;
       }
-      const plan = prompt("Chọn gói kích hoạt:
-1: Gói 1 Năm (150k)
-2: Gói 2 Năm (250k)
-3: Gói Vĩnh Viễn (599k)", "3");
+      const plan = prompt(`Chọn gói kích hoạt:\n1: Gói 1 Năm (150k)\n2: Gói 2 Năm (250k)\n3: Gói Vĩnh Viễn (599k)`, "3");
       let planKey = "lifetime";
       if (plan === "1") planKey = "1year";
       else if (plan === "2") planKey = "2year";
@@ -833,7 +830,9 @@ Khi giáo viên đăng nhập bằng Gmail này sẽ có ngay bản quyền PRO!
   window.AuthManager = AuthManager;
   window.AdminManager = AdminManager;
 
-  document.addEventListener("DOMContentLoaded", () => {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => AuthManager.init());
+  } else {
     AuthManager.init();
-  });
+  }
 })();

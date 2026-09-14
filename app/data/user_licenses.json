@@ -39,5 +39,20 @@
     "pro_activated_at": null,
     "pro_expires_at": null,
     "created_at": "2026-09-14 17:38:21"
+  },
+  "guest_123": {
+    "uid": "guest_123",
+    "email": "",
+    "display_name": "Giáo viên",
+    "photo_url": "",
+    "trial_used": 0,
+    "trial_limit": 10,
+    "is_pro": false,
+    "pro_plan": null,
+    "pro_activated_at": null,
+    "pro_expires_at": null,
+    "status": "active",
+    "is_admin": false,
+    "created_at": "2026-09-14 21:48:47"
   }
 }

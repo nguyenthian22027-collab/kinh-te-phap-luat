@@ -40,6 +40,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Vercel ASGI path normalizer
+@app.middleware("http")
+async def vercel_asgi_normalizer(request, call_next):
+    # In Vercel serverless, requests to /api/xyz might arrive as /api/index.py or /xyz
+    x_matched = (
+        request.headers.get("x-matched-path") or 
+        request.headers.get("x-forwarded-uri") or 
+        request.headers.get("x-original-uri")
+    )
+    if x_matched:
+        clean_path = x_matched.split("?")[0]
+        if clean_path.startswith("/api/"):
+            request.scope["path"] = clean_path
+
+    # Check query param path from vercel.json rewrite
+    curr_path = request.scope.get("path", "")
+    if curr_path in ["/api/index.py", "/api/index", "/api", "/api/"]:
+        path_param = request.query_params.get("path") or request.query_params.get("p")
+        if path_param:
+            if not path_param.startswith("/"):
+                path_param = "/" + path_param
+            if not path_param.startswith("/api"):
+                path_param = "/api" + path_param
+            request.scope["path"] = path_param
+            curr_path = path_param
+
+    # If incoming path is /status (with /api stripped), rewrite to /api/status
+    if curr_path in ["/status", "/pricing", "/knowledge", "/questions", "/generate"]:
+        request.scope["path"] = "/api" + curr_path
+    elif curr_path.startswith("/user/") or curr_path.startswith("/admin/") or curr_path.startswith("/question/"):
+        request.scope["path"] = "/api" + curr_path
+
+    response = await call_next(request)
+    return response
+
+
+
 # Active session cache for current exam
 CURRENT_EXAM = {}
 
