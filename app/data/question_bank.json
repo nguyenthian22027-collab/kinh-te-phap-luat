@@ -338,8 +338,8 @@
       "stem": "Cho các số liệu sau\n\n<table class=\"stem-table\" style=\"border-collapse:collapse;width:100%;margin:8px 0;\"><tr><td style=\"border:1px solid #475569;padding:5px 8px;text-align:left;\">Quốc gia A có GDP 100 tỷ USD và dân số 10 triệu người.</td></tr><tr><td style=\"border:1px solid #475569;padding:5px 8px;text-align:left;\">Quốc gia B có GDP 80 tỷ USD và dân số 5 triệu người.</td></tr></table>\n\nNhận định nào dưới đây là đúng?",
       "options": {
         "A": "Quốc gia A có quy mô nền kinh tế lớn hơn, nhưng quốc gia B có thu nhập bình quân đầu người cao hơn.",
-        "B": "",
-        "C": "Quốc gia A có cả quy mô kinh tế và thu nhập bình quân đầu người cao hơn quốc gia",
+        "B": "Cả hai quốc gia đều có quy mô kinh tế và thu nhập bình quân đầu người tương đương nhau.",
+        "C": "Quốc gia A có cả quy mô kinh tế và thu nhập bình quân đầu người cao hơn quốc gia B.",
         "D": "Quốc gia B có quy mô nền kinh tế lớn hơn và thu nhập bình quân đầu người cao hơn."
       },
       "answer": "A",
@@ -1165,9 +1165,9 @@
       "type": "part1",
       "stem": "Nhận được tin báo anh C tàng trữ trái phép chất ma túy tại nhà riêng, anh M là trưởng công an xã cùng anh P công an viên, bí mật vào nhà anh C lục soát. Vì bị anh C quyết liệt ngăn cản, nên hai bên xảy ra xô sát, do thiếu kiềm chế, anh M và anh P đã đánh anh C bị thương. Chứng kiến sự việc, chị T vợ anh C đã dùng điện thoại quay và phát trực tiếp lên mạng với lời lẽ tố cáo cán bộ đánh người dân. Yêu cầu chị T gỡ bỏ những hình ảnh đó không được, anh M đã khống chế đưa chị T về giam tại nhà tạm giam của đơn vị. Nhiều lần yêu cầu anh M thả vợ mình không được, phát hiện cháu B con gái anh M thường xuyên đi học qua nhà, anh C đã ép cháu M đi theo mình sau đó nhốt cháu trong một ngồi nhà hoang ngoài cánh đồng nhằm gây sức ép yêu cầu anh M thả vợ mình. Do hoảng sợ và bị bỏ đói nhiều giờ, cháu B bị ngất xỉu sau đó được một người dân đi làm đồng phát hiện và đưa vào viện cấp cứu. Những ai dưới đây vừa vi phạm quyền bất khả xâm phạm về thân thể vừa vi phạm quyền được pháp luật bảo hộ về tính mạng, sức khỏe của công dân?",
       "options": {
-        "A": "Anh M, anh P và anh",
-        "C": "",
+        "A": "Anh M, anh P và anh C.",
         "B": "Anh P, anh C và chị T.",
+        "C": "Anh M và anh C.",
         "D": "Anh M và anh P."
       },
       "answer": "A",
@@ -1221,8 +1221,8 @@
       "options": {
         "A": "Anh A và anh M.",
         "B": "Anh C và anh K.",
-        "C": "",
-        "D": "Anh A, anh M và anh"
+        "C": "Anh A, anh M và anh K.",
+        "D": "Anh A, anh M và anh C."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Một số quyền dân chủ cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -1309,10 +1309,10 @@
       "type": "part1",
       "stem": "Công ty anh H có hợp đồng với 15 người lao động. Hàng tháng anh H đều đóng bảo hiểm cho công nhân của mình. Tháng 8, anh H có thuê anh S là nhân viên IT đến phụ giúp công ty mình mảng kỹ thuật máy tính làm việc 25 ngày. Anh S có nguyện vọng được anh H phải đóng bảo hiểm xã hội cho mình nhưng anh H không đồng ý vì anh là lao động thuê khi cần thiết chứ không phải lao động có hợp đồng lao đồng. Anh S dự định sẽ làm đơn kiện anh H về sự việc này. 5 tháng gần đây công ty anh H làm ăn khó khăn nên anh H chỉ đạo anh T là bộ phận kế toán để khoản tiền nộp bảo hiểm trong 5 tháng để đầu tư kinh doanh.Mức đóng bảo hiểm của người lao độngphải nộp cho bảo hiểm xã hội (bảo hiểm xã hội bắt buộc, bảo hiểm y tế, bảo hiểm thất nghiệp) là bao nhiêu?",
       "options": {
-        "A": "15%.B .10%.",
+        "A": "15%.",
+        "B": "10%.",
         "C": "10,5%.",
-        "D": "5%.",
-        "B": "(Phương án B - cần bổ sung)"
+        "D": "5%."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Bảo hiểm và an sinh xã hội theo quy định pháp luật và kiến thức GDKT&PL.",
