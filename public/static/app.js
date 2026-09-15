@@ -13,7 +13,34 @@ document.addEventListener("DOMContentLoaded", () => {
   initResourceHandlers();
   initExportHandlers();
   initBankExplorer();
+  initAiGradeTopicSync();
 });
+
+// TỰ ĐỒNG BỘ TOPIC DROPDOWN THEO GRADE
+function initAiGradeTopicSync() {
+  const gradeSelect = document.getElementById("ai-grade-select");
+  const topicSelect = document.getElementById("ai-topic-select");
+  if (!gradeSelect || !topicSelect) return;
+
+  const TOPIC_BY_GRADE = {
+    "12": ["Bảo hiểm và an sinh xã hội", "Tăng trưởng và phát triển kinh tế", "Hội nhập kinh tế quốc tế"],
+    "11": ["Bình đẳng, Dân chủ và Tự do công dân", "Một số quyền dân chủ cơ bản của công dân", "Một số quyền tự do cơ bản của công dân", "Quyền bình đẳng của công dân trước pháp luật"],
+    "10": ["Pháp luật nước CHXHCN Việt Nam", "Thực hiện pháp luật", "Vi phạm pháp luật và trách nhiệm pháp lý"]
+  };
+
+  gradeSelect.addEventListener("change", () => {
+    const grade = gradeSelect.value;
+    const validTopics = TOPIC_BY_GRADE[grade] || [];
+    // Tìm option nào đang selected có thuộc grade hiện tại không
+    const currentVal = topicSelect.value;
+    if (!validTopics.includes(currentVal)) {
+      // Chọn topic đầu tiên của grade mới
+      const firstMatchOption = Array.from(topicSelect.options).find(opt => validTopics.includes(opt.value));
+      if (firstMatchOption) topicSelect.value = firstMatchOption.value;
+    }
+  });
+}
+
 
 // TAB NAVIGATION
 function initTabs() {
@@ -637,8 +664,8 @@ function initResourceHandlers() {
       const numQuestionsSelect = document.getElementById("url-num-questions");
       const numQ = numQuestionsSelect ? parseInt(numQuestionsSelect.value) || 5 : 5;
       const apiConfig = window.GeminiClient ? window.GeminiClient.getSavedApiConfig() : { rawKeys: "", model: "gemini-3.5" };
-
-      resBox.innerHTML = `<div class="spinner"></div><span>Đang kết nối trang web, bóc tách bài viết & AI đang phân tích sinh ${numQ} câu hỏi...</span>`;
+      const resBox = document.getElementById("url-fetch-result");
+      if (resBox) resBox.innerHTML = `<div class="spinner"></div><span>Đang kết nối trang web, bóc tách bài viết & AI đang phân tích sinh ${numQ} câu hỏi...</span>`;
 
       fetch("/api/import-url", {
         method: "POST",
