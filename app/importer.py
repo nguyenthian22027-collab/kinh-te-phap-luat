@@ -22,43 +22,84 @@ def save_bank(bank_data):
         json.dump(bank_data, f, ensure_ascii=False, indent=2)
 
 def extract_text_from_docx(file_path):
+    """
+    Trích xuất toàn bộ văn bản và bảng số liệu từ tệp docx THEO ĐÚNG THỨ TỰ xuất hiện.
+    Bảng số liệu nằm trong câu hỏi nào sẽ được giữ nguyên vị trí trong câu hỏi đó.
+    """
     doc = Document(file_path)
-    full_text = []
-    for para in doc.paragraphs:
-        if para.text.strip():
-            full_text.append(para.text.strip())
-    for table in doc.tables:
-        for row in table.rows:
-            row_vals = [cell.text.strip() for cell in row.cells if cell.text.strip()]
-            if row_vals:
-                full_text.append(" | ".join(row_vals))
-    return "\n".join(full_text)
+    blocks = []
+    for child in doc.element.body.iterchildren():
+        if child.tag.endswith('p'):
+            from docx.text.paragraph import Paragraph
+            p = Paragraph(child, doc)
+            if p.text.strip():
+                blocks.append(p.text.strip())
+        elif child.tag.endswith('tbl'):
+            from docx.table import Table
+            t = Table(child, doc)
+            tbl_lines = []
+            for row in t.rows:
+                cells = [c.text.strip() for c in row.cells if c.text.strip()]
+                if cells:
+                    unique_cells = []
+                    for c in cells:
+                        if not unique_cells or c != unique_cells[-1]:
+                            unique_cells.append(c)
+                    tbl_lines.append(" | ".join(unique_cells))
+            if tbl_lines:
+                blocks.append("[TABLE START]\n" + "\n".join(tbl_lines) + "\n[TABLE END]")
+    return "\n".join(blocks)
 
 def classify_text(stem, opts_text=""):
     combined = (stem + " " + opts_text).lower()
     
-    kt12_kw = ["gdp", "gni", "tăng trưởng", "phát triển kinh tế", "hội nhập", "fta", "cptpp", "evfta", 
-               "wto", "asean", "thuế quan", "fdi", "oda", "bảo hiểm", "bhxh", "bhyt", "an sinh", "thất nghiệp", "hưu trí", "thai sản"]
-    pl10_kw = ["quy phạm pháp luật", "văn bản luật", "văn bản dưới luật", "ngành luật", "chế định pháp luật",
-               "tuân thủ pháp luật", "thi hành pháp luật", "sử dụng pháp luật", "áp dụng pháp luật", 
-               "đặc trưng của pháp luật", "tính quy phạm phổ biến", "tính quyền lực", "tính xác định chặt chẽ"]
+    # 1. Từ khóa Kinh tế & An sinh xã hội 12
+    kt12_kw = [
+        "gdp", "gni", "hdi", "tăng trưởng", "phát triển kinh tế", "tăng trưởng xanh", 
+        "hội nhập", "hội nhập kinh tế", "fta", "cptpp", "evfta", "wto", "asean", 
+        "thuế quan", "fdi", "oda", "xuất khẩu", "nhập khẩu", "quy tắc xuất xứ",
+        "bảo hiểm", "bhxh", "bhyt", "bảo hiểm thất nghiệp", "an sinh", "an sinh xã hội",
+        "hưu trí", "thai sản", "lương hưu", "luật bảo hiểm xã hội", "trốn đóng",
+        "biển đảo", "unclos", "luật biển"
+    ]
+    
+    # 2. Từ khóa Pháp luật & Kinh tế 10
+    pl10_kw = [
+        "quy phạm pháp luật", "văn bản quy phạm", "văn bản luật", "ngành luật", "hệ thống pháp luật",
+        "tuân thủ pháp luật", "thi hành pháp luật", "sử dụng pháp luật", "áp dụng pháp luật", 
+        "hình thức thực hiện pháp luật", "đặc trưng của pháp luật", "tính quy phạm phổ biến",
+        "tính quyền lực", "tính xác định chặt chẽ", "bộ máy nhà nước", "hệ thống chính trị",
+        "hiến pháp 2013", "ngân sách nhà nước", "ngân sách", "thuế", "thuế thu nhập",
+        "cơ chế thị trường", "sản xuất kinh doanh", "hộ kinh doanh", "hợp tác xã",
+        "doanh nghiệp tư nhân", "tài chính cá nhân"
+    ]
+
+    # 3. Từ khóa Quyền công dân & Kinh tế 11
+    pl11_kw = [
+        "quyền bình đẳng", "bình đẳng", "hôn nhân và gia đình", "lao động",
+        "quyền dân chủ", "bầu cử", "ứng cử", "khiếu nại", "tố cáo", "quản lý nhà nước",
+        "quyền tự do", "bất khả xâm phạm về thân thể", "tính mạng", "sức khỏe", "danh dự", "nhân phẩm",
+        "chỗ ở", "thư tín", "điện thoại", "tự do ngôn luận", "tiếp cận thông tin",
+        "lạm phát", "thất nghiệp", "cạnh tranh", "cung cầu", "cung - cầu", "thị trường lao động"
+    ]
     
     score_kt12 = sum(1 for kw in kt12_kw if kw in combined)
     score_pl10 = sum(1 for kw in pl10_kw if kw in combined)
+    score_pl11 = sum(1 for kw in pl11_kw if kw in combined)
     
-    if score_kt12 > score_pl10:
+    if score_kt12 >= max(score_pl10, score_pl11) and score_kt12 > 0:
         grade = 12
         topic = "Kinh tế và An sinh xã hội 12"
-    elif score_pl10 > 0:
+    elif score_pl10 >= max(score_kt12, score_pl11) and score_pl10 > 0:
         grade = 10
         topic = "Pháp luật nước CHXHCN Việt Nam"
     else:
         grade = 11
         topic = "Bình đẳng, Dân chủ và Tự do công dân"
         
-    if any(k in combined for k in ["những ai", "ông a", "bà b", "anh m", "chị n", "xử phạt", "phạt tù", "vi phạm"]) or len(stem) > 250:
+    if any(k in combined for k in ["những ai", "ông a", "bà b", "anh m", "chị n", "xử phạt", "phạt tù", "vi phạm", "trách nhiệm pháp lý"]) or len(stem) > 230:
         level = "van_dung"
-    elif any(k in combined for k in ["vì sao", "nhận định", "ý nghĩa", "phân biệt", "thể hiện"]):
+    elif any(k in combined for k in ["vì sao", "nhận định", "ý nghĩa", "phân biệt", "thể hiện", "bản chất", "nguyên nhân"]):
         level = "hieu"
     else:
         level = "biet"
@@ -109,6 +150,52 @@ def _table_markers_to_html(text: str) -> str:
         html += '</table>'
         return html
     return re.sub(r'\[TABLE START\](.*?)\[TABLE END\]', replace_table, text, flags=re.DOTALL)
+
+def parse_p1_options(opts_str: str) -> dict:
+    """
+    Trích xuất 4 phương án A, B, C, D chuẩn xác:
+    - Hỗ trợ cả nhiều dòng lẫn trên cùng 1 dòng (2 cột hoặc 4 phương án/dòng)
+    - Hỗ trợ các ký hiệu: A., A), A:
+    - Bảo vệ tuyệt đối không nhận nhầm tên nhân vật (anh A, ông B, chị C, anh C...)
+    - Tự động dọn dẹp đoạn text dư thừa (passage bleed) ở phương án cuối
+    """
+    options = {}
+    letters = ['A', 'B', 'C', 'D']
+    opts_str = opts_str.strip()
+    
+    positions = {}
+    curr_pos = 0
+    for letter in letters:
+        p = re.compile(
+            rf'(?:^|(?<=\n)\s*|(?<=\t)\s*|(?<=\s\s)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?<!cô\s)(?<!thầy\s)(?:^|[\s\n])){letter}[\.\:\)]\s+',
+            re.IGNORECASE
+        )
+        m = p.search(opts_str[curr_pos:])
+        if m:
+            start_idx = curr_pos + m.start()
+            content_idx = curr_pos + m.end()
+            positions[letter] = (start_idx, content_idx)
+            curr_pos = content_idx
+
+    found_letters = [l for l in letters if l in positions]
+    for idx, letter in enumerate(found_letters):
+        start = positions[letter][1]
+        if idx + 1 < len(found_letters):
+            end = positions[found_letters[idx + 1]][0]
+            val = opts_str[start:end].strip()
+        else:
+            val = opts_str[start:].strip()
+            
+        val = _clean_passage_bleed(val)
+        if val:
+            options[letter] = val
+
+    # Bổ sung nhãn nếu thiếu
+    for l in letters:
+        if l not in options:
+            options[l] = f"(Phương án {l})"
+            
+    return options
 
 def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
     p1_items = []
@@ -177,36 +264,18 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     "source": source_name
                 })
         else:
-            # Câu Phần I: tìm A. B. C. D.
-            # Regex chặt hơn: option kết thúc khi gặp option kế, câu kế, hoặc "Đọc thông tin"
-            opt_match = re.search(r'(?:^|\n)\s*([A-D])\.\s+', q_body)
+            # Câu Phần I: tìm vị trí bắt đầu của phương án đầu tiên (A. hoặc A) hoặc A:)
+            opt_match = re.search(r'(?:^|(?<=\n)\s*|(?<=\s\s)\s*|(?<=\t)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?:^|[\s\n]))A[\.\:\)]\s+', q_body, re.IGNORECASE)
             if opt_match:
                 stem = _clean_passage_bleed(q_body[:opt_match.start()].strip())
                 opts_str = q_body[opt_match.start():]
                 
-                # Cắt opts_str tại ranh giới passage
-                opts_str = _clean_passage_bleed(opts_str)
+                # Bóc tách 4 phương án bằng bộ phân tích tuần tự thông minh
+                opts = parse_p1_options(opts_str)
                 
-                opts = {}
-                # Regex chặt: mỗi option kết thúc khi gặp "[A-D]." tiếp theo
-                opt_pattern = re.compile(
-                    r'([A-D])\.\s*(.*?)(?=(?:\n\s*[A-D]\.)|$)',
-                    re.DOTALL
-                )
-                for o_m in opt_pattern.finditer(opts_str):
-                    key = o_m.group(1)
-                    val = _clean_passage_bleed(o_m.group(2).strip())
-                    if val:
-                        opts[key] = val
-                
-                # Bỏ qua câu không đủ options (có thể là passage text không phải câu hỏi)
-                if len(opts) < 2 or not stem:
+                # Bỏ qua nếu stem rỗng hoặc không trích xuất được phương án thực sự
+                if not stem or not opts.get("A") or opts.get("A") == "(Phương án A)":
                     continue
-                    
-                # Điền option còn thiếu
-                for letter in ['A', 'B', 'C', 'D']:
-                    if letter not in opts:
-                        opts[letter] = f"(Phương án {letter})"
                         
                 grade, topic, level = classify_text(stem, " ".join(opts.values()))
                 
