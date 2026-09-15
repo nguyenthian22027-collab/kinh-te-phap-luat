@@ -817,6 +817,28 @@ body {
   color: #0f172a;
 }
 
+/* Bảng số liệu trong stem câu hỏi */
+.question-stem .stem-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0 10px 0;
+  font-size: 13px;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.question-stem .stem-table th,
+.question-stem .stem-table td {
+  border: 1px solid #94a3b8;
+  padding: 6px 10px;
+  text-align: left;
+  background: #f8fafc;
+}
+.question-stem .stem-table th {
+  background: #e2e8f0;
+  font-weight: 700;
+}
+
 .options-grid {
   display: grid;
   grid-template-columns: 1fr;

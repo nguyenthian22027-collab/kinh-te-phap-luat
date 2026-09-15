@@ -142,7 +142,7 @@
         "A": "Anh T, chị X, ông Q và ông K.",
         "B": "Ông Q, ông H, bà G và anh T.",
         "C": "Chị X, anh T, bà P và ông Q.",
-        "D": "Ông H, bà G, ông Q và bà P.\nĐọc thông tin và trả lời câu hỏi 9, 10\nAnh N là trưởng phòng kinh doanh, anh P là nhân viên mới tại công ty V. Do thường xuyên bị anh N phê bình trong công việc nên anh P rất ấm ức. Trong một dịp di nghỉ cuối tuần cùng gia đình, anh P vô tình bắt gặp vợ của anh N là chị T đang thân mật với một đồng nghiệp khắc của công ty mình. Anh P đã chụp ảnh gửi cho anh N đông thời gửi vào nhóm Zalo chung của công ty với mục dích trả thù anh N. Lập tức anh N cùng anh trai mình là anh M đến nhà anh P yêu cầu anh P thu hồi hình ảnh và đính chính thông tin, nhưng anh P đã từ chối và còn xúc phạm anh N. Chứng kiến cảnh đó, anh N và anh M tức giận đã lao vào cùng đánh anh P, khiến anh P bị thương. Lo sợ cho an toàn của chồng mình, chị Q (vợ anh P) đã gọi điện báo cho anh L công an phường thì anh L yêu cầu cả ba người lên phường để giải quyết sự việc.\nKhi đang yêu cầu ba người viết bản tường trình thì anh L nhận được điện thoại của vợ gọi về nhà có việc gấp. Anh L tạm khóa cửa phòng để anh N, anh M và anh P ngồi trong phòng tiếp tục viết bản tường trình và đi về nhà. Sau nửa ngày, khi giải quyết xong công việc của gia đình, anh L mới quay lại thu bản tường trình và mở cửa cho ba người ra về.\nHôm sau, khi anh N gặp anh P tại văn phòng đã yêu cầu anh P phải xin lỗi mình nhưng bị anh P tiếp tục xúc phạm và đe dọa nên anh N tức giận đã khóa trái cửa nhốt anh P tại văn phòng và bỏ đi. Đến ngày hôm sau, một nhân viên bảo vệ tên K phát hiện anh P bị ngất xỉu đã lập tức báo cáo cho ban lãnh đạo và đưa anh P đi bệnh viện cấp cứu."
+        "D": "Ông H, bà G, ông Q và bà P."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Một số quyền dân chủ cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -214,7 +214,7 @@
         "A": "chuẩn bị tài liệu để tố giác hành vi phạm tội rất nghiêm trọng.",
         "B": "phát hiện dấu vết tội phạm rất nghiêm trọng tại nơi ở của người khác.",
         "C": "đang chuẩn bị thực hiện tội phạm rất nghiêm trọng hoặc đặc biệt nghiêm trọng.",
-        "D": "cản trở người đang chuẩn bị thực hiện tội phạm đặc biệt nghiêm trọng.\nĐọc thông tin và trả lời câu hỏi 13, 14\nVợ chồng chị V, anh N và vợ chồng chị P, anh D cùng sống tại một khu phố, trong đó anh D là chủ một siêu thị điện máy. Một lần phát hiện anh N đột nhập vào siêu thị với mục đích trộm cắp tài sản, anh D lập tức khống chế và bắt anh N. Ngay sau đó, anh D áp giải anh N đến cơ quan công an và vô ý làm anh N bị thương. Tại trụ sở công an, anh D viết đơn kiến nghị khởi tố anh N. Biết chuyện của chồng, chị V cùng em trai là anh S đang làm bảo vệ tại một công trường xây dựng đã tự ý vào nhà anh D để yêu cầu anh phải rút đơn. Vì anh D đi vắng và bị chị P ngăn cản nên chị V và anh S đã uy hiếp, bắt, giữ chị P và đưa về nhà anh S. Nhận được tin nhắn đe dọa của chị V, anh D tìm cách vào nhà anh S và giải cứu được chị P."
+        "D": "cản trở người đang chuẩn bị thực hiện tội phạm đặc biệt nghiêm trọng."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Một số quyền tự do cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -335,7 +335,7 @@
       "id": "De_TP_08_p1_19",
       "original_num": 19,
       "type": "part1",
-      "stem": "Cho các số liệu sau\n\n[TABLE START]\n1 | Quốc gia A có GDP 100 tỷ USD và dân số 10 triệu người.\n2 | Quốc gia B có GDP 80 tỷ USD và dân số 5 triệu người.\n[TABLE END]\n\nNhận định nào dưới đây là đúng?",
+      "stem": "Cho các số liệu sau\n\n<table class=\"stem-table\" style=\"border-collapse:collapse;width:100%;margin:8px 0;\"><tr><td style=\"border:1px solid #475569;padding:5px 8px;text-align:left;\">Quốc gia A có GDP 100 tỷ USD và dân số 10 triệu người.</td></tr><tr><td style=\"border:1px solid #475569;padding:5px 8px;text-align:left;\">Quốc gia B có GDP 80 tỷ USD và dân số 5 triệu người.</td></tr></table>\n\nNhận định nào dưới đây là đúng?",
       "options": {
         "A": "Quốc gia A có quy mô nền kinh tế lớn hơn, nhưng quốc gia B có thu nhập bình quân đầu người cao hơn.",
         "B": "",
@@ -448,7 +448,7 @@
         "A": "Thương mại quốc tế.",
         "B": "Dịch vụ thu ngoại tệ.",
         "C": "Đầu tư quốc tế.",
-        "D": "Liên minh thuế quan.\nĐọc thông tin và trả lời các câu 26, 27\nChị N làm việc tại Doanh nghiệp Y theo hợp đồng không xác định thời hạn. Trong quá trình làm việc tại đoanh nghiệp, chị N được doanh nghiệp Y đóng các loại bảo hiểm bắt buộc đúng quy định của Luật Bảo hiểm xã hội, Luật Bảo hiểm y tế và Luật Lao động. Sau một thời gian làm việc, do hoa hoạn xảy ra làm doanh nghiệp phải ngừng hoạt động, chị N đã bị chấm dứt hợp đồng lao động. Doanh nghiệp Y hỗ trợ cho những công nhân mất việc như chị N mỗi tháng 2 triệu đồng và sau 3 tháng kể từ khi mất việc chị N nhận được khoản tiền trợ cấp thất nghiệp nên chị có thể đảm bảo được cuộc sống hiện tại của mình."
+        "D": "Liên minh thuế quan."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Bảo hiểm và an sinh xã hội theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -592,7 +592,7 @@
         "A": "(a) và (d).",
         "B": "(c), (g) và (h).",
         "C": "(b), (e) và (i).",
-        "D": "(k) và (i).\nĐọc thông tin trả lời câu hỏi 37,38 Căn cứ Luật Tổ chức chính quyền địa phương số 77/2015/QH13 đã được sửa đổi, bổ sung. Căn cứ Luật Ngân sách Nhà nước ngày 25 tháng 6 năm 2015. Căn cứ Thông tư số 08/2014/TT-BVHTTDL ngày 24 tháng 9 năm 2014 của Bộ Văn hóa, Thể thao và Du lịch quy định chi tiết tiêu chuẩn, trình tự, thủ tục xét và công nhận “Cơ quan đạt chuẩn văn hóa”, “Đơn vị đạt chuẩn văn hóa”, “Doanh nghiệp đạt chuẩn văn hóa”. Xét Tờ trình số 1718/TTr-UBND ngày 12 tháng 7 năm 2025 của Ủy ban nhân dân tỉnh Thanh Hóa về việc đề nghị ban hành Nghị quyết quy định mức tiền thưởng đối với cơ quan, đơn vị, doanh nghiệp đạt chuẩn văn hóa 5 năm liên tục trên địa bàn tỉnh Thanh Hóa. Hội đồng nhân dân tỉnh Thanh Hóa ban hành Nghị quyết Số: 01/2021/NQ-HĐND Quy định mức tiền thưởng đối với cơ quan, đơn vị, doanh nghiệp đạt chuẩn văn hóa 5 năm liên tục trên địa bàn tỉnh Thanh Hóa"
+        "D": "(k) và (i)."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Hội nhập kinh tế quốc tế theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -808,7 +808,7 @@
         "A": "1.",
         "B": "2.",
         "C": "3.",
-        "D": "4.\nĐọc thông tin trả lời câu hỏi 9,10\nCăn cứ Luật Tổ chức chính quyền địa phương số 77/2015/QH13 đã được sửa đổi, bổ sung. Căn cứ Luật Ngân sách Nhà nước ngày 25 tháng 6 năm 2015. Căn cứ Thông tư số 08/2014/TT-BVHTTDL ngày 24 tháng 9 năm 2014 của Bộ Văn hóa, Thể thao và Du lịch quy định chi tiết tiêu chuẩn, trình tự, thủ tục xét và công nhận “Cơ quan đạt chuẩn văn hóa”, “Đơn vị đạt chuẩn văn hóa”, “Doanh nghiệp đạt chuẩn văn hóa”. Xét Tờ trình số 1718/TTr-UBND ngày 12 tháng 7 năm 2025 của Ủy ban nhân dân tỉnh Thanh Hóa về việc đề nghị ban hành Nghị quyết quy định mức tiền thưởng đối với cơ quan, đơn vị, doanh nghiệp đạt chuẩn văn hóa 5 năm liên tục trên địa bàn tỉnh Thanh Hóa. UBND tỉnh Thanh Hóa ban hành Nghị quyết Số: 01/2021/NQ-HĐND Quy định mức tiền thưởng đối với cơ quan, đơn vị, doanh nghiệp đạt chuẩn văn hóa 5 năm liên tục trên địa bàn tỉnh Thanh Hóa"
+        "D": "4."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Pháp luật nước CHXHCN Việt Nam theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -880,7 +880,7 @@
         "A": "Khám xét trái pháp luật chỗ ở của người khác.",
         "B": "Đuổi trái pháp luật người khác ra khỏi chỗ ở của họ.",
         "C": "Chiếm giữ chỗ ở của người đang quản lý hợp pháp.",
-        "D": "Phá cửa để vào chỗ ở người khác dập vụ hỏa họa.\nĐọc thông tin sau và trả lời các câu hỏi 13, 14, 15\nĐiều 17 Luật An ninh quốc gia năm 2004 về Quyền và nghĩa vụ của công dân trong bảo vệ an ninh quốc gia có quy định công dân tham gia lực lượng bảo vệ an ninh quốc gia và thực hiện nhiệm vụ bảo vệ an ninh quốc gia theo quy định của pháp luật; Tố cáo hành vi xâm phạm an ninh quốc gia, hành vi lợi dụng việc thực hiện nhiệm vụ bảo vệ an ninh quốc gia xâm phạm lợi ích của Nhà nước, quyền và lợi ích hợp pháp của tổ chức, cá nhân; Phát hiện, cung cấp kịp thời thông tin, tài liệu liên quan đến hoạt động xâm phạm an ninh quốc gia cho chính quyền hoặc cơ quan chuyên trách bảo vệ an ninh quốc gia nơi gần nhất."
+        "D": "Phá cửa để vào chỗ ở người khác dập vụ hỏa họa."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Một số quyền dân chủ cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -988,7 +988,7 @@
         "A": "GDP của Việt Nam và GNI của Việt Nam.",
         "B": "GNI của Hàn Quốc và GDP của Hàn Quốc.",
         "C": "GDP của Việt Nam và GNI của Hàn Quốc.",
-        "D": "GNI của Việt Nam và GDP của Hàn Quốc.\nĐọc thông tin và trả lời câu hỏi 19, 20\nTính chung thời kì thực hiện Chiến lược phát triển kinh tế xã hội 10 năm (2011 - 2020), tăng trưởng GDP của Việt Nam đạt khoảng 5,9%/năm, thuộc nhóm các nước tăng trưởng cao trong khu vực. Quy mô GDP tăng gấp 2,4 lần, từ 116 tỉ USD năm 2010 lên 268,4 tỉ USD vào năm 2020. Tỉ lệ hộ nghèo cả nước giảm nhanh, từ 14,2% năm 2010 xuống còn 7% năm 2015 và giảm từ 9,2% năm 2016 xuống dưới 3% vào năm 2020. Cơ sở hạ tầng thiết yếu ở các huyện nghèo, xã nghèo, vùng đồng bào dân tộc thiểu số được tăng cường. Thực hiện nhiều giải pháp tạo việc làm, nâng cao thu nhập cho người lao động."
+        "D": "GNI của Việt Nam và GDP của Hàn Quốc."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Tăng trưởng và phát triển kinh tế theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -1024,7 +1024,7 @@
         "A": "Vai trò.",
         "B": "Mục tiêu.",
         "C": "Phương hướng.",
-        "D": "Ý nghĩa.\nĐọc đoạn thông tin sau và trả lời các câu hỏi 21, 22, 23\nNhờ đẩy mạnh tiến trình hội nhập kinh tế quốc tế, đến năm 2022, tổng số quan hệ kinh tế - thương mại của Việt Nam đã nâng lên thành 230 nước và vùng lãnh thổ.  Việt Nam đã phát triển quan hệ kinh tế với các tổ chức quốc tế, các công ty đa quốc gia như: Hiệp định Đối tác kinh tế Việt Nam - Nhật Bản (VJEPA, năm 2009), Hiệp định thương mại tự do Việt Nam - Chile (VCFTA, năm 2011)… Tích cực tham gia các hiệp định thương mại tự do (FTA), nhất là các FTA thế hệ mới. Trong đó, Hiệp định Đối tác toàn diện và tiến bộ xuyên Thái Bình Dương (CPTPP) và Hiệp định Thương mại tự do Việt Nam - Liên minh châu Âu (EVFTA) được đánh giá là những FTA thế hệ mới đang được triển khai tích cực, do vậy cần nắm bắt những cơ hội, vượt qua các thách thức để tận dụng hiệu quả, mang lại những lợi ích cho doanh nghiệp Việt Nam.\n(Tạp chí cộng sản ngày 15/2/2024)"
+        "D": "Ý nghĩa."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Hội nhập kinh tế quốc tế theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -1096,7 +1096,7 @@
         "A": "Anh P, chị V, anh T.",
         "B": "Anh P, anh H và anh K.",
         "C": "Chị V và anh P.",
-        "D": "Chị V, anh P và anh K.\nĐọc thông tin sau và trả lời các câu hỏi 25, 26\nBạn Q là học sinh trường THPT X, ngoài thành tích xuất sắc trong học tập, Q còn thường xuyên tham gia các hoạt động phong trào và hoạt động thiện nguyện, chủ nhật hàng tuần Q cùng một số bạn đến trung tâm bảo trợ trẻ em để hỗ trợ dọn dẹp vệ sinh và chăm sóc các bé. Mặc dù là học sinh lớp 11 nhưng Q rất quan tâm đến các chính sách của Ủy ban nhân dân xã đối với thanh thiếu niên. Q thường tham gia các cuộc họp thôn do Ủy ban nhân dân tổ chức và đã đóng góp ý kiến cho các chính sách xây dựng thư viện, khu vui chơi cho trẻ em. Thỉnh thoảng, Q còn viết bài gửi đăng báo phản ánh về những vấn đề liên quan đến thanh thiếu niên tại địa phương. P là bạn của Q cho rằng những việc làm của Q là không cần thiết vì đó là nhiệm vụ của Ủy ban nhân dân xã phải làm. Tuy nhiên, Q lại cho rằng mỗi công dân đều có quyền tham gia quản lý nhà nước và xã hội và phải có nghĩa vụ trong tham gia quản lý nhà nước và xã hội."
+        "D": "Chị V, anh P và anh K."
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Một số quyền dân chủ cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
@@ -1311,7 +1311,8 @@
       "options": {
         "A": "15%.B .10%.",
         "C": "10,5%.",
-        "D": "5%."
+        "D": "5%.",
+        "B": "(Phương án B - cần bổ sung)"
       },
       "answer": "A",
       "explanation": "Căn cứ nội dung chuyên đề Bảo hiểm và an sinh xã hội theo quy định pháp luật và kiến thức GDKT&PL.",

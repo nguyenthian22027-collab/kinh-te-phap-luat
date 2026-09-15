@@ -270,7 +270,7 @@ function renderExam(exam) {
               <button class="btn-tool" onclick="openEditModal('${q.id}', 'part1')">✏️ Sửa</button>
             </div>
           </div>
-          <div class="question-stem"><strong>Câu ${qNum}:</strong> ${escapeHtml(q.stem)}</div>
+          <div class="question-stem"><strong>Câu ${qNum}:</strong> ${renderStem(q.stem)}</div>
           <div class="options-grid">
       `;
 
@@ -278,9 +278,10 @@ function renderExam(exam) {
       ['A', 'B', 'C', 'D'].forEach(optKey => {
         if (opts[optKey]) {
           const isCorrect = (showAnswers && q.answer === optKey);
+          const optText = opts[optKey];
           html += `
             <div class="option-line ${isCorrect ? 'correct' : ''}">
-              <strong>${optKey}.</strong> ${escapeHtml(opts[optKey])}
+              <strong>${optKey}.</strong> ${escapeHtml(optText)}
             </div>
           `;
         }
@@ -1111,6 +1112,18 @@ function escapeHtml(text) {
   if (!text) return "";
   const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
   return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
+// renderStem: nếu stem chứa HTML (table từ importer), giữ nguyên; nếu không, escape + chuyển newline
+function renderStem(text) {
+  if (!text) return "";
+  const t = String(text);
+  // Nếu stem đã có HTML table (từ fix_qbank_bugs.py), dùng nguyên
+  if (t.includes('<table') || t.includes('<br>')) {
+    return t.replace(/\n/g, '<br>');
+  }
+  // Ngược lại escape an toàn và chuyển \n → <br>
+  return escapeHtml(t).replace(/\n/g, '<br>');
 }
 
 // REPLACEMENT SELECTION MODAL LOGIC
