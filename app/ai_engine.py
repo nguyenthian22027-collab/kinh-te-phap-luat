@@ -14,10 +14,8 @@ def load_knowledge():
     return {}
 
 def load_bank():
-    if os.path.exists(BANK_PATH):
-        with open(BANK_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {"part1": [], "part2": []}
+    from .generator import load_bank as gen_load_bank
+    return gen_load_bank()
 
 def save_bank(bank_data):
     with open(BANK_PATH, "w", encoding="utf-8") as f:

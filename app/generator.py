@@ -42,8 +42,20 @@ STANDARD_MATRIX = {
 }
 
 def load_bank():
+    orig = os.path.join(APP_DIR, "data", "question_bank.json")
+    if os.environ.get("VERCEL"):
+        if os.path.exists(orig):
+            if not os.path.exists(BANK_PATH) or os.path.getmtime(orig) > os.path.getmtime(BANK_PATH):
+                try:
+                    import shutil
+                    shutil.copy(orig, BANK_PATH)
+                except Exception:
+                    pass
     if os.path.exists(BANK_PATH):
         with open(BANK_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    elif os.path.exists(orig):
+        with open(orig, "r", encoding="utf-8") as f:
             return json.load(f)
     return {"part1": [], "part2": []}
 

@@ -12,10 +12,8 @@ USER_MATERIALS_DIR = os.path.join(APP_DIR, "data", "user_materials")
 os.makedirs(USER_MATERIALS_DIR, exist_ok=True)
 
 def load_bank():
-    if os.path.exists(BANK_PATH):
-        with open(BANK_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {"part1": [], "part2": []}
+    from .generator import load_bank as gen_load_bank
+    return gen_load_bank()
 
 def save_bank(bank_data):
     with open(BANK_PATH, "w", encoding="utf-8") as f:
