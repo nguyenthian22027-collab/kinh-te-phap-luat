@@ -77,32 +77,78 @@ def extract_answer_map(text: str) -> dict:
             ans_map[q_num] = ans
     return ans_map
 
+def _clean_passage_bleed(text: str) -> str:
+    """Xóa đoạn passage của câu tiếp theo bị dính vào cuối option/stem hiện tại."""
+    passage_markers = [
+        r'\n\s*Đọc đoạn thông tin',
+        r'\n\s*Đọc thông tin',
+        r'\n\s*Dựa vào bảng số liệu',
+        r'\n\s*Dựa vào thông tin',
+        r'\n\s*\[TABLE START\]',
+        r'\n\s*Căn cứ Luật',       # passage dạng lý thuyết nối sang câu sau
+    ]
+    for marker in passage_markers:
+        m = re.search(marker, text, re.IGNORECASE)
+        if m:
+            text = text[:m.start()]
+    return text.strip()
+
+def _table_markers_to_html(text: str) -> str:
+    """Chuyển [TABLE START]...[TABLE END] thành HTML table."""
+    def replace_table(m):
+        content = m.group(1).strip()
+        rows = [row.strip() for row in content.split('\n') if row.strip()]
+        html = '<table class="stem-table">'
+        for row in rows:
+            cells = [c.strip() for c in row.split('|') if c.strip()]
+            # Bỏ ô chỉ chứa số thứ tự đơn độc
+            cells = [c for c in cells if not re.match(r'^\d+$', c)]
+            if not cells:
+                continue
+            html += '<tr>' + ''.join(f'<td>{c}</td>' for c in cells) + '</tr>'
+        html += '</table>'
+        return html
+    return re.sub(r'\[TABLE START\](.*?)\[TABLE END\]', replace_table, text, flags=re.DOTALL)
+
 def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
     p1_items = []
     p2_items = []
     
     ans_map = extract_answer_map(text)
 
-    # Check if text contains Part II indicators (Đúng/Sai with a, b, c, d)
-    p2_pattern = re.compile(r'(?:Câu|CÂU|Bài|BÀI)\s*(\d+)[\.:]\s*(.*?)(?=(?:\n(?:Câu|CÂU|Bài|BÀI)\s*\d+[\.:])|$)', re.DOTALL)
+    # Tách ranh giới câu hỏi: "Câu N:" hoặc "Câu N." — lookahead câu tiếp hoặc hết file
+    # Thêm lookahead chặn "Đọc thông tin..." không bị ăn vào nội dung câu
+    q_pattern = re.compile(
+        r'(?:Câu|CÂU|Bài|BÀI)\s*(\d+)\s*[\.:\)]\s*(.*?)(?=(?:\n\s*(?:Câu|CÂU|Bài|BÀI)\s*\d+\s*[\.:\)])|$)',
+        re.DOTALL
+    )
     
-    for match in p2_pattern.finditer(text):
+    for match in q_pattern.finditer(text):
         q_num = int(match.group(1))
         q_body = match.group(2).strip()
         
-        # Check if it has a), b), c), d)
-        stmt_matches = list(re.finditer(r'(?:^|\n)\s*([a-d])\)\s*(.*?)(?=(?:\n\s*[a-d]\))|$)', q_body, re.DOTALL))
+        # Loại bỏ passage "Đọc thông tin..." bị kéo theo nếu chưa có câu mới rõ ràng
+        q_body = _clean_passage_bleed(q_body)
+        if not q_body:
+            continue
+        
+        # Chuyển bảng số liệu
+        q_body = _table_markers_to_html(q_body)
+
+        # Check if it has a), b), c), d) — câu Phần II
+        stmt_matches = list(re.finditer(
+            r'(?:^|\n)\s*([a-d])\)\s*(.*?)(?=(?:\n\s*[a-d]\))|$)',
+            q_body, re.DOTALL
+        ))
         if len(stmt_matches) >= 3:
-            # This is a Part 2 question
-            stem = q_body[:stmt_matches[0].start()].strip()
+            stem = _clean_passage_bleed(q_body[:stmt_matches[0].start()].strip())
             grade, topic, level = classify_text(stem)
             statements = []
             for sm in stmt_matches:
                 lbl = sm.group(1)
-                st_text = sm.group(2).strip()
+                st_text = _clean_passage_bleed(sm.group(2).strip())
                 s_grade, s_topic, s_level = classify_text(st_text)
                 
-                # Trích xuất đáp án Đúng/Sai thực tế nếu văn bản có ghi (Ví dụ: "a) ... (Đúng)", "a) ... Đúng", "a) ... [Đ]")
                 ans_bool = True if lbl in ['a', 'c'] else False
                 st_lower = st_text.lower()
                 if re.search(r'[\(\[\s](?:đúng|đ)[\)\]\s\.]*$', st_lower):
@@ -119,37 +165,60 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     "topic": s_topic,
                     "explanation": f"Căn cứ nội dung chuyên đề {s_topic}."
                 })
-            p2_items.append({
-                "id": f"imported_p2_{uuid.uuid4().hex[:8]}",
-                "type": "part2",
-                "stem": stem,
-                "statements": statements,
-                "grade": grade,
-                "topic": topic,
-                "level": level,
-                "source": source_name
-            })
+            if stem:
+                p2_items.append({
+                    "id": f"imported_p2_{uuid.uuid4().hex[:8]}",
+                    "type": "part2",
+                    "stem": stem,
+                    "statements": statements,
+                    "grade": grade,
+                    "topic": topic,
+                    "level": level,
+                    "source": source_name
+                })
         else:
-            # Check if it has A., B., C., D. options
-            opt_match = re.search(r'(?:^|\s)([A-D])\.\s+', q_body)
+            # Câu Phần I: tìm A. B. C. D.
+            # Regex chặt hơn: option kết thúc khi gặp option kế, câu kế, hoặc "Đọc thông tin"
+            opt_match = re.search(r'(?:^|\n)\s*([A-D])\.\s+', q_body)
             if opt_match:
-                stem = q_body[:opt_match.start()].strip()
+                stem = _clean_passage_bleed(q_body[:opt_match.start()].strip())
                 opts_str = q_body[opt_match.start():]
+                
+                # Cắt opts_str tại ranh giới passage
+                opts_str = _clean_passage_bleed(opts_str)
+                
                 opts = {}
-                opt_pattern = re.compile(r'([A-D])\.\s*(.*?)(?=(?:[A-D]\.|$))', re.DOTALL)
+                # Regex chặt: mỗi option kết thúc khi gặp "[A-D]." tiếp theo
+                opt_pattern = re.compile(
+                    r'([A-D])\.\s*(.*?)(?=(?:\n\s*[A-D]\.)|$)',
+                    re.DOTALL
+                )
                 for o_m in opt_pattern.finditer(opts_str):
-                    opts[o_m.group(1)] = o_m.group(2).strip()
+                    key = o_m.group(1)
+                    val = _clean_passage_bleed(o_m.group(2).strip())
+                    if val:
+                        opts[key] = val
+                
+                # Bỏ qua câu không đủ options (có thể là passage text không phải câu hỏi)
+                if len(opts) < 2 or not stem:
+                    continue
                     
+                # Điền option còn thiếu
+                for letter in ['A', 'B', 'C', 'D']:
+                    if letter not in opts:
+                        opts[letter] = f"(Phương án {letter})"
+                        
                 grade, topic, level = classify_text(stem, " ".join(opts.values()))
                 
-                # Tìm đáp án thực tế: từ bảng đáp án ans_map hoặc từ inline text (Ví dụ: "Đáp án: B", "Chọn C")
                 ans = ans_map.get(q_num)
                 if not ans:
                     inline_match = re.search(r'(?:Đáp án|Chọn|Key|Đ/A)[\s:\.]+([A-D])', q_body, re.IGNORECASE)
                     if inline_match:
                         ans = inline_match.group(1).upper()
                     else:
-                        ans = "A" # Mặc định nếu hoàn toàn không có dấu hiệu
+                        # Kiểm tra option có đánh dấu * (A*. hoặc A.)
+                        star_match = re.search(r'([A-D])\*\.', q_body)
+                        ans = star_match.group(1) if star_match else "A"
 
                 p1_items.append({
                     "id": f"imported_p1_{uuid.uuid4().hex[:8]}",
