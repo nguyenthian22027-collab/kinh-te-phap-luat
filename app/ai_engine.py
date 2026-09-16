@@ -425,6 +425,221 @@ Trích xuất DUY NHẤT một chuỗi JSON hợp lệ:
     save_bank(bank)
     return {"status": "success", "question": chosen}
 
+def generate_ai_cluster_questions(topic, grade=12, level_q1="hieu", level_q2="van_dung", api_key=None, raw_keys=None, model="gemini-2.0-flash"):
+    """
+    Sinh chùm câu hỏi HSG (01 ngữ liệu chung + 02 câu hỏi trắc nghiệm A, B, C, D) với tỷ lệ nhận thức tùy biến.
+    Tự động lưu cả 2 câu hỏi vào ngân hàng câu hỏi dưới dạng câu hỏi chùm chuẩn.
+    """
+    config_keys = raw_keys or api_key or get_saved_api_config().get("raw_keys", "")
+    cluster_id = f"cluster_ai_{uuid.uuid4().hex[:8]}"
+    
+    lvl1_vn = "Nhận biết" if level_q1 == "biet" else ("Thông hiểu" if level_q1 == "hieu" else "Vận dụng")
+    lvl2_vn = "Nhận biết" if level_q2 == "biet" else ("Thông hiểu" if level_q2 == "hieu" else "Vận dụng")
+
+    if config_keys:
+        try:
+            curriculum_guidance = get_grade_curriculum_guidelines(grade, topic)
+            prompt = f"""Tạo 01 CHÙM CÂU HỎI (Dạng câu hỏi trùm/ngữ liệu chung gồm 01 đoạn thông tin tình huống và 02 câu hỏi trắc nghiệm A, B, C, D) phục vụ kỳ thi Học sinh giỏi (HSG) môn Giáo dục Kinh tế và Pháp luật (GDKT&PL) lớp {grade}, chuyên đề: "{topic}".
+
+{curriculum_guidance}
+
+YÊU CẦU BẮT BUỘC ĐỐI VỚI DẠNG CÂU HỎI CHÙM THI HSG:
+1. ĐOẠN THÔNG TIN TÌNH HUỐNG (cluster_passage):
+   - Là một tình huống thực tế, vụ việc pháp lý hoặc bài báo kinh tế - xã hội thời sự hoàn chỉnh, logic (khoảng 150 - 250 từ).
+   - Có dữ kiện đa chiều: số liệu, hành vi của các chủ thể/doanh nghiệp, bối cảnh kinh tế hoặc pháp lý rõ ràng.
+   - Chứa đủ thông tin để làm ngữ liệu nền tảng cho CẢ 2 CÂU HỎI trắc nghiệm tiếp theo.
+
+2. CÂU HỎI THỨ NHẤT (sub_question 1):
+   - Mức độ nhận thức: {level_q1.upper()} ({lvl1_vn}).
+   - Khai thác trực tiếp từ đoạn thông tin: kiểm tra khả năng nhận diện, hiểu bản chất hoặc phân tích ban đầu từ ngữ liệu.
+   - Có 4 phương án A, B, C, D độc lập, 1 đáp án đúng và 3 phương án nhiễu có tính sư phạm cao.
+   - Lời giải (explanation) chi tiết, viện dẫn căn cứ pháp lý hoặc nguyên lý kinh tế.
+
+3. CÂU HỎI THỨ HAI (sub_question 2):
+   - Mức độ nhận thức: {level_q2.upper()} ({lvl2_vn}).
+   - Khai thác sâu sắc từ đoạn thông tin: đánh giá trách nhiệm pháp lý, vi phạm pháp luật, tính toán chỉ tiêu, giải pháp kinh tế hoặc xử lý tình huống nâng cao.
+   - Có 4 phương án A, B, C, D phân hóa mạnh mẽ, 1 đáp án đúng.
+   - Lời giải (explanation) chi tiết kèm căn cứ điều luật/quy chuẩn hiện hành.
+
+4. ĐỊNH DẠNG JSON DUY NHẤT:
+Trích xuất DUY NHẤT một chuỗi JSON hợp lệ (không có văn bản nào khác ngoài JSON):
+{{
+  "cluster_passage": "Đoạn văn bản ngữ liệu/thông tin tình huống...",
+  "topic": "{topic}",
+  "grade": {grade},
+  "questions": [
+    {{
+      "stem": "Câu hỏi 1...",
+      "level": "{level_q1}",
+      "options": {{
+        "A": "Phương án A...",
+        "B": "Phương án B...",
+        "C": "Phương án C...",
+        "D": "Phương án D..."
+      }},
+      "answer": "A",
+      "explanation": "Lời giải và căn cứ pháp lý chi tiết..."
+    }},
+    {{
+      "stem": "Câu hỏi 2...",
+      "level": "{level_q2}",
+      "options": {{
+        "A": "Phương án A...",
+        "B": "Phương án B...",
+        "C": "Phương án C...",
+        "D": "Phương án D..."
+      }},
+      "answer": "B",
+      "explanation": "Lời giải và căn cứ pháp lý chi tiết..."
+    }}
+  ]
+}}"""
+
+            result = call_gemini_rest_failover(
+                prompt=prompt,
+                raw_keys_text=config_keys,
+                model=model,
+                system_instruction=GDKTPL_EXAM_SYSTEM_INSTRUCTION
+            )
+            res_text = result["text"].strip()
+            
+            import re
+            json_match = re.search(r'(\{.*\})', res_text, re.DOTALL)
+            if json_match:
+                res_text = json_match.group(1)
+            elif "```json" in res_text:
+                res_text = res_text.split("```json")[1].split("```")[0].strip()
+            elif "```" in res_text:
+                res_text = res_text.split("```")[1].split("```")[0].strip()
+                
+            data = json.loads(res_text)
+            passage = data.get("cluster_passage", "").strip()
+            sub_qs = data.get("questions", [])
+            
+            if len(sub_qs) >= 2 and passage:
+                q1_raw = sub_qs[0]
+                q2_raw = sub_qs[1]
+                
+                q1 = {
+                    "id": f"{cluster_id}_q1",
+                    "type": "part1",
+                    "grade": int(data.get("grade", grade)),
+                    "level": q1_raw.get("level", level_q1),
+                    "topic": data.get("topic", topic),
+                    "stem": q1_raw.get("stem", ""),
+                    "options": q1_raw.get("options", {}),
+                    "answer": q1_raw.get("answer", "A"),
+                    "explanation": q1_raw.get("explanation", ""),
+                    "source": f"Gemini {result['used_model']} ({result['used_key_masked']})",
+                    "cluster_id": cluster_id,
+                    "cluster_passage": passage,
+                    "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+                    "cluster_order": 1,
+                    "cluster_size": 2
+                }
+                
+                q2 = {
+                    "id": f"{cluster_id}_q2",
+                    "type": "part1",
+                    "grade": int(data.get("grade", grade)),
+                    "level": q2_raw.get("level", level_q2),
+                    "topic": data.get("topic", topic),
+                    "stem": q2_raw.get("stem", ""),
+                    "options": q2_raw.get("options", {}),
+                    "answer": q2_raw.get("answer", "B"),
+                    "explanation": q2_raw.get("explanation", ""),
+                    "source": f"Gemini {result['used_model']} ({result['used_key_masked']})",
+                    "cluster_id": cluster_id,
+                    "cluster_passage": passage,
+                    "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+                    "cluster_order": 2,
+                    "cluster_size": 2
+                }
+                
+                bank = load_bank()
+                bank["part1"].extend([q1, q2])
+                save_bank(bank)
+                
+                return {
+                    "status": "success",
+                    "cluster_id": cluster_id,
+                    "cluster_passage": passage,
+                    "questions": [q1, q2],
+                    "is_ai": True,
+                    "used_model": result["used_model"],
+                    "used_key_masked": result["used_key_masked"]
+                }
+        except Exception as e:
+            print(f"[AI Cluster Fallback] Lỗi Gemini ({e}), sử dụng chùm mẫu dự phòng...")
+            pass
+
+    # Template fallback for cluster questions
+    fallback_passage = (
+        "Năm 2024, một số địa phương ghi nhận tình trạng doanh nghiệp sản xuất da giày X trên địa bàn "
+        "bị đình chỉ hoạt động vì xả nước thải chưa qua xử lý ra sông. Trong quá trình thanh tra, ông B "
+        "(Trưởng đoàn thanh tra môi trường) phát hiện sai phạm nhưng đã nhận 50 triệu đồng của bà M (Giám đốc công ty X) "
+        "để không lập biên bản đình chỉ. Anh T (kỹ sư nhà máy) đã gửi đơn tố cáo kèm file ghi âm đến cơ quan chức năng. "
+        "Sau đó, ông C (Phó Giám đốc Sở) đã chỉ đạo chuyển hồ sơ sang Cơ quan Cảnh sát điều tra để khởi tố vụ án theo quy định."
+    )
+    
+    q1 = {
+        "id": f"{cluster_id}_q1",
+        "type": "part1",
+        "grade": grade,
+        "level": level_q1,
+        "topic": topic or "Vi phạm pháp luật và trách nhiệm pháp lý",
+        "stem": "Trong thông tin trên, hành vi của ông B đã vi phạm hình thức thực hiện pháp luật nào và phải chịu trách nhiệm pháp lý gì?",
+        "options": {
+            "A": "Không tuân thủ pháp luật và phải chịu trách nhiệm hình sự.",
+            "B": "Sử dụng sai pháp luật và chỉ chịu trách nhiệm kỷ luật.",
+            "C": "Không áp dụng pháp luật và phải chịu trách nhiệm dân sự.",
+            "D": "Không thi hành pháp luật và chỉ bị xử phạt hành chính."
+        },
+        "answer": "A",
+        "explanation": "Ông B là người có chức vụ quyền hạn đã nhận hối lộ để bỏ qua vi phạm môi trường, đây là hành vi không tuân thủ pháp luật (làm điều pháp luật cấm) và có dấu hiệu tội phạm hình sự (Điều 354 Bộ luật Hình sự 2015).",
+        "source": "Bộ sinh chùm câu hỏi tự động chuẩn GDPT 2018",
+        "cluster_id": cluster_id,
+        "cluster_passage": fallback_passage,
+        "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+        "cluster_order": 1,
+        "cluster_size": 2
+    }
+    
+    q2 = {
+        "id": f"{cluster_id}_q2",
+        "type": "part1",
+        "grade": grade,
+        "level": level_q2,
+        "topic": topic or "Vi phạm pháp luật và trách nhiệm pháp lý",
+        "stem": "Những chủ thể nào dưới đây trong thông tin trên ĐÃ VI PHẠM pháp luật?",
+        "options": {
+            "A": "Bà M và ông B.",
+            "B": "Chỉ có bà M.",
+            "C": "Bà M, ông B và anh T.",
+            "D": "Ông B và ông C."
+        },
+        "answer": "A",
+        "explanation": "Bà M vi phạm pháp luật bảo vệ môi trường và hành vi đưa hối lộ; ông B vi phạm pháp luật với hành vi nhận hối lộ. Anh T thực hiện quyền tố cáo đúng luật; ông C thực thi công vụ đúng quy định pháp luật.",
+        "source": "Bộ sinh chùm câu hỏi tự động chuẩn GDPT 2018",
+        "cluster_id": cluster_id,
+        "cluster_passage": fallback_passage,
+        "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+        "cluster_order": 2,
+        "cluster_size": 2
+    }
+    
+    bank = load_bank()
+    bank["part1"].extend([q1, q2])
+    save_bank(bank)
+    
+    return {
+        "status": "success",
+        "cluster_id": cluster_id,
+        "cluster_passage": fallback_passage,
+        "questions": [q1, q2],
+        "is_ai": False
+    }
+
 def ai_parse_and_solve_imported_exam(raw_text: str, source_name: str = "Tài liệu nạp vào", raw_keys: str = None, model: str = "gemini-3.5") -> tuple:
     """
     Sử dụng Google Gemini AI để bóc tách, thẩm định và giải chuẩn xác toàn bộ đề thi được nạp vào.

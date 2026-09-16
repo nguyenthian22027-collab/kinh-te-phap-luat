@@ -71,7 +71,7 @@ def get_grade_key(grade):
     else:
         return "kt_12"
 
-def generate_exam(preset="city_hsg", custom_config=None, exam_info=None):
+def generate_exam(preset="city_hsg", custom_config=None, exam_info=None, num_clusters=3):
     bank = load_bank()
     p1_pool = copy.deepcopy(bank.get("part1", []))
     p2_pool = copy.deepcopy(bank.get("part2", []))
@@ -89,34 +89,94 @@ def generate_exam(preset="city_hsg", custom_config=None, exam_info=None):
             "header_left": "SỞ GIÁO DỤC VÀ ĐÀO TẠO\nTHÀNH PHỐ HẢI PHÒNG",
             "header_right": "ĐỀ THI CHÍNH THỨC\n(Đề thi gồm 48 câu, 8 trang)"
         }
-        
+
+    # ---- Helper: select cluster questions atomically ----
+    def select_clusters(pool, n_clusters):
+        """Pick n_clusters cluster groups atomically (each group = 2 questions).
+        Returns list of chosen questions (ordered by cluster_order) and set of used IDs."""
+        # Build map of cluster_id -> sorted list of questions
+        cluster_map = {}
+        for q in pool:
+            cid = q.get("cluster_id")
+            if cid:
+                cluster_map.setdefault(cid, []).append(q)
+        # Only keep complete clusters (both sub-questions present)
+        complete_clusters = {
+            cid: sorted(qs, key=lambda x: x.get("cluster_order", 1))
+            for cid, qs in cluster_map.items()
+            if len(qs) >= 2
+        }
+        available = list(complete_clusters.values())
+        n_pick = min(n_clusters, len(available))
+        chosen_groups = random.sample(available, n_pick)
+        chosen_qs = []
+        for group in chosen_groups:
+            chosen_qs.extend(group[:2])  # take first 2 sub-questions per cluster
+        return chosen_qs
+
     if preset in ["city_hsg", "school_hsg"]:
-        # Select Part 1 according to matrix
+        # 1. First select clusters atomically
+        cluster_qs = select_clusters(p1_pool, num_clusters) if num_clusters > 0 else []
+        cluster_ids_used = {q["id"] for q in cluster_qs}
+        # Exclude all cluster questions from standalone pool so no cluster question is picked alone
+        standalone_pool = [q for q in p1_pool if not q.get("cluster_id")]
+
+        # 2. How many slots remain for standalone questions?
+        total_target = 40
+        standalone_target = total_target - len(cluster_qs)
+
+        # 3. Select standalone questions per matrix (reduced by cluster contribution)
         dist = STANDARD_MATRIX["part1"]["distribution"]
+        # Tally what clusters already contributed by grade/level
+        cluster_contrib = {}
+        for q in cluster_qs:
+            g_key = get_grade_key(q.get("grade", 11))
+            lvl = q.get("level", "hieu")
+            cluster_contrib.setdefault(g_key, {}).setdefault(lvl, 0)
+            cluster_contrib[g_key][lvl] += 1
+
+        selected_standalone = []
         for g_key, target in dist.items():
             g_num = 10 if g_key == "pl_10" else (11 if g_key == "pl_11" else 12)
             for lvl in ["biet", "hieu", "van_dung"]:
                 target_count = target[lvl]
-                # Filter candidates
-                candidates = [q for q in p1_pool if q.get("grade") == g_num and q.get("level") == lvl and q not in selected_p1]
-                if len(candidates) < target_count:
-                    # fallback to any question of same grade
-                    candidates += [q for q in p1_pool if q.get("grade") == g_num and q not in selected_p1 and q not in candidates]
-                if len(candidates) < target_count:
-                    # fallback to any question
-                    candidates += [q for q in p1_pool if q not in selected_p1 and q not in candidates]
-                    
-                chosen = random.sample(candidates, min(target_count, len(candidates)))
-                selected_p1.extend(chosen)
-                
-        # Fill remaining if Part 1 < 40
-        while len(selected_p1) < 40 and len(p1_pool) > len(selected_p1):
-            avail = [q for q in p1_pool if q not in selected_p1]
+                # Subtract cluster contribution for this grade/level
+                already = cluster_contrib.get(g_key, {}).get(lvl, 0)
+                need = max(0, target_count - already)
+                candidates = [
+                    q for q in standalone_pool
+                    if q.get("grade") == g_num and q.get("level") == lvl
+                    and q not in selected_standalone
+                ]
+                if len(candidates) < need:
+                    candidates += [
+                        q for q in standalone_pool
+                        if q.get("grade") == g_num and q not in selected_standalone and q not in candidates
+                    ]
+                if len(candidates) < need:
+                    candidates += [
+                        q for q in standalone_pool
+                        if q not in selected_standalone and q not in candidates
+                    ]
+                chosen = random.sample(candidates, min(need, len(candidates)))
+                selected_standalone.extend(chosen)
+
+        # Fill remaining if still under target
+        while len(selected_standalone) < standalone_target:
+            avail = [q for q in standalone_pool if q not in selected_standalone]
             if not avail:
                 break
-            selected_p1.append(random.choice(avail))
-            
-        # Select Part 2 according to matrix: 2 items grade 10, 3 items grade 11, 3 items grade 12
+            selected_standalone.append(random.choice(avail))
+
+        # 4. Merge: place cluster groups together (adjacent), then fill rest
+        #    Strategy: insert cluster groups at natural positions, then append standalone
+        selected_p1 = cluster_qs + selected_standalone
+        random.shuffle(selected_p1)
+        # But ensure cluster pairs stay adjacent:
+        # Re-sort so that within each cluster_id, order is preserved, and clusters are contiguous blocks
+        selected_p1 = _reorder_with_clusters(selected_p1)
+
+        # Select Part 2 (unchanged)
         p2_dist = STANDARD_MATRIX["part2"]["distribution"]
         for g_key, target in p2_dist.items():
             g_num = 10 if g_key == "pl_10" else (11 if g_key == "pl_11" else 12)
@@ -126,51 +186,91 @@ def generate_exam(preset="city_hsg", custom_config=None, exam_info=None):
                 candidates += [q for q in p2_pool if q not in selected_p2 and q not in candidates]
             chosen = random.sample(candidates, min(target_items, len(candidates)))
             selected_p2.extend(chosen)
-            
+
         while len(selected_p2) < 8 and len(p2_pool) > len(selected_p2):
             avail = [q for q in p2_pool if q not in selected_p2]
             if not avail:
                 break
             selected_p2.append(random.choice(avail))
-            
+
     elif preset.startswith("review_grade_"):
         req_grade = int(preset.split("_")[-1])
-        # Filter questions of that grade
         g_p1 = [q for q in p1_pool if q.get("grade") == req_grade]
         g_p2 = [q for q in p2_pool if q.get("grade") == req_grade]
         selected_p1 = random.sample(g_p1, min(len(g_p1), 30))
         selected_p2 = random.sample(g_p2, min(len(g_p2), 5))
-        
+
     elif preset == "custom" and custom_config:
         num_p1 = custom_config.get("num_part1", 40)
         num_p2 = custom_config.get("num_part2", 8)
         selected_p1 = random.sample(p1_pool, min(len(p1_pool), num_p1))
         selected_p2 = random.sample(p2_pool, min(len(p2_pool), num_p2))
     else:
-        # Default fallback
         selected_p1 = random.sample(p1_pool, min(len(p1_pool), 40))
         selected_p2 = random.sample(p2_pool, min(len(p2_pool), 8))
-        
+
     # Re-number items in order
     exam_p1 = []
     for idx, q in enumerate(selected_p1, 1):
         item = copy.deepcopy(q)
         item["exam_number"] = idx
+        # Update cluster_header with actual question numbers for cluster q1
+        if item.get("cluster_id") and item.get("cluster_order") == 1:
+            cluster_size = item.get("cluster_size", 2)
+            item["cluster_header_rendered"] = f"Đọc thông tin sau và trả lời câu hỏi từ câu {idx} đến câu {idx + cluster_size - 1}:"
         exam_p1.append(item)
-        
+
     exam_p2 = []
     for idx, q in enumerate(selected_p2, 1):
         item = copy.deepcopy(q)
         item["exam_number"] = idx
         exam_p2.append(item)
-        
+
     return {
         "info": exam_info,
         "preset": preset,
+        "num_clusters": num_clusters,
         "part1": exam_p1,
         "part2": exam_p2,
         "stats": calculate_stats(exam_p1, exam_p2)
     }
+
+
+def _reorder_with_clusters(questions):
+    """
+    Reorder questions so that cluster pairs stay adjacent.
+    Non-cluster questions are interspersed randomly between cluster blocks.
+    """
+    # Separate clusters and standalone
+    cluster_map = {}
+    standalone = []
+    for q in questions:
+        cid = q.get("cluster_id")
+        if cid:
+            cluster_map.setdefault(cid, []).append(q)
+        else:
+            standalone.append(q)
+
+    # Sort each cluster group by cluster_order
+    cluster_blocks = [
+        sorted(qs, key=lambda x: x.get("cluster_order", 1))
+        for qs in cluster_map.values()
+    ]
+
+    # Shuffle cluster blocks and standalone
+    random.shuffle(cluster_blocks)
+    random.shuffle(standalone)
+
+    # Interleave: place cluster blocks at random insertion points
+    result = list(standalone)
+    for block in cluster_blocks:
+        insert_pos = random.randint(0, len(result))
+        for i, q in enumerate(block):
+            result.insert(insert_pos + i, q)
+
+    return result
+
+
 
 def calculate_stats(p1_list, p2_list):
     stats = {

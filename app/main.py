@@ -2,7 +2,7 @@ import os
 import json
 import shutil
 import uuid
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Union
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
@@ -15,7 +15,7 @@ from .generator import (
 )
 from .docx_exporter import export_student_docx, export_teacher_docx, export_matrix_docx
 from .importer import import_document_file, import_from_url, import_raw_text
-from .ai_engine import generate_ai_scenario_question, load_knowledge
+from .ai_engine import generate_ai_scenario_question, generate_ai_cluster_questions, load_knowledge
 from .license_manager import (
     get_user_status, consume_user_quota, activate_user_pro,
     get_firebase_config, save_firebase_config, generate_checksum_key, PLAN_PRICING,
@@ -84,6 +84,7 @@ class GenerateRequest(BaseModel):
     preset: str = "city_hsg"
     custom_config: Optional[Dict[str, Any]] = None
     exam_info: Optional[Dict[str, Any]] = None
+    num_clusters: Optional[int] = 3
 
 class RerollRequest(BaseModel):
     exam_id: Optional[str] = None
@@ -148,12 +149,22 @@ class AiGenerateRequest(BaseModel):
     prompt: Optional[str] = ""
     q_type: Optional[str] = "part1"
 
+class AiClusterGenerateRequest(BaseModel):
+    topic: str
+    grade: int = 12
+    level_q1: str = "hieu"
+    level_q2: str = "van_dung"
+    api_key: Optional[str] = None
+    raw_keys: Optional[str] = None
+    model: Optional[str] = "gemini-2.0-flash"
+
+
 class ApiConfigRequest(BaseModel):
     raw_keys: str
     model: Optional[str] = "gemini-2.0-flash"
 
 class SaveGeneratedQuestionRequest(BaseModel):
-    question: dict
+    question: Union[dict, List[dict]]
 
 class UserStatusRequest(BaseModel):
     uid: str
@@ -371,7 +382,8 @@ def handle_swap_question(req: SwapQuestionRequest):
 @app.post("/api/generate")
 def create_exam(req: GenerateRequest):
     global CURRENT_EXAM
-    exam = generate_exam(preset=req.preset, custom_config=req.custom_config, exam_info=req.exam_info)
+    num_clusters = req.num_clusters if req.num_clusters is not None else 3
+    exam = generate_exam(preset=req.preset, custom_config=req.custom_config, exam_info=req.exam_info, num_clusters=num_clusters)
     CURRENT_EXAM = exam
     return exam
 
@@ -527,21 +539,38 @@ def save_api_config(req: ApiConfigRequest):
 
 @app.post("/api/save-generated-question")
 def save_generated_question(req: SaveGeneratedQuestionRequest):
-    q = req.question
-    if not q or "stem" not in q:
-        raise HTTPException(status_code=400, detail="Dữ liệu câu hỏi không hợp lệ.")
-    
-    if not q.get("id"):
-        q["id"] = f"ai_gen_{uuid.uuid4().hex[:8]}"
-        
-    q_type = q.get("type", "part1")
     bank = load_bank()
-    if q_type == "part2":
-        bank["part2"].append(q)
+    data = req.question
+    saved_items = []
+    
+    if isinstance(data, list):
+        questions_to_save = data
+    elif isinstance(data, dict) and "questions" in data and isinstance(data["questions"], list):
+        questions_to_save = data["questions"]
     else:
-        bank["part1"].append(q)
+        questions_to_save = [data]
+        
+    for q in questions_to_save:
+        if not q or not isinstance(q, dict) or "stem" not in q:
+            continue
+        if not q.get("id"):
+            q["id"] = f"ai_gen_{uuid.uuid4().hex[:8]}"
+        q_type = q.get("type", "part1")
+        if q_type == "part2":
+            bank["part2"].append(q)
+        else:
+            bank["part1"].append(q)
+        saved_items.append(q)
+        
+    if not saved_items:
+        raise HTTPException(status_code=400, detail="Dữ liệu câu hỏi không hợp lệ.")
+        
     save_bank(bank)
-    return {"status": "success", "question": q}
+    return {
+        "status": "success",
+        "question": saved_items[0] if len(saved_items) == 1 else saved_items,
+        "count": len(saved_items)
+    }
 
 @app.post("/api/ai-generate")
 def handle_ai_generate(req: AiGenerateRequest):
@@ -554,6 +583,18 @@ def handle_ai_generate(req: AiGenerateRequest):
         model=req.model or "gemini-2.0-flash",
         custom_prompt=req.prompt,
         q_type=req.q_type or "part1"
+    )
+
+@app.post("/api/ai-generate-cluster")
+def handle_ai_generate_cluster(req: AiClusterGenerateRequest):
+    return generate_ai_cluster_questions(
+        topic=req.topic,
+        grade=req.grade,
+        level_q1=req.level_q1,
+        level_q2=req.level_q2,
+        api_key=req.api_key,
+        raw_keys=req.raw_keys,
+        model=req.model or "gemini-2.0-flash"
     )
 
 # --- LICENSE & FIREBASE AUTH ENDPOINTS ---

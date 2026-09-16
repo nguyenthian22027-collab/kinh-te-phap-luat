@@ -31,14 +31,23 @@ function initAiGradeTopicSync() {
   gradeSelect.addEventListener("change", () => {
     const grade = gradeSelect.value;
     const validTopics = TOPIC_BY_GRADE[grade] || [];
-    // Tìm option nào đang selected có thuộc grade hiện tại không
     const currentVal = topicSelect.value;
     if (!validTopics.includes(currentVal)) {
-      // Chọn topic đầu tiên của grade mới
       const firstMatchOption = Array.from(topicSelect.options).find(opt => validTopics.includes(opt.value));
       if (firstMatchOption) topicSelect.value = firstMatchOption.value;
     }
   });
+
+  const typeSelect = document.getElementById("ai-type-select");
+  if (typeSelect) {
+    typeSelect.addEventListener("change", () => {
+      const isCluster = typeSelect.value === "cluster";
+      const clusterBox = document.getElementById("ai-cluster-levels-box");
+      const singleBox = document.getElementById("ai-single-level-box");
+      if (clusterBox) clusterBox.style.display = isCluster ? "block" : "none";
+      if (singleBox) singleBox.style.display = isCluster ? "none" : "block";
+    });
+  }
 }
 
 
@@ -133,6 +142,17 @@ function initPresetSelection() {
     });
   });
 
+  // Tùy chọn số lượng câu hỏi chùm
+  const clusterCards = document.querySelectorAll(".cluster-radio-card");
+  clusterCards.forEach(card => {
+    card.addEventListener("click", () => {
+      clusterCards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+      const radio = card.querySelector("input[type='radio']");
+      if (radio) radio.checked = true;
+    });
+  });
+
   const btnGen = document.getElementById("btn-generate-exam");
   if (btnGen) {
     btnGen.addEventListener("click", async () => {
@@ -140,6 +160,9 @@ function initPresetSelection() {
         return;
       }
       const selectedPreset = document.querySelector("input[name='preset-select']:checked").value;
+      const numClustersRadio = document.querySelector("input[name='cfg-num-clusters']:checked");
+      const numClusters = numClustersRadio ? parseInt(numClustersRadio.value, 10) : 3;
+
       const examInfo = {
         header_left: document.getElementById("cfg-header-left").value,
         exam_title: document.getElementById("cfg-title").value,
@@ -154,7 +177,7 @@ function initPresetSelection() {
       fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preset: selectedPreset, exam_info: examInfo })
+        body: JSON.stringify({ preset: selectedPreset, exam_info: examInfo, num_clusters: numClusters })
       })
       .then(res => res.json())
       .then(data => {
@@ -255,12 +278,36 @@ function renderExam(exam) {
       const lvlClass = q.level === 'biet' ? 'q-badge-biet' : (q.level === 'hieu' ? 'q-badge-hieu' : 'q-badge-van-dung');
       const lvlName = q.level === 'biet' ? 'Biết' : (q.level === 'hieu' ? 'Hiểu' : 'Vận dụng');
 
+      // Khối hiển thị ngữ liệu chung nếu là câu đầu tiên trong chùm câu hỏi
+      if (q.cluster_id && q.cluster_order === 1) {
+        const clusterSize = q.cluster_size || 2;
+        const endNum = qNum + clusterSize - 1;
+        const headerText = q.cluster_header_rendered || `Đọc thông tin sau và trả lời các câu hỏi từ câu ${qNum} đến câu ${endNum}:`;
+        html += `
+          <div class="cluster-passage-card">
+            <div class="cluster-passage-header">
+              <div class="cluster-header-left">
+                <span class="cluster-icon">📖</span>
+                <span class="cluster-header-text">${escapeHtml(headerText)}</span>
+              </div>
+              <span class="cluster-badge">Chùm ${clusterSize} câu hỏi</span>
+            </div>
+            <div class="cluster-passage-body">
+              ${renderStem(q.cluster_passage || '')}
+            </div>
+          </div>
+        `;
+      }
+
+      const clusterTag = q.cluster_id ? `<span class="q-badge q-badge-cluster">Chùm câu hỏi (${q.cluster_order || 1}/${q.cluster_size || 2})</span>` : '';
+
       html += `
-        <div class="question-item" id="q-item-${q.id}">
+        <div class="question-item ${q.cluster_id ? 'question-cluster-member' : ''}" id="q-item-${q.id}">
           <div class="question-header">
             <div class="question-meta">
               <span class="q-badge ${lvlClass}">${lvlName}</span>
               <span class="q-badge q-badge-grade">Lớp ${q.grade || 11}</span>
+              ${clusterTag}
               <span class="tag">${q.topic || 'GDKT&PL'}</span>
               <span class="source-tag" style="font-size:10px;">📁 ${escapeHtml(q.source || 'Đề gốc')}</span>
             </div>
@@ -739,11 +786,77 @@ function initResourceHandlers() {
           <div style="display: flex; align-items: center; gap: 10px;">
             <div class="spinner"></div>
             <span id="ai-gen-live-status" style="color: #bae6fd; font-size: 13.5px;">
-              ${hasKeys ? `🤖 Đang kết nối Gemini (${apiConfig.model}) và biên soạn câu hỏi theo chuẩn HSG GDPT 2018...` : `Đang kích hoạt bộ sinh kịch bản tình huống pháp luật...`}
+              ${hasKeys ? `🤖 Đang kết nối Gemini (${apiConfig.model}) và biên soạn ${qType === 'cluster' ? 'chùm câu hỏi' : 'câu hỏi'} theo chuẩn HSG GDPT 2018...` : `Đang kích hoạt bộ sinh kịch bản tình huống pháp luật...`}
             </span>
           </div>
         </div>
       `;
+
+      // 0. XỬ LÝ DẠNG CÂU HỎI CHÙM (1 Ngữ liệu + 2 Câu hỏi TN)
+      if (qType === "cluster") {
+        const lvl1 = document.getElementById("ai-cluster-lvl1")?.value || "hieu";
+        const lvl2 = document.getElementById("ai-cluster-lvl2")?.value || "van_dung";
+
+        fetch("/api/ai-generate-cluster", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            topic: topic,
+            grade: grade,
+            level_q1: lvl1,
+            level_q2: lvl2,
+            raw_keys: apiConfig.rawKeys,
+            model: apiConfig.model
+          })
+        })
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === "success") {
+            const passage = res.cluster_passage || "";
+            const qs = res.questions || [];
+            const isAi = res.is_ai;
+            const modelTag = isAi
+              ? `<span class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">${res.used_model} (${res.used_key_masked})</span>`
+              : `<span class="badge-tag">Bộ sinh thông minh GDPT 2018</span>`;
+
+            resBox.innerHTML = `
+              <div style="background: rgba(56, 189, 248, 0.1); padding: 16px; border-radius: 8px; border: 1px solid #38bdf8; color: #bae6fd; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                  <strong style="color: #38bdf8;">✨ Đã tạo xong Chùm câu hỏi mới (01 Ngữ liệu + 02 Câu hỏi):</strong>
+                  ${modelTag}
+                </div>
+                <div style="background: rgba(15, 23, 42, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #38bdf8; margin: 8px 0; font-size: 13px; color: #f1f5f9; line-height: 1.6;">
+                  <div style="font-weight: 600; color: #38bdf8; margin-bottom: 4px;">📖 Đoạn thông tin tình huống chung:</div>
+                  <em>${escapeHtml(passage)}</em>
+                </div>
+                <div style="font-size: 13px; color: #e2e8f0; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #bae6fd;">🔹 Câu hỏi 1 [Mức độ: ${lvl1.toUpperCase()}]:</div>
+                    <div>${renderStem(qs[0]?.stem || "")}</div>
+                    <div style="margin-top: 4px; font-size: 12px; color: #94a3b8;">Đáp án đúng: <strong style="color: #34d399;">${qs[0]?.answer || "A"}</strong> - ${escapeHtml(qs[0]?.explanation || "")}</div>
+                  </div>
+                  <div style="background: rgba(30, 41, 59, 0.5); padding: 8px 12px; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #bae6fd;">🔹 Câu hỏi 2 [Mức độ: ${lvl2.toUpperCase()}]:</div>
+                    <div>${renderStem(qs[1]?.stem || "")}</div>
+                    <div style="margin-top: 4px; font-size: 12px; color: #94a3b8;">Đáp án đúng: <strong style="color: #34d399;">${qs[1]?.answer || "B"}</strong> - ${escapeHtml(qs[1]?.explanation || "")}</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap;">
+                  <span style="color: #10b981; font-weight: 600; font-size: 13px;">✅ Đã lưu trực tiếp 2 câu hỏi vào Ngân Hàng Đề Thi!</span>
+                  <button class="btn btn-primary btn-sm" onclick="switchTab('tab-bank')">📚 Mở Ngân Hàng Xem Ngay</button>
+                </div>
+              </div>
+            `;
+            loadStatus();
+          } else {
+            resBox.innerHTML = `<span style="color: #ef4444;">❌ Lỗi tạo chùm câu hỏi: ${res.message || "Không thể tạo"}</span>`;
+          }
+        })
+        .catch(err => {
+          resBox.innerHTML = `<span style="color: #ef4444;">❌ Lỗi: ${err}</span>`;
+        });
+        return;
+      }
 
       // 1. If keys are present, use frontend multi-key auto-failover engine
       if (hasKeys && window.GeminiClient) {

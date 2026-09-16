@@ -167,7 +167,12 @@
       "grade": 11,
       "topic": "Một số quyền tự do cơ bản của công dân",
       "level": "van_dung",
-      "source": "De_TP_08"
+      "source": "De_TP_08",
+      "cluster_id": "cluster_tp08_9_10",
+      "cluster_passage": "Anh N là trưởng phòng kinh doanh, anh P là nhân viên mới tại công ty V. Do thường xuyên bị anh N phê bình trong công việc nên anh P rất ấm ức. Trong một dịp di nghỉ cuối tuần cùng gia đình, anh P vô tình bắt gặp vợ của anh N là chị T đang thân mật với một đồng nghiệp khắc của công ty mình. Anh P đã chụp ảnh gửi cho anh N đông thời gửi vào nhóm Zalo chung của công ty với mục dích trả thù anh N. Lập tức anh N cùng anh trai mình là anh M đến nhà anh P yêu cầu anh P thu hồi hình ảnh và đính chính thông tin, nhưng anh P đã từ chối và còn xúc phạm anh N. Chứng kiến cảnh đó, anh N và anh M tức giận đã lao vào cùng đánh anh P, khiến anh P bị thương. Lo sợ cho an toàn của chồng mình, chị Q (vợ anh P) đã gọi điện báo cho anh L công an phường thì anh L yêu cầu cả ba người lên phường để giải quyết sự việc.\nKhi đang yêu cầu ba người viết bản tường trình thì anh L nhận được điện thoại của vợ gọi về nhà có việc gấp. Anh L tạm khóa cửa phòng để anh N, anh M và anh P ngồi trong phòng tiếp tục viết bản tường trình và đi về nhà. Sau nửa ngày, khi giải quyết xong công việc của gia đình, anh L mới quay lại thu bản tường trình và mở cửa cho ba người ra về.\nHôm sau, khi anh N gặp anh P tại văn phòng đã yêu cầu anh P phải xin lỗi mình nhưng bị anh P tiếp tục xúc phạm và đe dọa nên anh N tức giận đã khóa trái cửa nhốt anh P tại văn phòng và bỏ đi. Đến ngày hôm sau, một nhân viên bảo vệ tên K phát hiện anh P bị ngất xỉu đã lập tức báo cáo cho ban lãnh đạo và đưa anh P đi bệnh viện cấp cứu.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 9, 10",
+      "cluster_order": 1,
+      "cluster_size": 2
     },
     {
       "id": "De_TP_08_p1_10",
@@ -185,7 +190,12 @@
       "grade": 11,
       "topic": "Một số quyền tự do cơ bản của công dân",
       "level": "van_dung",
-      "source": "De_TP_08"
+      "source": "De_TP_08",
+      "cluster_id": "cluster_tp08_9_10",
+      "cluster_passage": "Anh N là trưởng phòng kinh doanh, anh P là nhân viên mới tại công ty V. Do thường xuyên bị anh N phê bình trong công việc nên anh P rất ấm ức. Trong một dịp di nghỉ cuối tuần cùng gia đình, anh P vô tình bắt gặp vợ của anh N là chị T đang thân mật với một đồng nghiệp khắc của công ty mình. Anh P đã chụp ảnh gửi cho anh N đông thời gửi vào nhóm Zalo chung của công ty với mục dích trả thù anh N. Lập tức anh N cùng anh trai mình là anh M đến nhà anh P yêu cầu anh P thu hồi hình ảnh và đính chính thông tin, nhưng anh P đã từ chối và còn xúc phạm anh N. Chứng kiến cảnh đó, anh N và anh M tức giận đã lao vào cùng đánh anh P, khiến anh P bị thương. Lo sợ cho an toàn của chồng mình, chị Q (vợ anh P) đã gọi điện báo cho anh L công an phường thì anh L yêu cầu cả ba người lên phường để giải quyết sự việc.\nKhi đang yêu cầu ba người viết bản tường trình thì anh L nhận được điện thoại của vợ gọi về nhà có việc gấp. Anh L tạm khóa cửa phòng để anh N, anh M và anh P ngồi trong phòng tiếp tục viết bản tường trình và đi về nhà. Sau nửa ngày, khi giải quyết xong công việc của gia đình, anh L mới quay lại thu bản tường trình và mở cửa cho ba người ra về.\nHôm sau, khi anh N gặp anh P tại văn phòng đã yêu cầu anh P phải xin lỗi mình nhưng bị anh P tiếp tục xúc phạm và đe dọa nên anh N tức giận đã khóa trái cửa nhốt anh P tại văn phòng và bỏ đi. Đến ngày hôm sau, một nhân viên bảo vệ tên K phát hiện anh P bị ngất xỉu đã lập tức báo cáo cho ban lãnh đạo và đưa anh P đi bệnh viện cấp cứu.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 9, 10",
+      "cluster_order": 2,
+      "cluster_size": 2
     },
     {
       "id": "De_TP_08_p1_11",
@@ -239,7 +249,12 @@
       "grade": 11,
       "topic": "Một số quyền dân chủ cơ bản của công dân",
       "level": "hieu",
-      "source": "De_TP_08"
+      "source": "De_TP_08",
+      "cluster_id": "cluster_tp08_13_14",
+      "cluster_passage": "Vợ chồng chị V, anh N và vợ chồng chị P, anh D cùng sống tại một khu phố, trong đó anh D là chủ một siêu thị điện máy. Một lần phát hiện anh N đột nhập vào siêu thị với mục đích trộm cắp tài sản, anh D lập tức khống chế và bắt anh N. Ngay sau đó, anh D áp giải anh N đến cơ quan công an và vô ý làm anh N bị thương. Tại trụ sở công an, anh D viết đơn kiến nghị khởi tố anh N. Biết chuyện của chồng, chị V cùng em trai là anh S đang làm bảo vệ tại một công trường xây dựng đã tự ý vào nhà anh D để yêu cầu anh phải rút đơn. Vì anh D đi vắng và bị chị P ngăn cản nên chị V và anh S đã uy hiếp, bắt, giữ chị P và đưa về nhà anh S. Nhận được tin nhắn đe dọa của chị V, anh D tìm cách vào nhà anh S và giải cứu được chị P.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 13, 14",
+      "cluster_order": 1,
+      "cluster_size": 2
     },
     {
       "id": "De_TP_08_p1_14",
@@ -257,7 +272,12 @@
       "grade": 11,
       "topic": "Một số quyền tự do cơ bản của công dân",
       "level": "van_dung",
-      "source": "De_TP_08"
+      "source": "De_TP_08",
+      "cluster_id": "cluster_tp08_13_14",
+      "cluster_passage": "Vợ chồng chị V, anh N và vợ chồng chị P, anh D cùng sống tại một khu phố, trong đó anh D là chủ một siêu thị điện máy. Một lần phát hiện anh N đột nhập vào siêu thị với mục đích trộm cắp tài sản, anh D lập tức khống chế và bắt anh N. Ngay sau đó, anh D áp giải anh N đến cơ quan công an và vô ý làm anh N bị thương. Tại trụ sở công an, anh D viết đơn kiến nghị khởi tố anh N. Biết chuyện của chồng, chị V cùng em trai là anh S đang làm bảo vệ tại một công trường xây dựng đã tự ý vào nhà anh D để yêu cầu anh phải rút đơn. Vì anh D đi vắng và bị chị P ngăn cản nên chị V và anh S đã uy hiếp, bắt, giữ chị P và đưa về nhà anh S. Nhận được tin nhắn đe dọa của chị V, anh D tìm cách vào nhà anh S và giải cứu được chị P.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 13, 14",
+      "cluster_order": 2,
+      "cluster_size": 2
     },
     {
       "id": "De_TP_08_p1_15",
@@ -473,7 +493,12 @@
       "grade": 12,
       "topic": "Bảo hiểm và an sinh xã hội",
       "level": "van_dung",
-      "source": "De_TP_08"
+      "source": "De_TP_08",
+      "cluster_id": "cluster_tp08_26_27",
+      "cluster_passage": "Chị N làm việc tại Doanh nghiệp Y theo hợp đồng không xác định thời hạn. Trong quá trình làm việc tại đoanh nghiệp, chị N được doanh nghiệp Y đóng các loại bảo hiểm bắt buộc đúng quy định của Luật Bảo hiểm xã hội, Luật Bảo hiểm y tế và Luật Lao động. Sau một thời gian làm việc, do hoa hoạn xảy ra làm doanh nghiệp phải ngừng hoạt động, chị N đã bị chấm dứt hợp đồng lao động. Doanh nghiệp Y hỗ trợ cho những công nhân mất việc như chị N mỗi tháng 2 triệu đồng và sau 3 tháng kể từ khi mất việc chị N nhận được khoản tiền trợ cấp thất nghiệp nên chị có thể đảm bảo được cuộc sống hiện tại của mình.",
+      "cluster_header": "Đọc thông tin và trả lời các câu 26, 27",
+      "cluster_order": 1,
+      "cluster_size": 2
     },
     {
       "id": "De_TP_08_p1_27",
@@ -491,7 +516,12 @@
       "grade": 12,
       "topic": "Bảo hiểm và an sinh xã hội",
       "level": "van_dung",
-      "source": "De_TP_08"
+      "source": "De_TP_08",
+      "cluster_id": "cluster_tp08_26_27",
+      "cluster_passage": "Chị N làm việc tại Doanh nghiệp Y theo hợp đồng không xác định thời hạn. Trong quá trình làm việc tại đoanh nghiệp, chị N được doanh nghiệp Y đóng các loại bảo hiểm bắt buộc đúng quy định của Luật Bảo hiểm xã hội, Luật Bảo hiểm y tế và Luật Lao động. Sau một thời gian làm việc, do hoa hoạn xảy ra làm doanh nghiệp phải ngừng hoạt động, chị N đã bị chấm dứt hợp đồng lao động. Doanh nghiệp Y hỗ trợ cho những công nhân mất việc như chị N mỗi tháng 2 triệu đồng và sau 3 tháng kể từ khi mất việc chị N nhận được khoản tiền trợ cấp thất nghiệp nên chị có thể đảm bảo được cuộc sống hiện tại của mình.",
+      "cluster_header": "Đọc thông tin và trả lời các câu 26, 27",
+      "cluster_order": 2,
+      "cluster_size": 2
     },
     {
       "id": "De_TP_08_p1_28",
@@ -1793,6 +1823,270 @@
       "level": "hieu",
       "id": "ai_synth_f5621d69",
       "source": "Bộ sinh tình huống pháp luật tự động"
+    },
+    {
+      "id": "cluster_chum_23_24_q1",
+      "type": "part1",
+      "grade": 11,
+      "level": "van_dung",
+      "topic": "Câu hỏi chùm",
+      "stem": "Trong thông tin trên, ai đã vi phạm pháp luật bảo vệ môi trường?",
+      "options": {
+        "A": "Công ty H không lắp đặt hệ thống xử lý chất thải.",
+        "B": "Công ty T không lắp đặt hệ thống xử lý chất thải.",
+        "C": "Anh P giám đốc công ty H đã làm đơn tố cáo.",
+        "D": "Ông L tiếp nhận đơn và ra quyết định kỷ luật."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_23_24",
+      "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
+      "cluster_header": "Đọc thông tin để trả lời các câu hỏi 23,24",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_23_24_q2",
+      "type": "part1",
+      "grade": 11,
+      "level": "van_dung",
+      "topic": "Câu hỏi chùm",
+      "stem": "Ông M có thể phải chịu trách nhiệm pháp lí nào đây?",
+      "options": {
+        "A": "Trách nhiệm hành chính và vi phạm kỉ luật.",
+        "B": "Trách nhiệm kỉ luật và chịu hình phạt tù từ 3 tháng đến 2 năm.",
+        "C": "Trách nhiệm kỉ luật, trả lại số tiền đã nhận hối lộ và tù án treo.",
+        "D": "Trách nhiệm kỉ luật và chịu hình phạt tù từ 2 năm đến 7 năm."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_23_24",
+      "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
+      "cluster_header": "Đọc thông tin để trả lời các câu hỏi 23,24",
+      "cluster_order": 2,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_17_18_q1",
+      "type": "part1",
+      "grade": 11,
+      "level": "van_dung",
+      "topic": "Câu hỏi chùm",
+      "stem": "Trong thông tin trên, việc làm nào dưới đây của các chủ thể đã thể hiện công dân bình đẳng trong việc hưởng quyền?",
+      "options": {
+        "A": "Công ty H không lắp đặt hệ thống xử lý chất thải.",
+        "B": "Công ty T không lắp đặt hệ thống xử lý chất thải.",
+        "C": "Anh P giám đốc công ty H đã làm đơn tố cáo.",
+        "D": "Ông L tiếp nhận đơn và ra quyết định kỷ luật."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_17_18",
+      "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 17,18",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_17_18_q2",
+      "type": "part1",
+      "grade": 11,
+      "level": "van_dung",
+      "topic": "Câu hỏi chùm",
+      "stem": "Việc làm của chủ thể nào dưới đây trong thông tin trên đã thể hiện nội dung công dân bình đẳng về trách nhiệm pháp lý?",
+      "options": {
+        "A": "Đình chỉ công tác ông M để tiến hành điều tra.",
+        "B": "Cả 2 công ty đều không lắp đặt xử lý chất thải.",
+        "C": "Anh P làm đơn tố cáo tới cơ quan chức năng.",
+        "D": "Cơ quan chức năng tiếp nhận đơn tố cáo."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_17_18",
+      "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 17,18",
+      "cluster_order": 2,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_19_20_q1",
+      "type": "part1",
+      "grade": 11,
+      "level": "hieu",
+      "topic": "Câu hỏi chùm",
+      "stem": "Những chính sách nhằm phát triển vùng đồng bào dân tộc thiểu số được đề cập trong thông tin trên sẽ có tác động như thế nào đối với các dân tộc?",
+      "options": {
+        "A": "Giúp các dân tộc giải quyết nạn đói giáp hạt.",
+        "B": "Thể hiện tinh thần tương thân, tương ái.",
+        "C": "Giúp rút ngắn khoảng cách giữa các dân tộc.",
+        "D": "Nhằm khai thác triệt để nguồn tài nguyên."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_19_20",
+      "cluster_passage": "Với mục tiêu thu hẹp khoảng cách về phát triển giữa các nhóm đồng bào dân tộc thiểu số, phần lớn các chương trình của Nhà nước tập trung vào hỗ trợ sinh kế và tạo cơ hội xóa đói, giảm nghèo, như: Chương trình 143; Chương trình 135; Chương trình 134; Chương trình phân bổ đất rừng và trồng rừng; các chính sách về giáo dục, y tế,... Trong giai đoạn  2011 - 2018, có 205 chính sách hỗ trợ phát triển kinh tế - xã hội vùng dân tộc thiểu số và miền núi được ban hành. Nội dung các chính sách tập trung chủ yếu vào lĩnh vực giảm nghèo; phát triển sản xuất trong nông, lâm nghiệp, thủy sản; phát triển giáo dục - đào tạo, văn hóa, như: Chính sách hỗ trợ đất ở, đất sản xuất, nước sinh hoạt, phát triển sản xuất và ổn định đời sống cho người dân tộc thiểu số nghèo, hộ nghèo vùng đặc biệt khó khăn; ổn định cuộc sống cho người dân tộc thiểu số di cư tự phát.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi  19,20",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_19_20_q2",
+      "type": "part1",
+      "grade": 11,
+      "level": "hieu",
+      "topic": "Câu hỏi chùm",
+      "stem": "Việc thực hiện chính sách để phát triển vùng đồng bào dân tộc trong thông tin trên xuất phát từ cơ sở pháp lý là",
+      "options": {
+        "A": "mọi công dân đều bình đẳng trước pháp luật.",
+        "B": "mọi công dân đều được trợ cấp xã hội.",
+        "C": "quyền tự do kinh doanh của mỗi công dân.",
+        "D": "quyền tự do đi lại của mỗi dân tộc."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_19_20",
+      "cluster_passage": "Với mục tiêu thu hẹp khoảng cách về phát triển giữa các nhóm đồng bào dân tộc thiểu số, phần lớn các chương trình của Nhà nước tập trung vào hỗ trợ sinh kế và tạo cơ hội xóa đói, giảm nghèo, như: Chương trình 143; Chương trình 135; Chương trình 134; Chương trình phân bổ đất rừng và trồng rừng; các chính sách về giáo dục, y tế,... Trong giai đoạn  2011 - 2018, có 205 chính sách hỗ trợ phát triển kinh tế - xã hội vùng dân tộc thiểu số và miền núi được ban hành. Nội dung các chính sách tập trung chủ yếu vào lĩnh vực giảm nghèo; phát triển sản xuất trong nông, lâm nghiệp, thủy sản; phát triển giáo dục - đào tạo, văn hóa, như: Chính sách hỗ trợ đất ở, đất sản xuất, nước sinh hoạt, phát triển sản xuất và ổn định đời sống cho người dân tộc thiểu số nghèo, hộ nghèo vùng đặc biệt khó khăn; ổn định cuộc sống cho người dân tộc thiểu số di cư tự phát.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi  19,20",
+      "cluster_order": 2,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_35_36_q1",
+      "type": "part1",
+      "grade": 12,
+      "level": "biet",
+      "topic": "Câu hỏi chùm",
+      "stem": "Việc xuất khẩu sầu riêng của Việt Nam ra thị trường quốc tế sẽ đem lại lợi ích nào dưới đây?",
+      "options": {
+        "A": "Giảm giá trị xuất khẩu và khai thác tối ưu lợi thế quốc gia.",
+        "B": "Nhập khẩu đạt doanh thu 470 triệu đô la Mỹ trong năm 2024.",
+        "C": "Tiếp cận thị trường và tăng giá trị xuất khẩu là 124,6%.",
+        "D": "Tạo việc làm và tăng thu nhập cho mọi tầng lớp dân cư."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_35_36",
+      "cluster_passage": "Hội nhập kinh tế quốc tế đã tạo điều kiện thu hút đầu tư cho Việt Nam tiếp cận thị trường toàn cầu. Một trong những mặt hàng có thể mạnh xuất khẩu lớn của Việt Nam hiện nay là sầu riêng. Bốn tháng đầu năm 2024, mặt hàng này đã xuất khẩu đạt khoảng 111.600 tấn với giá trị trên 470 triệu đô la Mỹ, tăng 124,6% về lượng và 145,8% về giá trị so với cùng kỳ năm trước. Bên cạnh đó, quan hệ hợp tác giữa Việt Nam với các quốc gia cũng được đẩy mạnh. Tháng 12/2022, Việt Nam - Hàn Quốc ra tuyên bố chung về nâng cấp quan hệ lên đối tác chiến lược toàn diện. Về thương mại, trong năm 2023, kim ngạch thương mại Việt Nam - Hàn Quốc đạt 76,1 tỷ USD, trong đó kim ngạch xuất khẩu của Việt Nam đạt 23,5 tỷ USD, kim ngạch nhập khẩu đạt 52,6 tỷ USD. Trong 4 tháng đầu năm 2024, tổng kim ngạch xuất nhập khẩu hai nước đạt 25,5 tỷ USD, tăng 4% so với cùng kỳ năm trước.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 35,36",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_35_36_q2",
+      "type": "part1",
+      "grade": 12,
+      "level": "hieu",
+      "topic": "Câu hỏi chùm",
+      "stem": "Trong thông tin trên phản ánh đường lối và chính sách hội nhập kinh tế quốc tế nào sau đây của Việt Nam?",
+      "options": {
+        "A": "Đẩy mạnh hoàn thiện thể chế pháp luật.",
+        "B": "Gia tăng mức độ liên kết giữa các tỉnh.",
+        "C": "Chủ động hội nhập toàn diện, sâu rộng.",
+        "D": "Tăng cường các biện pháp cải cách hành chính."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_35_36",
+      "cluster_passage": "Hội nhập kinh tế quốc tế đã tạo điều kiện thu hút đầu tư cho Việt Nam tiếp cận thị trường toàn cầu. Một trong những mặt hàng có thể mạnh xuất khẩu lớn của Việt Nam hiện nay là sầu riêng. Bốn tháng đầu năm 2024, mặt hàng này đã xuất khẩu đạt khoảng 111.600 tấn với giá trị trên 470 triệu đô la Mỹ, tăng 124,6% về lượng và 145,8% về giá trị so với cùng kỳ năm trước. Bên cạnh đó, quan hệ hợp tác giữa Việt Nam với các quốc gia cũng được đẩy mạnh. Tháng 12/2022, Việt Nam - Hàn Quốc ra tuyên bố chung về nâng cấp quan hệ lên đối tác chiến lược toàn diện. Về thương mại, trong năm 2023, kim ngạch thương mại Việt Nam - Hàn Quốc đạt 76,1 tỷ USD, trong đó kim ngạch xuất khẩu của Việt Nam đạt 23,5 tỷ USD, kim ngạch nhập khẩu đạt 52,6 tỷ USD. Trong 4 tháng đầu năm 2024, tổng kim ngạch xuất nhập khẩu hai nước đạt 25,5 tỷ USD, tăng 4% so với cùng kỳ năm trước.",
+      "cluster_header": "Đọc thông tin và trả lời câu hỏi 35,36",
+      "cluster_order": 2,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_33_34_q1",
+      "type": "part1",
+      "grade": 12,
+      "level": "van_dung",
+      "topic": "Câu hỏi chùm",
+      "stem": "Việc chậm đóng, trốn đóng bảo hiểm xã hội, bảo hiểm thất nghiệp trong thông tin trên gắn với trách nhiệm của chủ thể nào dưới đây?",
+      "options": {
+        "A": "các đơn vị, doanh nghiệp.",
+        "B": "Bộ phận kế toán trong công ty.",
+        "C": "các cá nhân người lao động.",
+        "D": "bộ phận thủ quỹ của các doanh nghiệp."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_33_34",
+      "cluster_passage": "Theo báo cáo của Bộ Lao động, Thương binh và Xã hội, tính đến hết tháng 10/2023, tổng số tiền chậm đóng, trốn đóng bảo hiểm xã hội, bảo hiểm thất nghiệp (BHTN) khoảng 14.650 tỉ đồng. Trong đó, số tiền chậm đóng tại các đơn vị không có khả năng thu hồi là 4.164 tỉ đồng. Nguyên nhân được lý giải là do những năm gần đây nhiều doanh nghiệp gặp khó khăn trong sản xuất, kinh doanh dẫn tới khó khăn trong việc đóng BHXH cho người lao động. Bên cạnh đó còn có tình trạng nhiều doanh nghiệp chưa chấp hành nghiêm các quy định pháp luật, thiếu quan tâm đến quyền lợi của người lao động. Các quy định về chế tài xử lý hành vi nợ bảo hiểm xã hội chưa đủ sức răn đe.",
+      "cluster_header": "Đọc thông tin để trả lời các câu hỏi 33,34",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_chum_33_34_q2",
+      "type": "part1",
+      "grade": 12,
+      "level": "van_dung",
+      "topic": "Câu hỏi chùm",
+      "stem": "Việc chậm đóng, trốn đóng bảo hiểm xã hội, bảo hiểm thất nghiệp trong thông tin trên là hành vi xâm phạm đến quyền và lợi ích của ai?",
+      "options": {
+        "A": "Các đơn vị, doanh nghiệp.",
+        "B": "Gia đình người lao động.",
+        "C": "Người lao động.",
+        "D": "Thủ trưởng đơn vị."
+      },
+      "answer": "A",
+      "explanation": "",
+      "source": "Dạng câu hỏi trùm.docx",
+      "cluster_id": "cluster_chum_33_34",
+      "cluster_passage": "Theo báo cáo của Bộ Lao động, Thương binh và Xã hội, tính đến hết tháng 10/2023, tổng số tiền chậm đóng, trốn đóng bảo hiểm xã hội, bảo hiểm thất nghiệp (BHTN) khoảng 14.650 tỉ đồng. Trong đó, số tiền chậm đóng tại các đơn vị không có khả năng thu hồi là 4.164 tỉ đồng. Nguyên nhân được lý giải là do những năm gần đây nhiều doanh nghiệp gặp khó khăn trong sản xuất, kinh doanh dẫn tới khó khăn trong việc đóng BHXH cho người lao động. Bên cạnh đó còn có tình trạng nhiều doanh nghiệp chưa chấp hành nghiêm các quy định pháp luật, thiếu quan tâm đến quyền lợi của người lao động. Các quy định về chế tài xử lý hành vi nợ bảo hiểm xã hội chưa đủ sức răn đe.",
+      "cluster_header": "Đọc thông tin để trả lời các câu hỏi 33,34",
+      "cluster_order": 2,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_ai_b3aceab2_q1",
+      "type": "part1",
+      "grade": 12,
+      "level": "hieu",
+      "topic": "Bảo hiểm và an sinh xã hội",
+      "stem": "Trong thông tin trên, hành vi của ông B đã vi phạm hình thức thực hiện pháp luật nào và phải chịu trách nhiệm pháp lý gì?",
+      "options": {
+        "A": "Không tuân thủ pháp luật và phải chịu trách nhiệm hình sự.",
+        "B": "Sử dụng sai pháp luật và chỉ chịu trách nhiệm kỷ luật.",
+        "C": "Không áp dụng pháp luật và phải chịu trách nhiệm dân sự.",
+        "D": "Không thi hành pháp luật và chỉ bị xử phạt hành chính."
+      },
+      "answer": "A",
+      "explanation": "Ông B là người có chức vụ quyền hạn đã nhận hối lộ để bỏ qua vi phạm môi trường, đây là hành vi không tuân thủ pháp luật (làm điều pháp luật cấm) và có dấu hiệu tội phạm hình sự (Điều 354 Bộ luật Hình sự 2015).",
+      "source": "Bộ sinh chùm câu hỏi tự động chuẩn GDPT 2018",
+      "cluster_id": "cluster_ai_b3aceab2",
+      "cluster_passage": "Năm 2024, một số địa phương ghi nhận tình trạng doanh nghiệp sản xuất da giày X trên địa bàn bị đình chỉ hoạt động vì xả nước thải chưa qua xử lý ra sông. Trong quá trình thanh tra, ông B (Trưởng đoàn thanh tra môi trường) phát hiện sai phạm nhưng đã nhận 50 triệu đồng của bà M (Giám đốc công ty X) để không lập biên bản đình chỉ. Anh T (kỹ sư nhà máy) đã gửi đơn tố cáo kèm file ghi âm đến cơ quan chức năng. Sau đó, ông C (Phó Giám đốc Sở) đã chỉ đạo chuyển hồ sơ sang Cơ quan Cảnh sát điều tra để khởi tố vụ án theo quy định.",
+      "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_ai_b3aceab2_q2",
+      "type": "part1",
+      "grade": 12,
+      "level": "van_dung",
+      "topic": "Bảo hiểm và an sinh xã hội",
+      "stem": "Những chủ thể nào dưới đây trong thông tin trên ĐÃ VI PHẠM pháp luật?",
+      "options": {
+        "A": "Bà M và ông B.",
+        "B": "Chỉ có bà M.",
+        "C": "Bà M, ông B và anh T.",
+        "D": "Ông B và ông C."
+      },
+      "answer": "A",
+      "explanation": "Bà M vi phạm pháp luật bảo vệ môi trường và hành vi đưa hối lộ; ông B vi phạm pháp luật với hành vi nhận hối lộ. Anh T thực hiện quyền tố cáo đúng luật; ông C thực thi công vụ đúng quy định pháp luật.",
+      "source": "Bộ sinh chùm câu hỏi tự động chuẩn GDPT 2018",
+      "cluster_id": "cluster_ai_b3aceab2",
+      "cluster_passage": "Năm 2024, một số địa phương ghi nhận tình trạng doanh nghiệp sản xuất da giày X trên địa bàn bị đình chỉ hoạt động vì xả nước thải chưa qua xử lý ra sông. Trong quá trình thanh tra, ông B (Trưởng đoàn thanh tra môi trường) phát hiện sai phạm nhưng đã nhận 50 triệu đồng của bà M (Giám đốc công ty X) để không lập biên bản đình chỉ. Anh T (kỹ sư nhà máy) đã gửi đơn tố cáo kèm file ghi âm đến cơ quan chức năng. Sau đó, ông C (Phó Giám đốc Sở) đã chỉ đạo chuyển hồ sơ sang Cơ quan Cảnh sát điều tra để khởi tố vụ án theo quy định.",
+      "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+      "cluster_order": 2,
+      "cluster_size": 2
     }
   ],
   "part2": [

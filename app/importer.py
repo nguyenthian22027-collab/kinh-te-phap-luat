@@ -195,11 +195,48 @@ def parse_p1_options(opts_str: str) -> dict:
             
     return options
 
+def detect_text_clusters(text: str):
+    """
+    Phát hiện các khối câu hỏi chùm trong văn bản:
+    Tìm mẫu: (Đọc thông tin / Dựa vào thông tin... câu X đến câu Y)
+    Trả về dict: {q_num: {cluster_id, cluster_passage, cluster_header, cluster_order, cluster_size}}
+    """
+    cluster_map = {}
+    pattern = re.compile(
+        r'((?:Đọc\s+(?:đoạn\s+)?thông\s+tin|Dựa\s+vào\s+thông\s+tin|Đọc\s+ngữ\s+liệu)[^\n]*?(?:trả\s+lời|cho\s+biết)?[^\n]*?(?:câu|từ\s+câu)\s*(\d+)[\s,vàđến\-]+(?:câu\s*)?(\d+)[^\n]*)\n(.*?)(?=(?:Câu|CÂU|Bài|BÀI)\s*\d+\s*[\.:\)])',
+        re.DOTALL | re.IGNORECASE
+    )
+    for m in pattern.finditer(text):
+        header = m.group(1).strip()
+        try:
+            start_q = int(m.group(2))
+            end_q = int(m.group(3))
+        except (ValueError, TypeError):
+            continue
+        passage = m.group(4).strip()
+        
+        passage = re.sub(r'^[-\s\*\•]+', '', passage).strip()
+        if not passage or start_q >= end_q:
+            continue
+            
+        cluster_id = f"cluster_imp_{start_q}_{end_q}_{uuid.uuid4().hex[:6]}"
+        size = end_q - start_q + 1
+        for idx, q_n in enumerate(range(start_q, end_q + 1), 1):
+            cluster_map[q_n] = {
+                "cluster_id": cluster_id,
+                "cluster_passage": passage,
+                "cluster_header": header,
+                "cluster_order": idx,
+                "cluster_size": size
+            }
+    return cluster_map
+
 def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
     p1_items = []
     p2_items = []
     
     ans_map = extract_answer_map(text)
+    clusters_info = detect_text_clusters(text)
 
     # Tách ranh giới câu hỏi: "Câu N:" hoặc "Câu N." — lookahead câu tiếp hoặc hết file
     # Thêm lookahead chặn "Đọc thông tin..." không bị ăn vào nội dung câu
@@ -287,7 +324,7 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                         star_match = re.search(r'([A-D])\*\.', q_body)
                         ans = star_match.group(1) if star_match else "A"
 
-                p1_items.append({
+                p1_item = {
                     "id": f"imported_p1_{uuid.uuid4().hex[:8]}",
                     "type": "part1",
                     "stem": stem,
@@ -298,7 +335,16 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     "topic": topic,
                     "level": level,
                     "source": source_name
-                })
+                }
+                if q_num in clusters_info:
+                    cinfo = clusters_info[q_num]
+                    p1_item["cluster_id"] = cinfo["cluster_id"]
+                    p1_item["cluster_passage"] = cinfo["cluster_passage"]
+                    p1_item["cluster_header"] = cinfo["cluster_header"]
+                    p1_item["cluster_order"] = cinfo["cluster_order"]
+                    p1_item["cluster_size"] = cinfo["cluster_size"]
+
+                p1_items.append(p1_item)
                 
     return p1_items, p2_items
 

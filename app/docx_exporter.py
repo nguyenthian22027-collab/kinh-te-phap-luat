@@ -109,6 +109,35 @@ def export_student_docx(exam, file_path):
     r2.font.italic = True
     
     for q in exam.get("part1", []):
+        # Nếu là câu đầu tiên trong chùm câu hỏi, in tiêu đề chùm và đoạn thông tin ngữ liệu
+        if q.get("cluster_id") and q.get("cluster_order") == 1:
+            q_num = q.get("exam_number", 1)
+            cluster_size = q.get("cluster_size", 2)
+            end_num = q_num + cluster_size - 1
+            header_text = q.get("cluster_header_rendered") or f"Đọc thông tin sau và trả lời các câu hỏi từ câu {q_num} đến câu {end_num}:"
+            
+            hp = doc.add_paragraph()
+            hp.paragraph_format.space_before = Pt(10)
+            hp.paragraph_format.space_after = Pt(2)
+            rh = hp.add_run(header_text)
+            rh.font.name = "Times New Roman"
+            rh.font.size = Pt(11)
+            rh.font.bold = True
+            rh.font.italic = True
+            
+            passage_text = q.get("cluster_passage", "").strip()
+            if passage_text:
+                pp = doc.add_paragraph()
+                pp.paragraph_format.left_indent = Inches(0.25)
+                pp.paragraph_format.right_indent = Inches(0.25)
+                pp.paragraph_format.space_before = Pt(2)
+                pp.paragraph_format.space_after = Pt(6)
+                pp.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                rp = pp.add_run(passage_text)
+                rp.font.name = "Times New Roman"
+                rp.font.size = Pt(10.5)
+                rp.font.italic = True
+
         qp = doc.add_paragraph()
         qp.paragraph_format.space_before = Pt(4)
         qp.paragraph_format.space_after = Pt(2)
@@ -309,6 +338,19 @@ def export_teacher_docx(exam, file_path):
     r_exp.font.bold = True
     
     for q in p1_list:
+        if q.get("cluster_id") and q.get("cluster_order") == 1:
+            q_num = q.get("exam_number", 1)
+            cluster_size = q.get("cluster_size", 2)
+            end_num = q_num + cluster_size - 1
+            cp = doc.add_paragraph()
+            cp.paragraph_format.space_before = Pt(8)
+            cp.paragraph_format.space_after = Pt(2)
+            rc = cp.add_run(f"★ [CHÙM CÂU HỎI TỪ CÂU {q_num} ĐẾN CÂU {end_num}]")
+            rc.font.name = "Times New Roman"
+            rc.font.size = Pt(10.5)
+            rc.font.bold = True
+            rc.font.color.rgb = RGBColor(0, 51, 102)
+
         qp = doc.add_paragraph()
         qp.paragraph_format.space_before = Pt(4)
         q_num = q.get("exam_number", 1)
