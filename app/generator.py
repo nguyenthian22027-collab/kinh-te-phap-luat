@@ -71,10 +71,28 @@ def get_grade_key(grade):
     else:
         return "kt_12"
 
-def generate_exam(preset="city_hsg", custom_config=None, exam_info=None, num_clusters=3):
+def generate_exam(preset="city_hsg", custom_config=None, exam_info=None, num_clusters=3, custom_questions=None):
     bank = load_bank()
     p1_pool = copy.deepcopy(bank.get("part1", []))
     p2_pool = copy.deepcopy(bank.get("part2", []))
+    
+    # Gộp thêm kho câu hỏi riêng của giáo viên (nếu có gửi lên từ tài khoản cá nhân)
+    if custom_questions:
+        existing_p1_ids = {q.get("id") for q in p1_pool}
+        existing_p2_ids = {q.get("id") for q in p2_pool}
+        for q in custom_questions:
+            if not isinstance(q, dict) or "stem" not in q:
+                continue
+            q_type = q.get("type", "part1")
+            qid = q.get("id")
+            if q_type == "part2":
+                if qid not in existing_p2_ids:
+                    p2_pool.append(copy.deepcopy(q))
+                    existing_p2_ids.add(qid)
+            else:
+                if qid not in existing_p1_ids:
+                    p1_pool.append(copy.deepcopy(q))
+                    existing_p1_ids.add(qid)
     
     selected_p1 = []
     selected_p2 = []
@@ -397,8 +415,19 @@ def delete_question_from_bank(q_id):
         return True
     return False
 
-def reroll_question(exam, q_id, q_type="part1"):
+def reroll_question(exam, q_id, q_type="part1", custom_questions=None):
     bank = load_bank()
+    p1_pool = list(bank.get("part1", []))
+    p2_pool = list(bank.get("part2", []))
+    if custom_questions:
+        for cq in custom_questions:
+            if not isinstance(cq, dict):
+                continue
+            if cq.get("type") == "part2":
+                p2_pool.append(cq)
+            else:
+                p1_pool.append(cq)
+                
     current_ids = {q["id"] for q in exam["part1"]} if q_type == "part1" else {q["id"] for q in exam["part2"]}
     
     # Find the current question to match attributes
@@ -414,7 +443,7 @@ def reroll_question(exam, q_id, q_type="part1"):
     if not current_q:
         return None
         
-    pool = bank.get("part1", []) if q_type == "part1" else bank.get("part2", [])
+    pool = p1_pool if q_type == "part1" else p2_pool
     # Candidate search with same grade and level
     cands = [q for q in pool if q["id"] not in current_ids and q.get("grade") == current_q.get("grade") and q.get("level") == current_q.get("level")]
     if not cands:

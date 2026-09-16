@@ -348,20 +348,14 @@ Trích xuất DUY NHẤT một chuỗi JSON hợp lệ:
             q_data["source"] = f"Gemini {result['used_model']} ({result['used_key_masked']})"
             q_data["grade"] = int(q_data.get("grade", grade))
             q_data["level"] = q_data.get("level", level)
-            q_data["topic"] = q_data.get("topic", topic)
-            
-            # Save to bank
-            bank = load_bank()
-            if q_data.get("type") == "part2":
-                bank["part2"].append(q_data)
-            else:
+            # Không lưu vào kho gốc dùng chung để đảm bảo tính riêng tư của từng giáo viên
+            if "type" not in q_data:
                 q_data["type"] = "part1"
-                bank["part1"].append(q_data)
-            save_bank(bank)
             
             return {
                 "status": "success", 
                 "question": q_data, 
+                "questions": [q_data],
                 "is_ai": True,
                 "used_model": result["used_model"],
                 "used_key_masked": result["used_key_masked"]
@@ -420,10 +414,8 @@ Trích xuất DUY NHẤT một chuỗi JSON hợp lệ:
     chosen["id"] = f"ai_synth_{uuid.uuid4().hex[:8]}"
     chosen["source"] = "Bộ sinh tình huống pháp luật tự động"
     
-    bank = load_bank()
-    bank["part1"].append(chosen)
-    save_bank(bank)
-    return {"status": "success", "question": chosen}
+    # Không lưu vào kho gốc dùng chung để bảo vệ tính riêng tư của từng giáo viên
+    return {"status": "success", "question": chosen, "questions": [chosen], "is_ai": False}
 
 def generate_ai_cluster_questions(topic, grade=12, level_q1="hieu", level_q2="van_dung", api_key=None, raw_keys=None, model="gemini-2.0-flash"):
     """
@@ -556,10 +548,7 @@ Trích xuất DUY NHẤT một chuỗi JSON hợp lệ (không có văn bản n�
                     "cluster_size": 2
                 }
                 
-                bank = load_bank()
-                bank["part1"].extend([q1, q2])
-                save_bank(bank)
-                
+                # Không lưu vào kho gốc dùng chung để bảo vệ tính riêng tư của từng giáo viên
                 return {
                     "status": "success",
                     "cluster_id": cluster_id,
@@ -628,9 +617,7 @@ Trích xuất DUY NHẤT một chuỗi JSON hợp lệ (không có văn bản n�
         "cluster_size": 2
     }
     
-    bank = load_bank()
-    bank["part1"].extend([q1, q2])
-    save_bank(bank)
+    # Không lưu vào kho gốc dùng chung để bảo vệ tính riêng tư của từng giáo viên
     
     return {
         "status": "success",

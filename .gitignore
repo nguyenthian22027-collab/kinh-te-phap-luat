@@ -32,4 +32,6 @@ app/output/*.docx
 *.swp
 *.swo
 .DS_Store
-Thumbs.db
+# User banks isolation
+app/data/user_banks/*.json
+!app/data/user_banks/.gitkeep

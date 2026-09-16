@@ -30,6 +30,31 @@ else:
     OUTPUT_DIR = os.path.join(APP_DIR, "output")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+# --- PERSONAL QUESTION BANK HELPERS (USER ISOLATION) ---
+USER_BANKS_DIR = os.path.join("/tmp", "user_banks") if os.environ.get("VERCEL") else os.path.join(APP_DIR, "data", "user_banks")
+os.makedirs(USER_BANKS_DIR, exist_ok=True)
+
+import re
+
+def get_user_bank_path(uid: str) -> str:
+    safe_uid = re.sub(r'[^a-zA-Z0-9_\-]', '_', uid or 'guest')
+    return os.path.join(USER_BANKS_DIR, f"{safe_uid}.json")
+
+def load_user_questions(uid: str) -> List[Dict[str, Any]]:
+    path = get_user_bank_path(uid)
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def save_user_questions(uid: str, questions: List[Dict[str, Any]]):
+    path = get_user_bank_path(uid)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(questions, f, ensure_ascii=False, indent=2)
+
 app = FastAPI(title="GDKTPL Exam Studio Pro", version="2.0")
 
 app.add_middleware(
@@ -85,11 +110,13 @@ class GenerateRequest(BaseModel):
     custom_config: Optional[Dict[str, Any]] = None
     exam_info: Optional[Dict[str, Any]] = None
     num_clusters: Optional[int] = 3
+    custom_questions: Optional[List[Dict[str, Any]]] = None
 
 class RerollRequest(BaseModel):
     exam_id: Optional[str] = None
     q_id: str
     q_type: str = "part1"
+    custom_questions: Optional[List[Dict[str, Any]]] = None
 
 class SwapQuestionRequest(BaseModel):
     q_id: str
@@ -119,6 +146,7 @@ class UpdateBankQuestionRequest(BaseModel):
     statements: Optional[List[Dict[str, Any]]] = None
     answer: Optional[str] = None
     explanation: Optional[str] = None
+    uid: Optional[str] = None
 
 class ExportRequest(BaseModel):
     export_type: str = "student" # "student", "teacher", "matrix", "all"
@@ -165,6 +193,8 @@ class ApiConfigRequest(BaseModel):
 
 class SaveGeneratedQuestionRequest(BaseModel):
     question: Union[dict, List[dict]]
+    uid: Optional[str] = None
+    email: Optional[str] = None
 
 class UserStatusRequest(BaseModel):
     uid: str
@@ -234,10 +264,13 @@ def get_knowledge_data():
     return load_knowledge()
 
 @app.get("/api/question-sources")
-def get_question_sources():
+def get_question_sources(uid: Optional[str] = None):
     bank = load_bank()
+    all_qs = list(bank.get("part1", [])) + list(bank.get("part2", []))
+    if uid:
+        all_qs += load_user_questions(uid)
     counts = {}
-    for q in bank.get("part1", []) + bank.get("part2", []):
+    for q in all_qs:
         src = q.get("source", "Tài liệu chưa phân loại")
         counts[src] = counts.get(src, 0) + 1
     
@@ -261,13 +294,39 @@ def get_questions(
     q_type: Optional[str] = None, 
     source: Optional[str] = None,
     query: Optional[str] = None,
-    q_id: Optional[str] = None
+    q_id: Optional[str] = None,
+    uid: Optional[str] = None,
+    scope: Optional[str] = "all"
 ):
     bank = load_bank()
-    results = []
-    
-    if q_type in ["part1", None]:
+    p1 = []
+    p2 = []
+
+    # 1. System questions (nếu chọn 'all' hoặc 'system')
+    if scope in ["all", "system", None, ""]:
         for q in bank.get("part1", []):
+            item = dict(q)
+            item["is_personal"] = False
+            p1.append(item)
+        for q in bank.get("part2", []):
+            item = dict(q)
+            item["is_personal"] = False
+            p2.append(item)
+
+    # 2. Personal questions của đúng giáo viên đang đăng nhập (nếu chọn 'all' hoặc 'personal')
+    if scope in ["all", "personal"] and uid:
+        user_qs = load_user_questions(uid)
+        for q in user_qs:
+            item = dict(q)
+            item["is_personal"] = True
+            if item.get("type") == "part2":
+                p2.append(item)
+            else:
+                p1.append(item)
+
+    results = []
+    if q_type in ["part1", None]:
+        for q in p1:
             if q_id and q.get("id") != q_id:
                 continue
             if grade and q.get("grade") != grade:
@@ -281,7 +340,7 @@ def get_questions(
             results.append(q)
             
     if q_type in ["part2", None]:
-        for q in bank.get("part2", []):
+        for q in p2:
             if q_id and q.get("id") != q_id:
                 continue
             if grade and q.get("grade") != grade:
@@ -297,15 +356,47 @@ def get_questions(
     return {"total": len(results), "questions": results[:500]}
 
 @app.get("/api/question/{q_id}")
-def get_single_question(q_id: str):
+def get_single_question(q_id: str, uid: Optional[str] = None):
+    if uid:
+        for q in load_user_questions(uid):
+            if q.get("id") == q_id:
+                item = dict(q)
+                item["is_personal"] = True
+                return {"status": "success", "question": item}
     bank = load_bank()
     for q in bank.get("part1", []) + bank.get("part2", []):
         if q.get("id") == q_id:
-            return {"status": "success", "question": q}
+            item = dict(q)
+            item["is_personal"] = False
+            return {"status": "success", "question": item}
     raise HTTPException(status_code=404, detail="Không tìm thấy câu hỏi trong ngân hàng.")
 
 @app.post("/api/update-bank-question")
 def handle_update_bank_question(req: UpdateBankQuestionRequest):
+    if req.uid:
+        user_qs = load_user_questions(req.uid)
+        updated = False
+        for q in user_qs:
+            if q.get("id") == req.q_id:
+                q["stem"] = req.stem
+                q["grade"] = int(req.grade)
+                q["level"] = req.level
+                if req.topic:
+                    q["topic"] = req.topic
+                if req.options is not None:
+                    q["options"] = req.options
+                if req.statements is not None:
+                    q["statements"] = req.statements
+                if req.answer is not None:
+                    q["answer"] = req.answer
+                if req.explanation is not None:
+                    q["explanation"] = req.explanation
+                updated = True
+                break
+        if updated:
+            save_user_questions(req.uid, user_qs)
+            return {"status": "success", "question": q}
+
     bank = load_bank()
     pool = bank.get("part1", []) if req.q_type == "part1" else bank.get("part2", [])
     found_q = None
@@ -355,7 +446,14 @@ def handle_update_bank_question(req: UpdateBankQuestionRequest):
     return {"status": "success", "question": found_q}
 
 @app.delete("/api/questions/{q_id}")
-def handle_delete_question(q_id: str):
+def handle_delete_question(q_id: str, uid: Optional[str] = None):
+    if uid:
+        user_qs = load_user_questions(uid)
+        new_uqs = [q for q in user_qs if q.get("id") != q_id]
+        if len(new_uqs) != len(user_qs):
+            save_user_questions(uid, new_uqs)
+            return {"status": "success", "message": f"Đã xóa câu hỏi khỏi kho cá nhân của bạn."}
+            
     success = delete_question_from_bank(q_id)
     if not success:
         raise HTTPException(status_code=404, detail="Không tìm thấy câu hỏi để xóa.")
@@ -383,7 +481,13 @@ def handle_swap_question(req: SwapQuestionRequest):
 def create_exam(req: GenerateRequest):
     global CURRENT_EXAM
     num_clusters = req.num_clusters if req.num_clusters is not None else 3
-    exam = generate_exam(preset=req.preset, custom_config=req.custom_config, exam_info=req.exam_info, num_clusters=num_clusters)
+    exam = generate_exam(
+        preset=req.preset,
+        custom_config=req.custom_config,
+        exam_info=req.exam_info,
+        num_clusters=num_clusters,
+        custom_questions=req.custom_questions
+    )
     CURRENT_EXAM = exam
     return exam
 
@@ -399,7 +503,7 @@ def handle_reroll(req: RerollRequest):
     global CURRENT_EXAM
     if not CURRENT_EXAM:
         raise HTTPException(status_code=400, detail="Chưa có đề thi nào đang hoạt động.")
-    new_q = reroll_question(CURRENT_EXAM, req.q_id, req.q_type)
+    new_q = reroll_question(CURRENT_EXAM, req.q_id, req.q_type, custom_questions=req.custom_questions)
     if not new_q:
         raise HTTPException(status_code=404, detail="Không tìm thấy câu hỏi phù hợp để thay thế.")
     return {"status": "success", "new_question": new_q, "exam": CURRENT_EXAM}
@@ -539,7 +643,6 @@ def save_api_config(req: ApiConfigRequest):
 
 @app.post("/api/save-generated-question")
 def save_generated_question(req: SaveGeneratedQuestionRequest):
-    bank = load_bank()
     data = req.question
     saved_items = []
     
@@ -550,22 +653,29 @@ def save_generated_question(req: SaveGeneratedQuestionRequest):
     else:
         questions_to_save = [data]
         
+    uid = req.uid or "guest_local_user"
     for q in questions_to_save:
         if not q or not isinstance(q, dict) or "stem" not in q:
             continue
         if not q.get("id"):
             q["id"] = f"ai_gen_{uuid.uuid4().hex[:8]}"
-        q_type = q.get("type", "part1")
-        if q_type == "part2":
-            bank["part2"].append(q)
-        else:
-            bank["part1"].append(q)
+        q["is_personal"] = True
+        q["owner_uid"] = uid
+        q["owner_email"] = req.email or ""
         saved_items.append(q)
         
     if not saved_items:
         raise HTTPException(status_code=400, detail="Dữ liệu câu hỏi không hợp lệ.")
         
-    save_bank(bank)
+    # Lưu vào kho cá nhân của giáo viên tương ứng, không làm ô nhiễm kho gốc hệ thống
+    existing = load_user_questions(uid)
+    existing_ids = {item.get("id") for item in existing}
+    for item in saved_items:
+        if item["id"] not in existing_ids:
+            existing.append(item)
+            existing_ids.add(item["id"])
+    save_user_questions(uid, existing)
+    
     return {
         "status": "success",
         "question": saved_items[0] if len(saved_items) == 1 else saved_items,
@@ -596,6 +706,51 @@ def handle_ai_generate_cluster(req: AiClusterGenerateRequest):
         raw_keys=req.raw_keys,
         model=req.model or "gemini-2.0-flash"
     )
+
+# --- PERSONAL QUESTION BANK ENDPOINTS (USER ISOLATION) ---
+
+class SaveUserQuestionsRequest(BaseModel):
+    uid: str
+    email: Optional[str] = ""
+    questions: List[Dict[str, Any]]
+
+class DeleteUserQuestionRequest(BaseModel):
+    uid: str
+    q_id: str
+
+@app.get("/api/user/personal-questions")
+def get_personal_questions(uid: str = "guest_local_user"):
+    qs = load_user_questions(uid)
+    return {"status": "success", "uid": uid, "questions": qs, "count": len(qs)}
+
+@app.post("/api/user/personal-questions")
+def save_personal_questions_endpoint(req: SaveUserQuestionsRequest):
+    uid = req.uid or "guest_local_user"
+    existing = load_user_questions(uid)
+    existing_ids = {q.get("id") for q in existing}
+    added_count = 0
+    for q in req.questions:
+        if not q or not isinstance(q, dict) or "stem" not in q:
+            continue
+        if not q.get("id"):
+            q["id"] = f"user_q_{uuid.uuid4().hex[:8]}"
+        q["owner_uid"] = uid
+        q["owner_email"] = req.email or ""
+        q["is_personal"] = True
+        if q["id"] not in existing_ids:
+            existing.append(q)
+            existing_ids.add(q["id"])
+            added_count += 1
+    save_user_questions(uid, existing)
+    return {"status": "success", "uid": uid, "total": len(existing), "added": added_count}
+
+@app.post("/api/user/personal-questions/delete")
+def delete_personal_question_endpoint(req: DeleteUserQuestionRequest):
+    uid = req.uid or "guest_local_user"
+    existing = load_user_questions(uid)
+    updated = [q for q in existing if q.get("id") != req.q_id]
+    save_user_questions(uid, updated)
+    return {"status": "success", "uid": uid, "deleted_id": req.q_id, "remaining": len(updated)}
 
 # --- LICENSE & FIREBASE AUTH ENDPOINTS ---
 

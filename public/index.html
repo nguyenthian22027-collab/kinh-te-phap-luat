@@ -583,6 +583,14 @@
             </div>
           </div>
           <div class="card-body">
+            <!-- BANK SCOPE SELECTOR (CÁCH LY KHO CÁ NHÂN & KHO CHUẨN) -->
+            <div class="bank-scope-selector" style="display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; background: rgba(15, 23, 42, 0.45); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); align-items: center;">
+              <span style="font-size: 13px; font-weight: 600; color: #94a3b8; margin-right: 4px;">🔍 Phạm vi kho:</span>
+              <button type="button" class="btn-chip active" id="filter-scope-all" onclick="setBankScope('all')">🌐 Tất cả câu hỏi khả dụng</button>
+              <button type="button" class="btn-chip" id="filter-scope-system" onclick="setBankScope('system')">🏛️ Kho chuẩn hệ thống</button>
+              <button type="button" class="btn-chip" id="filter-scope-personal" onclick="setBankScope('personal')">👤 Kho cá nhân của tôi <span id="personal-bank-badge-count" style="background: #3b82f6; color: white; padding: 2px 7px; border-radius: 10px; font-size: 11px; margin-left: 4px; font-weight: bold;">0</span></button>
+            </div>
+
             <!-- FILTER TOOLBAR -->
             <div class="bank-filters-grid">
               <div class="form-group">

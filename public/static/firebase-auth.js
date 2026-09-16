@@ -243,6 +243,13 @@
         }
 
         await this.refreshUserStatus();
+        if (window.UserBankManager) {
+          window.UserBankManager.syncCurrentUid();
+          await window.UserBankManager.fetchPersonalQuestions();
+          if (typeof window.loadQuestions === "function") {
+            window.loadQuestions();
+          }
+        }
         this.renderTopbarAuth();
         this.updateSidebarLicenseInfo();
       });
@@ -492,6 +499,13 @@
         this.user = null;
         this.initLocalGuestSession();
         await this.refreshUserStatus();
+        if (window.UserBankManager) {
+          window.UserBankManager.syncCurrentUid();
+          window.UserBankManager.loadFromCache();
+        }
+        if (typeof window.loadQuestions === "function") {
+          window.loadQuestions();
+        }
         this.renderTopbarAuth();
         this.updateSidebarLicenseInfo();
         alert("Đã đăng xuất tài khoản thành công.");
@@ -1136,12 +1150,191 @@
     }
   };
 
+  // =========================================================================
+  // USER BANK MANAGER: PHÂN TÁCH KHO CÂU HỎI CÁ NHÂN THEO TÀI KHOẢN (ISOLATION)
+  // =========================================================================
+  const UserBankManager = {
+    currentUid: 'guest_local_user',
+    personalQuestions: [],
+
+    init() {
+      this.syncCurrentUid();
+      this.loadFromCache();
+    },
+
+    syncCurrentUid() {
+      if (AuthManager && AuthManager.user && AuthManager.user.uid && !AuthManager.user.isGuest) {
+        this.currentUid = AuthManager.user.uid;
+      } else {
+        this.currentUid = 'guest_local_user';
+      }
+    },
+
+    getCacheKey() {
+      return 'gdktpl_personal_bank_' + this.currentUid;
+    },
+
+    loadFromCache() {
+      this.syncCurrentUid();
+      try {
+        const data = localStorage.getItem(this.getCacheKey());
+        this.personalQuestions = data ? JSON.parse(data) : [];
+      } catch(e) {
+        this.personalQuestions = [];
+      }
+      return this.personalQuestions;
+    },
+
+    saveToCache(questions) {
+      this.personalQuestions = questions;
+      try {
+        localStorage.setItem(this.getCacheKey(), JSON.stringify(questions));
+      } catch(e) {}
+    },
+
+    async fetchPersonalQuestions() {
+      this.syncCurrentUid();
+      // 1. Thử lấy từ Cloud Firestore nếu đã đăng nhập
+      if (AuthManager && AuthManager.db && this.currentUid !== 'guest_local_user') {
+        try {
+          const snap = await AuthManager.db
+            .collection('users')
+            .doc(this.currentUid)
+            .collection('personal_questions')
+            .get();
+          if (!snap.empty) {
+            const qs = [];
+            snap.forEach(doc => {
+              const d = doc.data();
+              if (d && d.stem) qs.push(d);
+            });
+            this.saveToCache(qs);
+            return qs;
+          }
+        } catch(e) {
+          console.warn('Firestore fetch personal questions:', e);
+        }
+      }
+
+      // 2. Thử lấy từ Backend endpoint cách ly
+      try {
+        const res = await fetch('/api/user/personal-questions?uid=' + encodeURIComponent(this.currentUid)).then(r => r.json());
+        if (res.status === 'success' && Array.isArray(res.questions) && res.questions.length > 0) {
+          this.saveToCache(res.questions);
+          return res.questions;
+        }
+      } catch(e) {}
+
+      // 3. Dự phòng từ Local Cache
+      return this.loadFromCache();
+    },
+
+    async addQuestions(newQuestions) {
+      this.syncCurrentUid();
+      const userEmail = (AuthManager && AuthManager.user && AuthManager.user.email) || '';
+      const qsToAdd = Array.isArray(newQuestions) ? newQuestions : [newQuestions];
+      
+      const preparedList = [];
+      qsToAdd.forEach(q => {
+        if (!q || !q.stem) return;
+        const copyQ = Object.assign({}, q);
+        if (!copyQ.id) copyQ.id = 'user_q_' + Math.random().toString(36).substring(2, 10);
+        copyQ.owner_uid = this.currentUid;
+        copyQ.owner_email = userEmail;
+        copyQ.is_personal = true;
+        preparedList.push(copyQ);
+      });
+
+      if (preparedList.length === 0) return this.personalQuestions;
+
+      // 1. Lưu lên Cloud Firestore nếu đã đăng nhập
+      if (AuthManager && AuthManager.db && this.currentUid !== 'guest_local_user') {
+        try {
+          const batch = AuthManager.db.batch();
+          preparedList.forEach(q => {
+            const ref = AuthManager.db
+              .collection('users')
+              .doc(this.currentUid)
+              .collection('personal_questions')
+              .doc(q.id);
+            batch.set(ref, q);
+          });
+          await batch.commit();
+        } catch(e) {
+          console.warn('Firestore save personal questions:', e);
+        }
+      }
+
+      // 2. Lưu lên Backend Endpoint cách ly
+      try {
+        await fetch('/api/user/personal-questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid: this.currentUid,
+            email: userEmail,
+            questions: preparedList
+          })
+        });
+      } catch(e) {}
+
+      // 3. Cập nhật LocalStorage
+      const currentList = this.loadFromCache();
+      const existingIds = new Set(currentList.map(q => q.id));
+      preparedList.forEach(q => {
+        if (!existingIds.has(q.id)) {
+          currentList.push(q);
+          existingIds.add(q.id);
+        }
+      });
+      this.saveToCache(currentList);
+      return currentList;
+    },
+
+    async deleteQuestion(qId) {
+      this.syncCurrentUid();
+      // 1. Xóa trên Cloud Firestore
+      if (AuthManager && AuthManager.db && this.currentUid !== 'guest_local_user') {
+        try {
+          await AuthManager.db
+            .collection('users')
+            .doc(this.currentUid)
+            .collection('personal_questions')
+            .doc(qId)
+            .delete();
+        } catch(e) {}
+      }
+
+      // 2. Xóa trên Backend
+      try {
+        await fetch('/api/user/personal-questions/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid: this.currentUid,
+            q_id: qId
+          })
+        });
+      } catch(e) {}
+
+      // 3. Cập nhật LocalStorage
+      const currentList = this.loadFromCache().filter(q => q.id !== qId);
+      this.saveToCache(currentList);
+      return currentList;
+    }
+  };
+
   window.AuthManager = AuthManager;
   window.AdminManager = AdminManager;
+  window.UserBankManager = UserBankManager;
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => AuthManager.init());
+    document.addEventListener("DOMContentLoaded", () => {
+      AuthManager.init();
+      UserBankManager.init();
+    });
   } else {
     AuthManager.init();
+    UserBankManager.init();
   }
 })();

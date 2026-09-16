@@ -401,13 +401,7 @@ def import_document_file(filename, file_bytes, raw_keys=None, model="gemini-3.5"
         )
         is_synthesized = True
     
-    # Lưu vào ngân hàng
-    if p1 or p2:
-        bank = load_bank()
-        bank["part1"].extend(p1)
-        bank["part2"].extend(p2)
-        save_bank(bank)
-    
+    # Không ghi đè vào kho gốc hệ thống để bảo vệ tính riêng tư của từng giáo viên
     return {
         "filename": filename,
         "text_length": len(text),
@@ -415,7 +409,8 @@ def import_document_file(filename, file_bytes, raw_keys=None, model="gemini-3.5"
         "imported_part2": len(p2),
         "total_imported": len(p1) + len(p2),
         "is_synthesized": is_synthesized,
-        "is_ai_solved": is_ai_solved
+        "is_ai_solved": is_ai_solved,
+        "questions": p1 + p2
     }
 
 def import_from_url(url, num_questions=5, raw_keys=None, model="gemini-3.5", use_ai_solver=True):
@@ -478,12 +473,6 @@ def import_from_url(url, num_questions=5, raw_keys=None, model="gemini-3.5", use
             )
             is_synthesized = True
 
-        if p1 or p2:
-            bank = load_bank()
-            bank["part1"].extend(p1)
-            bank["part2"].extend(p2)
-            save_bank(bank)
-            
         return {
             "status": "success",
             "title": title,
@@ -495,7 +484,8 @@ def import_from_url(url, num_questions=5, raw_keys=None, model="gemini-3.5", use
             "is_synthesized": is_synthesized,
             "is_ai_solved": is_ai_solved,
             "source_name": src_name,
-            "raw_text_sample": body_text[:600]
+            "raw_text_sample": body_text[:600],
+            "questions": p1 + p2
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
@@ -541,18 +531,14 @@ def import_raw_text(text, source_name="Văn bản dán vào", num_questions=5, r
         )
         is_synthesized = True
 
-    if p1 or p2:
-        bank = load_bank()
-        bank["part1"].extend(p1)
-        bank["part2"].extend(p2)
-        save_bank(bank)
-
+    # Không ghi đè vào kho gốc hệ thống để bảo vệ tính riêng tư của từng giáo viên
     return {
         "status": "success",
         "imported_part1": len(p1),
         "imported_part2": len(p2),
         "total_imported": len(p1) + len(p2),
         "is_synthesized": is_synthesized,
-        "is_ai_solved": is_ai_solved
+        "is_ai_solved": is_ai_solved,
+        "questions": p1 + p2
     }
 

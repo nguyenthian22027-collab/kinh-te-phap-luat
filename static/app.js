@@ -174,10 +174,17 @@ function initPresetSelection() {
       btnGen.disabled = true;
       btnGen.innerHTML = `<span>⏳</span> ĐANG XỬ LÝ MA TRẬN & SINH ĐỀ...`;
 
+      const customQuestions = (window.UserBankManager ? window.UserBankManager.loadFromCache() : []) || [];
+
       fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preset: selectedPreset, exam_info: examInfo, num_clusters: numClusters })
+        body: JSON.stringify({
+          preset: selectedPreset,
+          exam_info: examInfo,
+          num_clusters: numClusters,
+          custom_questions: customQuestions
+        })
       })
       .then(res => res.json())
       .then(data => {
@@ -401,10 +408,12 @@ window.rerollItem = function(qId, qType) {
   const itemEl = document.getElementById(`q-item-${qId}`);
   if (itemEl) itemEl.style.opacity = '0.4';
 
+  const customQuestions = (window.UserBankManager ? window.UserBankManager.loadFromCache() : []) || [];
+
   fetch("/api/reroll", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q_id: qId, q_type: qType })
+    body: JSON.stringify({ q_id: qId, q_type: qType, custom_questions: customQuestions })
   })
   .then(res => res.json())
   .then(data => {
@@ -464,7 +473,9 @@ window.openEditModal = function(qId, qType) {
 };
 
 window.openBankEditModal = function(qId, qType) {
-  fetch(`/api/question/${encodeURIComponent(qId)}`)
+  const curUid = (window.AuthManager && window.AuthManager.user && window.AuthManager.user.uid) || 
+                 (window.UserBankManager && window.UserBankManager.currentUid) || 'guest_local_user';
+  fetch(`/api/question/${encodeURIComponent(qId)}?uid=${encodeURIComponent(curUid)}`)
     .then(res => {
       if (!res.ok) throw new Error("Không tìm thấy câu hỏi");
       return res.json();
@@ -562,6 +573,10 @@ window.saveQuestionEdit = function() {
     payload.statements = stmts;
   }
 
+  const curUid = (window.AuthManager && window.AuthManager.user && window.AuthManager.user.uid) || 
+                 (window.UserBankManager && window.UserBankManager.currentUid) || 'guest_local_user';
+  payload.uid = curUid;
+
   const endpoint = (mode === 'bank') ? "/api/update-bank-question" : "/api/update-question";
 
   fetch(endpoint, {
@@ -572,6 +587,14 @@ window.saveQuestionEdit = function() {
   .then(res => res.json())
   .then(data => {
     if (mode === 'bank') {
+      if (window.UserBankManager && data.question) {
+        const cached = window.UserBankManager.loadFromCache();
+        const idx = cached.findIndex(item => item.id === qId);
+        if (idx !== -1) {
+          cached[idx] = Object.assign({}, cached[idx], data.question);
+          window.UserBankManager.saveToCache(cached);
+        }
+      }
       loadBankQuestions();
       loadStatus();
       closeEditModal();
@@ -624,7 +647,10 @@ function initResourceHandlers() {
         body: formData
       })
       .then(res => res.json())
-      .then(res => {
+      .then(async res => {
+        if (window.UserBankManager && res.questions && res.questions.length > 0) {
+          await window.UserBankManager.addQuestions(res.questions);
+        }
         const solvedNote = res.is_ai_solved ? "\n🤖 (Đã được AI thẩm định và giải chi tiết đáp án 100%!)" : "";
         alert(`✅ Nạp thành công tệp: ${res.filename}!\nBổ sung thêm: ${res.total_imported} câu hỏi (${res.imported_part1} câu TN, ${res.imported_part2} câu Đúng/Sai).${solvedNote}`);
         loadStatus();
@@ -679,7 +705,10 @@ function initResourceHandlers() {
         })
       })
       .then(res => res.json())
-      .then(res => {
+      .then(async res => {
+        if (window.UserBankManager && res.questions && res.questions.length > 0) {
+          await window.UserBankManager.addQuestions(res.questions);
+        }
         btnPaste.disabled = false;
         btnPaste.innerHTML = `<span>➕</span> Nhận Diện & Nạp Vào Ngân Hàng`;
         const solvedNote = res.is_ai_solved ? "\n🤖 (Đã được AI thẩm định và giải chi tiết đáp án 100%!)" : "";
@@ -726,8 +755,11 @@ function initResourceHandlers() {
         })
       })
       .then(res => res.json())
-      .then(res => {
+      .then(async res => {
         if (res.status === 'success') {
+          if (window.UserBankManager && res.questions && res.questions.length > 0) {
+            await window.UserBankManager.addQuestions(res.questions);
+          }
           const total = res.total_imported || 0;
           const srcName = res.source_name || `Web: ${res.title.substring(0, 35)}`;
           let resultMsg = "";
@@ -810,10 +842,13 @@ function initResourceHandlers() {
           })
         })
         .then(res => res.json())
-        .then(res => {
+        .then(async res => {
           if (res.status === "success") {
             const passage = res.cluster_passage || "";
             const qs = res.questions || [];
+            if (window.UserBankManager && qs.length > 0) {
+              await window.UserBankManager.addQuestions(qs);
+            }
             const isAi = res.is_ai;
             const modelTag = isAi
               ? `<span class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">${res.used_model} (${res.used_key_masked})</span>`
@@ -1008,14 +1043,12 @@ YÊU CẦU CHUẨN MỰC HSG:
           qData.topic = qData.topic || topic;
           qData.type = qType;
 
-          // Save to backend bank
-          const saveRes = await fetch("/api/save-generated-question", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question: qData })
-          }).then(r => r.json());
+          // Save to user's personal bank
+          if (window.UserBankManager) {
+            await window.UserBankManager.addQuestions([qData]);
+          }
 
-          const finalQ = saveRes.question || qData;
+          const finalQ = qData;
           resBox.innerHTML = `
             <div style="background: rgba(56, 189, 248, 0.1); padding: 14px; border-radius: 8px; border: 1px solid #38bdf8; color: #bae6fd; margin-top: 10px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
@@ -1053,9 +1086,12 @@ YÊU CẦU CHUẨN MỰC HSG:
         })
       })
       .then(res => res.json())
-      .then(res => {
+      .then(async res => {
         if (res.status === 'success') {
           const q = res.question;
+          if (window.UserBankManager && q) {
+            await window.UserBankManager.addQuestions([q]);
+          }
           const qSource = q.source || 'Bộ sinh tình huống pháp luật tự động';
           resBox.innerHTML = `
             <div style="background: rgba(56, 189, 248, 0.1); padding: 14px; border-radius: 8px; border: 1px solid #38bdf8; color: #bae6fd; margin-top: 10px;">
@@ -1488,7 +1524,9 @@ function initBankExplorer() {
 }
 
 function loadBankSources(preselectSource) {
-  return fetch("/api/question-sources")
+  const curUid = (window.AuthManager && window.AuthManager.user && window.AuthManager.user.uid) || 
+                 (window.UserBankManager && window.UserBankManager.currentUid) || 'guest_local_user';
+  return fetch(`/api/question-sources?uid=${encodeURIComponent(curUid)}`)
     .then(res => res.json())
     .then(data => {
       const select = document.getElementById("bank-filter-source");
@@ -1544,10 +1582,34 @@ function loadBankSources(preselectSource) {
     });
 }
 
+let currentBankScope = 'all'; // 'all', 'system', 'personal'
+
+window.setBankScope = function(scope) {
+  currentBankScope = scope;
+  ['filter-scope-all', 'filter-scope-system', 'filter-scope-personal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  const activeEl = document.getElementById(`filter-scope-${scope}`);
+  if (activeEl) activeEl.classList.add('active');
+  loadBankSources();
+  loadBankQuestions();
+};
+
 function loadBankQuestions() {
   const container = document.getElementById("bank-questions-list");
   const countBadge = document.getElementById("bank-view-count");
+  const personalBadge = document.getElementById("personal-bank-badge-count");
   if (!container) return;
+
+  const curUid = (window.AuthManager && window.AuthManager.user && window.AuthManager.user.uid) || 
+                 (window.UserBankManager && window.UserBankManager.currentUid) || 'guest_local_user';
+
+  // Cập nhật số lượng câu hỏi cá nhân trên badge
+  const personalQuestions = (window.UserBankManager ? window.UserBankManager.loadFromCache() : []) || [];
+  if (personalBadge) {
+    personalBadge.textContent = personalQuestions.length;
+  }
 
   container.innerHTML = `<div class="spinner"></div><p style="text-align:center;">Đang tải danh sách câu hỏi...</p>`;
 
@@ -1559,6 +1621,8 @@ function loadBankQuestions() {
 
   let url = `/api/questions?`;
   const params = [];
+  params.push(`uid=${encodeURIComponent(curUid)}`);
+  params.push(`scope=${encodeURIComponent(currentBankScope)}`);
   if (source) params.push(`source=${encodeURIComponent(source)}`);
   if (grade) params.push(`grade=${encodeURIComponent(grade)}`);
   if (qType) params.push(`q_type=${encodeURIComponent(qType)}`);
@@ -1570,19 +1634,24 @@ function loadBankQuestions() {
     .then(res => res.json())
     .then(data => {
       const questions = data.questions || [];
+      const scopeLabel = currentBankScope === 'system' ? '🏛️ Kho hệ thống' : (currentBankScope === 'personal' ? '👤 Kho cá nhân' : '🌐 Tất cả');
       if (countBadge) {
         if (source) {
-          countBadge.innerHTML = `Đang lọc nguồn: <strong style="color: #38bdf8;">${escapeHtml(source)}</strong> (${questions.length} / ${data.total} câu) <button onclick="clearBankSourceFilter()" style="margin-left: 8px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 11px;">✕ Xem tất cả</button>`;
+          countBadge.innerHTML = `[${scopeLabel}] Đang lọc nguồn: <strong style="color: #38bdf8;">${escapeHtml(source)}</strong> (${questions.length} / ${data.total} câu) <button onclick="clearBankSourceFilter()" style="margin-left: 8px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 11px;">✕ Xem tất cả</button>`;
         } else {
-          countBadge.textContent = `Hiển thị ${questions.length} / ${data.total} câu`;
+          countBadge.textContent = `[${scopeLabel}] Hiển thị ${questions.length} / ${data.total} câu`;
         }
       }
 
       if (questions.length === 0) {
+        let emptyMsg = "Không tìm thấy câu hỏi nào phù hợp với bộ lọc";
+        if (currentBankScope === 'personal') {
+          emptyMsg = "Thầy/Cô chưa có câu hỏi cá nhân nào trong kho riêng. Hãy dùng chức năng 'Nạp Đề & Ngữ Liệu' hoặc 'AI Sinh Câu Hỏi' để nạp câu hỏi riêng của mình!";
+        }
         container.innerHTML = `
           <div style="text-align:center; padding: 40px; color: #94a3b8;">
-            <h4>Không tìm thấy câu hỏi nào phù hợp với bộ lọc</h4>
-            <p style="margin-top: 6px;">Hãy thử chọn "-- Tất cả nguồn tài liệu --" hoặc bấm nút xem tất cả bên trên.</p>
+            <h4>${emptyMsg}</h4>
+            <p style="margin-top: 6px;">Hãy thử chọn phạm vi "🌐 Tất cả câu hỏi khả dụng" hoặc đặt lại bộ lọc.</p>
           </div>
         `;
         return;
@@ -1594,11 +1663,17 @@ function loadBankQuestions() {
         const lvlClass = q.level === 'biet' ? 'q-badge-biet' : (q.level === 'hieu' ? 'q-badge-hieu' : 'q-badge-van-dung');
         const isAi = (q.source || "").toLowerCase().includes("ai") || (q.source || "").toLowerCase().includes("tự động");
         const typeName = q.type === 'part1' ? 'Phần I (Trắc nghiệm)' : 'Phần II (Đúng/Sai)';
+        const isPersonal = !!q.is_personal;
+
+        const personalBadgeHtml = isPersonal
+          ? `<span class="q-badge" style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.5); font-weight: 700; padding: 2px 8px; border-radius: 4px;">👤 Của tôi (Riêng tư)</span>`
+          : `<span class="q-badge" style="background: rgba(14, 165, 233, 0.2); color: #7dd3fc; border: 1px solid rgba(14, 165, 233, 0.4); font-weight: 600; padding: 2px 8px; border-radius: 4px;">🏛️ Hệ thống</span>`;
 
         html += `
           <div class="bank-question-card" id="bank-q-${q.id}">
             <div class="bank-q-header">
               <div class="bank-q-meta">
+                ${personalBadgeHtml}
                 <span class="source-tag ${isAi ? 'source-tag-ai' : ''}">📁 ${escapeHtml(q.source || 'Tài liệu nạp')}</span>
                 <span class="q-badge" style="font-weight: 700; font-size: 12px; background: rgba(59, 130, 246, 0.25); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); padding: 2px 8px; border-radius: 4px;">🎓 Lớp ${q.grade || 11}</span>
                 <span class="q-badge ${lvlClass}" style="font-weight: 600; padding: 2px 8px; border-radius: 4px;">🎯 ${lvlName}</span>
@@ -1607,7 +1682,7 @@ function loadBankQuestions() {
               </div>
               <div style="display: flex; gap: 6px; align-items: center;">
                 <button class="btn btn-secondary btn-sm" onclick="openBankEditModal('${q.id}', '${q.type}')" title="Sửa nội dung hoặc đổi Khối Lớp (10, 11, 12), Mức độ nhận thức" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">✏️ Sửa / Đổi Lớp</button>
-                <button class="btn btn-secondary btn-sm" onclick="deleteBankQuestion('${q.id}')" title="Xóa khỏi ngân hàng" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">🗑️ Xóa</button>
+                <button class="btn btn-secondary btn-sm" onclick="deleteBankQuestion('${q.id}', ${isPersonal})" title="Xóa khỏi ngân hàng" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);">🗑️ Xóa</button>
               </div>
             </div>
             <div class="bank-q-stem"><strong>#${idx + 1}:</strong> ${escapeHtml(q.stem)}</div>
@@ -1664,10 +1739,17 @@ window.clearBankSourceFilter = function() {
   loadBankQuestions();
 };
 
-window.deleteBankQuestion = function(qId) {
+window.deleteBankQuestion = async function(qId, isPersonal) {
   if (!confirm("Thầy/cô có chắc chắn muốn xóa câu hỏi này khỏi Ngân Hàng Câu Hỏi?")) return;
 
-  fetch(`/api/questions/${qId}`, { method: "DELETE" })
+  const curUid = (window.AuthManager && window.AuthManager.user && window.AuthManager.user.uid) || 
+                 (window.UserBankManager && window.UserBankManager.currentUid) || 'guest_local_user';
+
+  if (isPersonal && window.UserBankManager) {
+    await window.UserBankManager.deleteQuestion(qId);
+  }
+
+  fetch(`/api/questions/${encodeURIComponent(qId)}?uid=${encodeURIComponent(curUid)}`, { method: "DELETE" })
     .then(res => res.json())
     .then(res => {
       loadBankQuestions();
