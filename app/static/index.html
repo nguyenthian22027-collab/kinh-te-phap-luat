@@ -233,45 +233,6 @@
                 </div>
               </div>
 
-              <!-- CẤU HÌNH DẠNG CÂU HỎI CHÙM (NGỮ LIỆU CHUNG) -->
-              <div class="form-group-box cluster-select-box">
-                <h4>📚 Cấu hình số lượng Câu hỏi chùm (Ngữ liệu chung):</h4>
-                <p class="text-muted" style="margin-bottom: 12px; font-size: 0.88rem; color: #94a3b8;">
-                  Đề thi HSG chuẩn hóa có các nhóm câu hỏi cùng khai thác một đoạn thông tin/tình huống pháp luật. Bạn có thể chọn số lượng chùm câu hỏi đưa vào Phần I:
-                </p>
-                <div class="cluster-options-grid">
-                  <label class="cluster-radio-card">
-                    <input type="radio" name="cfg-num-clusters" value="0">
-                    <div class="cluster-card-inner">
-                      <span class="cluster-title">0 chùm</span>
-                      <span class="cluster-desc">40 câu rời rạc (truyền thống)</span>
-                    </div>
-                  </label>
-                  <label class="cluster-radio-card">
-                    <input type="radio" name="cfg-num-clusters" value="2">
-                    <div class="cluster-card-inner">
-                      <span class="cluster-title">2 chùm</span>
-                      <span class="cluster-desc">4 câu hỏi chùm + 36 câu rời</span>
-                    </div>
-                  </label>
-                  <label class="cluster-radio-card active">
-                    <input type="radio" name="cfg-num-clusters" value="3" checked>
-                    <div class="cluster-card-inner">
-                      <span class="cluster-badge-rec">Chuẩn thi HSG</span>
-                      <span class="cluster-title">3 chùm</span>
-                      <span class="cluster-desc">6 câu hỏi chùm + 34 câu rời</span>
-                    </div>
-                  </label>
-                  <label class="cluster-radio-card">
-                    <input type="radio" name="cfg-num-clusters" value="4">
-                    <div class="cluster-card-inner">
-                      <span class="cluster-title">4 chùm</span>
-                      <span class="cluster-desc">8 câu hỏi chùm + 32 câu rời</span>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
               <div class="btn-action-row">
                 <button class="btn btn-primary btn-large" id="btn-generate-exam">
                   <span>✨</span> BẮT ĐẦU SINH ĐỀ THI THEO MA TRẬN
@@ -283,10 +244,52 @@
           <!-- BẢNG MA TRẬN VÀ THỐNG KÊ THỜI GIAN THỰC -->
           <div class="card glass-card">
             <div class="card-header">
-              <h3>📊 Kiểm Soát Ma Trận Thời Gian Thực</h3>
+              <h3>📊 Kiểm Soát Ma Trận & Cấu Hình Đề Thi</h3>
               <span class="badge-status-ok" id="matrix-status-tag">Đang tải ma trận</span>
             </div>
             <div class="card-body">
+              <!-- CẤU HÌNH DẠNG CÂU HỎI CHÙM (NGỮ LIỆU CHUNG) -->
+              <div class="form-group-box cluster-select-box" style="margin-top: 0; margin-bottom: 18px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                  <h4 style="margin: 0;">📚 Cấu hình số lượng Câu hỏi chùm:</h4>
+                  <span class="badge-tag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 11px;">Chuẩn mới GDPT 2018</span>
+                </div>
+                <p class="text-muted" style="margin-bottom: 12px; font-size: 0.85rem; color: #94a3b8; line-height: 1.4;">
+                  Chọn số lượng chùm câu hỏi (cặp câu hỏi chung một ngữ liệu/tình huống) đưa vào Phần I:
+                </p>
+                <div class="cluster-options-grid">
+                  <label class="cluster-radio-card">
+                    <input type="radio" name="cfg-num-clusters" value="0">
+                    <div class="cluster-card-inner">
+                      <span class="cluster-title">0 chùm</span>
+                      <span class="cluster-desc">40 câu rời rạc</span>
+                    </div>
+                  </label>
+                  <label class="cluster-radio-card">
+                    <input type="radio" name="cfg-num-clusters" value="2">
+                    <div class="cluster-card-inner">
+                      <span class="cluster-title">2 chùm</span>
+                      <span class="cluster-desc">4 câu chùm + 36 câu rời</span>
+                    </div>
+                  </label>
+                  <label class="cluster-radio-card active">
+                    <input type="radio" name="cfg-num-clusters" value="3" checked>
+                    <div class="cluster-card-inner">
+                      <span class="cluster-badge-rec">Chuẩn thi HSG</span>
+                      <span class="cluster-title">3 chùm</span>
+                      <span class="cluster-desc">6 câu chùm + 34 câu rời</span>
+                    </div>
+                  </label>
+                  <label class="cluster-radio-card">
+                    <input type="radio" name="cfg-num-clusters" value="4">
+                    <div class="cluster-card-inner">
+                      <span class="cluster-title">4 chùm</span>
+                      <span class="cluster-desc">8 câu chùm + 32 câu rời</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
               <div class="matrix-table-wrapper">
                 <table class="data-table" id="matrix-spec-table">
                   <thead>

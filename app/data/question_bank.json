@@ -2087,6 +2087,50 @@
       "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
       "cluster_order": 2,
       "cluster_size": 2
+    },
+    {
+      "id": "cluster_ai_35cc6353_q1",
+      "type": "part1",
+      "grade": 12,
+      "level": "hieu",
+      "topic": "Bảo hiểm và an sinh xã hội",
+      "stem": "Trong thông tin trên, hành vi của ông B đã vi phạm hình thức thực hiện pháp luật nào và phải chịu trách nhiệm pháp lý gì?",
+      "options": {
+        "A": "Không tuân thủ pháp luật và phải chịu trách nhiệm hình sự.",
+        "B": "Sử dụng sai pháp luật và chỉ chịu trách nhiệm kỷ luật.",
+        "C": "Không áp dụng pháp luật và phải chịu trách nhiệm dân sự.",
+        "D": "Không thi hành pháp luật và chỉ bị xử phạt hành chính."
+      },
+      "answer": "A",
+      "explanation": "Ông B là người có chức vụ quyền hạn đã nhận hối lộ để bỏ qua vi phạm môi trường, đây là hành vi không tuân thủ pháp luật (làm điều pháp luật cấm) và có dấu hiệu tội phạm hình sự (Điều 354 Bộ luật Hình sự 2015).",
+      "source": "Bộ sinh chùm câu hỏi tự động chuẩn GDPT 2018",
+      "cluster_id": "cluster_ai_35cc6353",
+      "cluster_passage": "Năm 2024, một số địa phương ghi nhận tình trạng doanh nghiệp sản xuất da giày X trên địa bàn bị đình chỉ hoạt động vì xả nước thải chưa qua xử lý ra sông. Trong quá trình thanh tra, ông B (Trưởng đoàn thanh tra môi trường) phát hiện sai phạm nhưng đã nhận 50 triệu đồng của bà M (Giám đốc công ty X) để không lập biên bản đình chỉ. Anh T (kỹ sư nhà máy) đã gửi đơn tố cáo kèm file ghi âm đến cơ quan chức năng. Sau đó, ông C (Phó Giám đốc Sở) đã chỉ đạo chuyển hồ sơ sang Cơ quan Cảnh sát điều tra để khởi tố vụ án theo quy định.",
+      "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+      "cluster_order": 1,
+      "cluster_size": 2
+    },
+    {
+      "id": "cluster_ai_35cc6353_q2",
+      "type": "part1",
+      "grade": 12,
+      "level": "van_dung",
+      "topic": "Bảo hiểm và an sinh xã hội",
+      "stem": "Những chủ thể nào dưới đây trong thông tin trên ĐÃ VI PHẠM pháp luật?",
+      "options": {
+        "A": "Bà M và ông B.",
+        "B": "Chỉ có bà M.",
+        "C": "Bà M, ông B và anh T.",
+        "D": "Ông B và ông C."
+      },
+      "answer": "A",
+      "explanation": "Bà M vi phạm pháp luật bảo vệ môi trường và hành vi đưa hối lộ; ông B vi phạm pháp luật với hành vi nhận hối lộ. Anh T thực hiện quyền tố cáo đúng luật; ông C thực thi công vụ đúng quy định pháp luật.",
+      "source": "Bộ sinh chùm câu hỏi tự động chuẩn GDPT 2018",
+      "cluster_id": "cluster_ai_35cc6353",
+      "cluster_passage": "Năm 2024, một số địa phương ghi nhận tình trạng doanh nghiệp sản xuất da giày X trên địa bàn bị đình chỉ hoạt động vì xả nước thải chưa qua xử lý ra sông. Trong quá trình thanh tra, ông B (Trưởng đoàn thanh tra môi trường) phát hiện sai phạm nhưng đã nhận 50 triệu đồng của bà M (Giám đốc công ty X) để không lập biên bản đình chỉ. Anh T (kỹ sư nhà máy) đã gửi đơn tố cáo kèm file ghi âm đến cơ quan chức năng. Sau đó, ông C (Phó Giám đốc Sở) đã chỉ đạo chuyển hồ sơ sang Cơ quan Cảnh sát điều tra để khởi tố vụ án theo quy định.",
+      "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
+      "cluster_order": 2,
+      "cluster_size": 2
     }
   ],
   "part2": [
