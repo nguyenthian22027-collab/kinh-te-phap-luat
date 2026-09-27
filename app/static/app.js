@@ -1701,6 +1701,13 @@ function loadBankQuestions() {
             }
           });
           html += `</div>`;
+          // Cảnh báo nếu cần kiểm tra đáp án
+          if (q.needs_review) {
+            html += `<div style="margin: 6px 0 4px 0; padding: 6px 10px; background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); border-radius: 6px; color: #fbbf24; font-size: 12px; font-weight: 600;">
+              ⚠️ Đáp án chưa xác định chính xác — Hệ thống không tìm thấy đáp án trong văn bản gốc. Vui lòng bấm ✏️ Sửa để kiểm tra và cập nhật đáp án đúng.
+            </div>`;
+          }
+
         } else if (q.statements) {
           html += `<div style="margin-bottom: 8px;">`;
           q.statements.forEach(s => {
@@ -1713,6 +1720,12 @@ function loadBankQuestions() {
             `;
           });
           html += `</div>`;
+          // Cảnh báo nếu cần kiểm tra đáp án đúng/sai
+          if (q.needs_review) {
+            html += `<div style="margin: 6px 0 4px 0; padding: 6px 10px; background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); border-radius: 6px; color: #fbbf24; font-size: 12px; font-weight: 600;">
+              ⚠️ Đáp án Đúng/Sai chưa xác định chính xác — Văn bản gốc không có ký hiệu đánh dấu đáp án. Vui lòng bấm ✏️ Sửa để kiểm tra lại từng lệnh hỏi a, b, c, d.
+            </div>`;
+          }
         }
 
         if (q.explanation) {

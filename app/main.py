@@ -391,6 +391,8 @@ def handle_update_bank_question(req: UpdateBankQuestionRequest):
                     q["answer"] = req.answer
                 if req.explanation is not None:
                     q["explanation"] = req.explanation
+                # Khi giáo viên đã chủ động sửa, xóa cờ cần kiểm tra
+                q.pop("needs_review", None)
                 updated = True
                 break
         if updated:
@@ -415,6 +417,8 @@ def handle_update_bank_question(req: UpdateBankQuestionRequest):
                 q["answer"] = req.answer
             if req.explanation is not None:
                 q["explanation"] = req.explanation
+            # Xóa cờ cần kiểm tra khi giáo viên đã chỉnh sửa
+            q.pop("needs_review", None)
             found_q = q
             break
             

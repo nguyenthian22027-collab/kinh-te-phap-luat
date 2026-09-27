@@ -266,16 +266,23 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
             stem = _clean_passage_bleed(q_body[:stmt_matches[0].start()].strip())
             grade, topic, level = classify_text(stem)
             statements = []
+            found_any_answer_marker = False
             for sm in stmt_matches:
                 lbl = sm.group(1)
                 st_text = _clean_passage_bleed(sm.group(2).strip())
                 s_grade, s_topic, s_level = classify_text(st_text)
                 
-                ans_bool = True if lbl in ['a', 'c'] else False
                 st_lower = st_text.lower()
-                if re.search(r'[\(\[\s](?:đúng|đ)[\)\]\s\.]*$', st_lower):
+                # Ưu tiên: tìm marker đánh dấu đúng/sai trong văn bản
+                if re.search(r'[\(\[\s](?:đúng|đ|true|T)[\)\]\s\.]*$', st_lower):
                     ans_bool = True
-                elif re.search(r'[\(\[\s](?:sai|s)[\)\]\s\.]*$', st_lower):
+                    found_any_answer_marker = True
+                elif re.search(r'[\(\[\s](?:sai|s|false|F)[\)\]\s\.]*$', st_lower):
+                    ans_bool = False
+                    found_any_answer_marker = True
+                else:
+                    # Không có marker → KHÔNG đoán mò, đặt False là placeholder
+                    # needs_review sẽ được gán bên dưới cho cả câu hỏi
                     ans_bool = False
 
                 statements.append({
@@ -288,7 +295,7 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     "explanation": f"Căn cứ nội dung chuyên đề {s_topic}."
                 })
             if stem:
-                p2_items.append({
+                p2_item = {
                     "id": f"imported_p2_{uuid.uuid4().hex[:8]}",
                     "type": "part2",
                     "stem": stem,
@@ -297,7 +304,11 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     "topic": topic,
                     "level": level,
                     "source": source_name
-                })
+                }
+                # Gắn cờ cần kiểm tra nếu không phát hiện được marker đúng/sai
+                if not found_any_answer_marker:
+                    p2_item["needs_review"] = True
+                p2_items.append(p2_item)
         else:
             # Câu Phần I: tìm vị trí bắt đầu của phương án đầu tiên (A. hoặc A) hoặc A:)
             opt_match = re.search(r'(?:^|(?<=\n)\s*|(?<=\s\s)\s*|(?<=\t)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?:^|[\s\n]))A[\.\:\)]\s+', q_body, re.IGNORECASE)
@@ -314,6 +325,7 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                         
                 grade, topic, level = classify_text(stem, " ".join(opts.values()))
                 
+                needs_review = False
                 ans = ans_map.get(q_num)
                 if not ans:
                     inline_match = re.search(r'(?:Đáp án|Chọn|Key|Đ/A)[\s:\.]+([A-D])', q_body, re.IGNORECASE)
@@ -322,7 +334,12 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     else:
                         # Kiểm tra option có đánh dấu * (A*. hoặc A.)
                         star_match = re.search(r'([A-D])\*\.', q_body)
-                        ans = star_match.group(1) if star_match else "A"
+                        if star_match:
+                            ans = star_match.group(1)
+                        else:
+                            # Không tìm được đáp án → mặc định A nhưng gắn cờ cần kiểm tra
+                            ans = "A"
+                            needs_review = True
 
                 p1_item = {
                     "id": f"imported_p1_{uuid.uuid4().hex[:8]}",
@@ -336,6 +353,8 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     "level": level,
                     "source": source_name
                 }
+                if needs_review:
+                    p1_item["needs_review"] = True
                 if q_num in clusters_info:
                     cinfo = clusters_info[q_num]
                     p1_item["cluster_id"] = cinfo["cluster_id"]
@@ -347,6 +366,7 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                 p1_items.append(p1_item)
                 
     return p1_items, p2_items
+
 
 def import_document_file(filename, file_bytes, raw_keys=None, model="gemini-3.5", use_ai_solver=True):
     save_path = os.path.join(USER_MATERIALS_DIR, filename)
