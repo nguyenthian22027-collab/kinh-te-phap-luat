@@ -65,6 +65,11 @@
           <span class="icon">📤</span>
           <span>Xuất File Word</span>
         </button>
+        <button class="nav-item" data-tab="tab-guide" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.12)); border: 1px solid rgba(16,185,129,0.35); margin-top: 4px;">
+          <span class="icon">📖</span>
+          <span>Hướng Dẫn Sử Dụng</span>
+          <span class="counter-badge" style="background: #10b981; color: #fff; font-size: 10px; font-weight: 700;">MỚI</span>
+        </button>
         <button class="nav-item" id="nav-item-api-btn" onclick="openApiSettingsModal()" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15)); border: 1px solid rgba(56, 189, 248, 0.4); margin-top: 6px;">
           <span class="icon">🔑</span>
           <span>Cài Đặt Gemini API</span>
@@ -756,10 +761,367 @@
           <div id="download-buttons-list" class="download-btns-row"></div>
         </div>
       </section>
+
+      <!-- TAB HƯỚNG DẪN SỬ DỤNG -->
+      <section class="tab-pane" id="tab-guide">
+        <div style="max-width: 900px; margin: 0 auto; padding: 0 4px;">
+
+          <!-- HEADER -->
+          <div style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.08)); border: 1px solid rgba(16,185,129,0.35); border-radius: 14px; padding: 28px 32px; margin-bottom: 28px; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 10px;">📖</div>
+            <h2 style="font-size: 24px; font-weight: 800; color: #d1fae5; margin: 0 0 8px 0;">Hướng Dẫn Sử Dụng GDKT&amp;PL Exam Studio</h2>
+            <p style="color: #6ee7b7; font-size: 14px; margin: 0;">Hệ thống tạo đề thi Học Sinh Giỏi môn Giáo Dục Kinh Tế &amp; Pháp Luật — Chuẩn GDPT 2018</p>
+          </div>
+
+          <!-- MỤC LỤC NHANH -->
+          <div style="background: rgba(30,41,59,0.7); border: 1px solid #334155; border-radius: 10px; padding: 18px 24px; margin-bottom: 24px;">
+            <h3 style="color: #38bdf8; font-size: 15px; margin: 0 0 12px 0; font-weight: 700;">📋 Mục Lục Nhanh</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
+              <a href="#guide-step1" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">🔐 Bước 1 — Đăng nhập</a>
+              <a href="#guide-step2" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">🎯 Bước 2 — Tạo đề thi</a>
+              <a href="#guide-step3" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">📝 Bước 3 — Xem & Sửa đề</a>
+              <a href="#guide-step4" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">📥 Bước 4 — Nạp ngữ liệu</a>
+              <a href="#guide-step5" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">📚 Bước 5 — Ngân hàng câu hỏi</a>
+              <a href="#guide-step6" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">📤 Bước 6 — Xuất file Word</a>
+              <a href="#guide-answers" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">✅ Đáp án các loại câu</a>
+              <a href="#guide-ai" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">🤖 Dùng AI Gemini</a>
+              <a href="#guide-tips" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 6px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: flex; gap: 6px; align-items: center;">💡 Mẹo &amp; Lưu ý</a>
+            </div>
+          </div>
+
+          <!-- BƯỚC 1: ĐĂNG NHẬP -->
+          <div id="guide-step1" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3 style="display:flex; gap:10px; align-items:center;"><span style="background:#0ea5e9; color:#fff; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">1</span> Đăng Nhập Tài Khoản</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <p>📍 Nhìn vào <strong style="color:#e2e8f0;">góc trên bên phải</strong> của màn hình, bấm nút <strong style="color:#38bdf8;">Đăng Nhập Google (+10 Lượt Free 🎁)</strong>.</p>
+              <ul style="padding-left: 20px; margin: 10px 0;">
+                <li>Sử dụng tài khoản Gmail cá nhân để đăng nhập an toàn qua Google.</li>
+                <li>Sau khi đăng nhập, hệ thống cấp ngay <strong style="color:#34d399;">10 lượt tạo đề miễn phí</strong>.</li>
+                <li>Dữ liệu câu hỏi bạn nạp vào chỉ bạn nhìn thấy — <strong>giáo viên khác không truy cập được</strong>.</li>
+                <li>Kho câu hỏi chuẩn hệ thống (<strong>Kho Chung</strong>) luôn hiển thị cho mọi tài khoản.</li>
+              </ul>
+              <div style="background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 10px 14px; border-radius: 0 6px 6px 0; margin-top: 10px;">
+                💡 <strong>Ghi nhớ:</strong> Không đăng nhập thì không thể tạo đề (hệ thống yêu cầu xác thực để bảo vệ dữ liệu cá nhân).
+              </div>
+            </div>
+          </div>
+
+          <!-- BƯỚC 2: TẠO ĐỀ THI -->
+          <div id="guide-step2" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3 style="display:flex; gap:10px; align-items:center;"><span style="background:#0ea5e9; color:#fff; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">2</span> Tạo Đề Thi (Tab 🎯 Tạo Đề Thi)</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <p><strong style="color:#e2e8f0;">Bước 2.1 — Chọn cấu trúc đề (Preset Ma Trận):</strong></p>
+              <ul style="padding-left: 20px; margin: 6px 0 14px 0;">
+                <li><strong>🏛️ Đề HSG Cấp Thành Phố</strong> — 48 câu chuẩn (40 TN + 8 Đúng/Sai). Dùng cho kỳ thi chính thức.</li>
+                <li><strong>🏫 Đề Chọn Đội Tuyển Cấp Trường</strong> — Tương tự nhưng thiên về phân hóa mạnh.</li>
+                <li><strong>📈 Chuyên Đề Lớp 12 / ⚖️ Lớp 11 / 📘 Lớp 10</strong> — Ôn tập chuyên sâu từng lớp.</li>
+              </ul>
+              <p><strong style="color:#e2e8f0;">Bước 2.2 — Tùy chỉnh thông tin đề thi:</strong></p>
+              <ul style="padding-left: 20px; margin: 6px 0 14px 0;">
+                <li>Nhập tên Sở GD&amp;ĐT, tiêu đề kỳ thi, năm học, thời gian, mã đề thi.</li>
+                <li>Thông tin này sẽ tự động in lên file Word xuất ra.</li>
+              </ul>
+              <p><strong style="color:#e2e8f0;">Bước 2.3 — Bấm "🎯 Tạo Đề Thi Ngay":</strong></p>
+              <ul style="padding-left: 20px; margin: 6px 0 0 0;">
+                <li>Hệ thống chọn ngẫu nhiên câu hỏi từ ngân hàng đúng theo ma trận đặc tả.</li>
+                <li>Nếu bạn đã nạp câu hỏi riêng, câu hỏi của bạn sẽ được ưu tiên đưa vào đề.</li>
+                <li>Chuyển sang tab <strong>📝 Xem Trước &amp; Sửa</strong> để kiểm tra đề vừa tạo.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- BƯỚC 3: XEM TRƯỚC & SỬA -->
+          <div id="guide-step3" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3 style="display:flex; gap:10px; align-items:center;"><span style="background:#0ea5e9; color:#fff; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">3</span> Xem Trước &amp; Sửa Đề (Tab 📝 Xem Trước)</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 6px;">✨ Hiện / Ẩn Đáp Án</div>
+                  <div>Bấm nút <strong>"Hiện Đáp Án &amp; Căn Cứ"</strong> để xem đáp án và điều luật giải thích cho từng câu. Bấm lại để ẩn đi khi in đề cho học sinh.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 6px;">🎲 Đổi Ngẫu Nhiên</div>
+                  <div>Bấm nút <strong>"Đổi ngẫu nhiên"</strong> bên cạnh mỗi câu để hệ thống tự chọn câu thay thế cùng lớp &amp; mức độ từ ngân hàng.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 6px;">🎯 Chọn Câu Thay Thế</div>
+                  <div>Bấm <strong>"Chọn câu thay thế"</strong> để mở danh sách câu hỏi phù hợp và tự tay chọn câu muốn đưa vào đề.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 6px;">✏️ Sửa Nội Dung Câu</div>
+                  <div>Bấm <strong>"Sửa"</strong> để chỉnh sửa trực tiếp nội dung câu hỏi, đáp án, phương án A/B/C/D, hoặc lệnh hỏi a/b/c/d của câu Đúng/Sai.</div>
+                </div>
+              </div>
+              <div style="background: rgba(56,189,248,0.08); border-left: 3px solid #38bdf8; padding: 10px 14px; border-radius: 0 6px 6px 0;">
+                📌 <strong>Phần I (TN 4 lựa chọn):</strong> Đáp án đúng hiển thị màu xanh lá ✓ khi bật "Hiện Đáp Án".<br>
+                📌 <strong>Phần II (Đúng/Sai):</strong> Mỗi lệnh hỏi a, b, c, d hiển thị tag <span style="background:#065f46; color:#6ee7b7; padding:1px 6px; border-radius:3px; font-size:12px;">ĐÚNG</span> hoặc <span style="background:#7f1d1d; color:#fca5a5; padding:1px 6px; border-radius:3px; font-size:12px;">SAI</span>.
+              </div>
+            </div>
+          </div>
+
+          <!-- BƯỚC 4: NẠP NGỮ LIỆU -->
+          <div id="guide-step4" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3 style="display:flex; gap:10px; align-items:center;"><span style="background:#0ea5e9; color:#fff; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">4</span> Nạp Ngữ Liệu (Tab 📥 Nạp Ngữ Liệu)</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <p>Có <strong>3 cách</strong> để thêm câu hỏi vào kho cá nhân của bạn:</p>
+              <div style="margin: 10px 0 14px 0;">
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; margin-bottom: 10px;">
+                  <div style="font-weight: 700; color: #fbbf24; margin-bottom: 6px;">📁 Cách 1: Tải lên file (.docx, .txt)</div>
+                  <ol style="padding-left: 18px; margin: 0;">
+                    <li>Bấm nút "Chọn File Tài Liệu" — hỗ trợ file Word (.docx) hoặc văn bản (.txt, .md).</li>
+                    <li>File cần chứa câu hỏi trắc nghiệm theo mẫu: <code style="background:rgba(0,0,0,0.3); padding:1px 5px; border-radius:3px;">Câu 1. Nội dung... A. ... B. ... C. ... D. ...</code></li>
+                    <li>Nếu file có Bảng Đáp Án (ví dụ: <code style="background:rgba(0,0,0,0.3); padding:1px 5px; border-radius:3px;">1. A, 2. B, 3. C...</code>) thì đáp án sẽ tự động được nhận diện.</li>
+                    <li>Nếu không có bảng đáp án → câu hỏi sẽ có cảnh báo <span style="color:#fbbf24;">⚠️ Cần kiểm tra đáp án</span> — bấm ✏️ Sửa để cập nhật.</li>
+                  </ol>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; margin-bottom: 10px;">
+                  <div style="font-weight: 700; color: #fbbf24; margin-bottom: 6px;">📋 Cách 2: Dán văn bản trực tiếp</div>
+                  <ol style="padding-left: 18px; margin: 0;">
+                    <li>Sao chép nội dung đề thi từ bất kỳ nguồn nào rồi dán vào ô văn bản.</li>
+                    <li>Bấm "Phân Tích &amp; Nạp Vào Kho" — hệ thống tự bóc tách câu hỏi.</li>
+                    <li>Nếu có API Key Gemini, hệ thống dùng AI để bóc tách chính xác hơn (kể cả đề phức tạp).</li>
+                  </ol>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 14px;">
+                  <div style="font-weight: 700; color: #fbbf24; margin-bottom: 6px;">🌐 Cách 3: Nhập từ URL trang web</div>
+                  <ol style="padding-left: 18px; margin: 0;">
+                    <li>Dán link bài báo, trang luật, hoặc đề thi online vào ô URL.</li>
+                    <li>Hệ thống tự tải nội dung và sinh câu hỏi HSG từ ngữ liệu đó (cần API Key Gemini).</li>
+                  </ol>
+                </div>
+              </div>
+              <div style="background: rgba(251,191,36,0.1); border-left: 3px solid #fbbf24; padding: 10px 14px; border-radius: 0 6px 6px 0;">
+                ⚠️ <strong>Quan trọng:</strong> Câu hỏi bạn nạp vào chỉ xuất hiện trong tài khoản của bạn. Giáo viên khác không nhìn thấy được. Đây là <strong>Kho Cá Nhân</strong> — hoàn toàn riêng biệt với Kho Hệ Thống.
+              </div>
+            </div>
+          </div>
+
+          <!-- BƯỚC 5: NGÂN HÀNG CÂU HỎI -->
+          <div id="guide-step5" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3 style="display:flex; gap:10px; align-items:center;"><span style="background:#0ea5e9; color:#fff; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">5</span> Ngân Hàng Câu Hỏi (Tab 📚)</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                <div style="background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.3); border-radius: 8px; padding: 10px 12px; text-align: center;">
+                  <div style="font-size: 20px; margin-bottom: 4px;">🌐</div>
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 4px;">Tất cả</div>
+                  <div style="font-size: 12px; color: #94a3b8;">Xem toàn bộ câu hỏi (kho chuẩn + cá nhân)</div>
+                </div>
+                <div style="background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.3); border-radius: 8px; padding: 10px 12px; text-align: center;">
+                  <div style="font-size: 20px; margin-bottom: 4px;">🏛️</div>
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 4px;">Kho Chuẩn</div>
+                  <div style="font-size: 12px; color: #94a3b8;">Câu hỏi gốc được biên soạn bởi chuyên gia</div>
+                </div>
+                <div style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); border-radius: 8px; padding: 10px 12px; text-align: center;">
+                  <div style="font-size: 20px; margin-bottom: 4px;">👤</div>
+                  <div style="font-weight: 700; color: #c084fc; margin-bottom: 4px;">Kho Cá Nhân</div>
+                  <div style="font-size: 12px; color: #94a3b8;">Câu hỏi bạn nạp vào — chỉ mình bạn thấy</div>
+                </div>
+              </div>
+              <p><strong style="color:#e2e8f0;">Bộ lọc nhanh:</strong> Lọc theo Khối Lớp (10/11/12), Mức độ (Nhận biết / Thông hiểu / Vận dụng), Nguồn tài liệu, hoặc từ khoá tìm kiếm.</p>
+              <p><strong style="color:#e2e8f0;">Sửa câu hỏi:</strong> Bấm ✏️ Sửa / Đổi Lớp để chỉnh nội dung, đổi khối lớp, đổi mức độ, hoặc sửa đáp án đúng.</p>
+              <p><strong style="color:#e2e8f0;">Xóa câu hỏi:</strong> Bấm 🗑️ Xóa — chỉ xóa được câu trong kho cá nhân của bạn (kho chuẩn hệ thống không xóa được).</p>
+              <div style="background: rgba(251,191,36,0.1); border-left: 3px solid #fbbf24; padding: 10px 14px; border-radius: 0 6px 6px 0; margin-top: 10px;">
+                ⚠️ Câu hỏi có badge <strong style="color:#fbbf24;">⚠️ Cần kiểm tra đáp án</strong> là câu hỏi được import từ tài liệu không có bảng đáp án. Bắt buộc bấm Sửa để xác nhận đáp án đúng trước khi sử dụng vào đề thi.
+              </div>
+            </div>
+          </div>
+
+          <!-- BƯỚC 6: XUẤT FILE WORD -->
+          <div id="guide-step6" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3 style="display:flex; gap:10px; align-items:center;"><span style="background:#0ea5e9; color:#fff; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">6</span> Xuất File Word (Tab 📤)</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #34d399; margin-bottom: 6px;">📄 Đề Thi Học Sinh</div>
+                  <div>File Word dành cho thí sinh — không có đáp án. Bố cục chuẩn thi cử: khung thông tin Sở/Trường, ô điền thông tin thí sinh.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #34d399; margin-bottom: 6px;">📑 Đáp Án & Lời Giải</div>
+                  <div>File Word dành cho giám khảo: bảng đáp án nhanh Phần I (A/B/C/D), bảng Đúng/Sai Phần II, và hướng dẫn giải chi tiết căn cứ điều luật.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #34d399; margin-bottom: 6px;">📊 Ma Trận & Đặc Tả</div>
+                  <div>File ma trận phân bố câu hỏi theo mức độ nhận thức và chuyên đề — dùng để nộp tổ bộ môn hoặc Sở GD&amp;ĐT duyệt đề.</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 14px;">
+                  <div style="font-weight: 700; color: #34d399; margin-bottom: 6px;">🔀 Trọn Bộ 4 Mã Đề</div>
+                  <div>Tự động xáo trộn thứ tự câu hỏi và phương án A/B/C/D thành 4 mã đề (097, 098, 099, 100) để chống quay cóp.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN: ĐÁP ÁN CÁC LOẠI CÂU HỎI -->
+          <div id="guide-answers" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3>✅ Đáp Án Các Loại Câu Hỏi</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+                <!-- Phần I -->
+                <div style="background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.25); border-radius: 10px; padding: 16px;">
+                  <div style="font-weight: 700; color: #38bdf8; font-size: 15px; margin-bottom: 10px;">📌 Phần I — Trắc nghiệm 4 lựa chọn</div>
+                  <ul style="padding-left: 18px; margin: 0; line-height: 2;">
+                    <li>Mỗi câu có <strong>4 phương án A, B, C, D</strong>.</li>
+                    <li>Trường <code style="background:rgba(0,0,0,0.3); padding:1px 5px; border-radius:3px;">answer</code> là một chữ cái: <strong>"A"</strong>, <strong>"B"</strong>, <strong>"C"</strong> hoặc <strong>"D"</strong>.</li>
+                    <li>Khi bật "Hiện Đáp Án": phương án đúng <span style="background:rgba(16,185,129,0.2); color:#34d399; padding:1px 6px; border-radius:4px; font-size:12px;">highlight xanh ✓</span>.</li>
+                    <li>Trong file Word giáo viên: đáp án in <span style="color:#ef4444; font-weight:700;">đỏ đậm</span> trong bảng tóm tắt.</li>
+                    <li>Khi sửa: chọn đáp án từ dropdown <strong>Phương án A / B / C / D</strong>.</li>
+                  </ul>
+                </div>
+                <!-- Phần II -->
+                <div style="background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.25); border-radius: 10px; padding: 16px;">
+                  <div style="font-weight: 700; color: #c084fc; font-size: 15px; margin-bottom: 10px;">📌 Phần II — Câu Đúng/Sai</div>
+                  <ul style="padding-left: 18px; margin: 0; line-height: 2;">
+                    <li>Mỗi câu có <strong>4 lệnh hỏi: a), b), c), d)</strong>.</li>
+                    <li>Mỗi lệnh hỏi có đáp án độc lập: <strong>Đúng</strong> hoặc <strong>Sai</strong>.</li>
+                    <li>Khi bật "Hiện Đáp Án": mỗi lệnh hỏi hiển thị tag <span style="background:#065f46; color:#6ee7b7; padding:1px 6px; border-radius:3px; font-size:11px;">ĐÚNG</span> hoặc <span style="background:#7f1d1d; color:#fca5a5; padding:1px 6px; border-radius:3px; font-size:11px;">SAI</span>.</li>
+                    <li>Trong file Word giáo viên: cột bảng hiển thị <span style="color:#16a34a; font-weight:700;">Đ</span> (xanh) hoặc <span style="color:#dc2626; font-weight:700;">S</span> (đỏ).</li>
+                    <li>Khi sửa: mỗi lệnh hỏi có dropdown riêng <strong>Đúng / Sai</strong>.</li>
+                  </ul>
+                </div>
+              </div>
+              <!-- Câu chùm -->
+              <div style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 16px;">
+                <div style="font-weight: 700; color: #fbbf24; font-size: 15px; margin-bottom: 10px;">📌 Câu Hỏi Chùm (Cluster)</div>
+                <ul style="padding-left: 18px; margin: 0; line-height: 2;">
+                  <li>Gồm <strong>1 đoạn ngữ liệu chung + 2 câu hỏi trắc nghiệm</strong> liên quan.</li>
+                  <li>Mỗi câu trong chùm vẫn có đáp án A/B/C/D riêng biệt — hoàn toàn giống câu Phần I.</li>
+                  <li>Câu hỏi chùm hiển thị nhãn <span style="background:rgba(251,191,36,0.2); color:#fbbf24; padding:1px 6px; border-radius:3px; font-size:11px;">Chùm câu hỏi (1/2)</span> trong đề.</li>
+                  <li>Sinh câu hỏi chùm: vào Tab 📥 Nạp Ngữ Liệu → phần "Sinh Câu Hỏi AI" → chọn loại <strong>"Chùm câu hỏi"</strong>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN: DÙNG AI GEMINI -->
+          <div id="guide-ai" class="card glass-card" style="margin-bottom: 20px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3>🤖 Cách Sử Dụng AI Gemini để Sinh Câu Hỏi Mới</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <p><strong style="color:#e2e8f0;">Bước 1 — Lấy API Key miễn phí từ Google:</strong></p>
+              <ol style="padding-left: 20px; margin: 6px 0 14px 0;">
+                <li>Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#38bdf8;">aistudio.google.com/app/apikey</a> (đăng nhập bằng Google).</li>
+                <li>Bấm <strong>"Create API Key"</strong> → sao chép key dạng <code style="background:rgba(0,0,0,0.3); padding:1px 5px; border-radius:3px;">AIzaSy...</code>.</li>
+              </ol>
+              <p><strong style="color:#e2e8f0;">Bước 2 — Cài Key vào ứng dụng:</strong></p>
+              <ol style="padding-left: 20px; margin: 6px 0 14px 0;">
+                <li>Bấm nút <strong>"🔑 Gemini API"</strong> trên thanh topbar.</li>
+                <li>Dán key vào ô → Bấm <strong>"Lưu &amp; Kích Hoạt"</strong>.</li>
+                <li>Trạng thái sẽ chuyển từ <span style="color:#ef4444;">Chưa cài</span> sang <span style="color:#34d399;">✓ Đã kết nối</span>.</li>
+              </ol>
+              <p><strong style="color:#e2e8f0;">Bước 3 — Sinh câu hỏi AI:</strong></p>
+              <ol style="padding-left: 20px; margin: 6px 0 0 0;">
+                <li>Vào Tab <strong>📥 Nạp Ngữ Liệu</strong> → kéo xuống phần "🤖 Sinh Câu Hỏi AI".</li>
+                <li>Chọn loại câu (Tình huống đơn / Chùm câu hỏi), chọn khối lớp và chủ đề.</li>
+                <li>Bấm <strong>"⚡ Tạo Câu Hỏi Mới"</strong> → AI tự viết câu hỏi đúng chuẩn HSG.</li>
+                <li>Câu hỏi AI sinh ra tự động lưu vào <strong>Kho Cá Nhân</strong> của bạn.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- PHẦN: MẸO & LƯU Ý -->
+          <div id="guide-tips" class="card glass-card" style="margin-bottom: 32px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(56,189,248,0.2);">
+              <h3>💡 Mẹo Sử Dụng Hiệu Quả &amp; Lưu Ý Quan Trọng</h3>
+            </div>
+            <div class="card-body" style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div style="background: rgba(16,185,129,0.08); border-left: 3px solid #10b981; padding: 12px 14px; border-radius: 0 8px 8px 0;">
+                  <div style="font-weight: 700; color: #34d399; margin-bottom: 6px;">✅ Quy trình tối ưu</div>
+                  <ol style="padding-left: 16px; margin: 0;">
+                    <li>Nạp đề thi gốc của tỉnh/trường vào (Tab 3).</li>
+                    <li>Vào Ngân Hàng (Tab 4) kiểm tra câu hỏi ⚠️.</li>
+                    <li>Sửa đáp án cho câu bị cảnh báo.</li>
+                    <li>Tạo đề mới (Tab 1) → câu của bạn được ưu tiên.</li>
+                    <li>Xuất 2 file Word: Đề HS + Đáp Án GV.</li>
+                  </ol>
+                </div>
+                <div style="background: rgba(239,68,68,0.08); border-left: 3px solid #ef4444; padding: 12px 14px; border-radius: 0 8px 8px 0;">
+                  <div style="font-weight: 700; color: #f87171; margin-bottom: 6px;">⚠️ Lưu ý quan trọng</div>
+                  <ul style="padding-left: 16px; margin: 0;">
+                    <li>Câu nhập từ file không có đáp án → <strong>bắt buộc sửa</strong> trước khi dùng.</li>
+                    <li>Kho Hệ Thống (🏛️) không xóa được — chỉ xóa Kho Cá Nhân (👤).</li>
+                    <li>Nếu AI không sinh câu: kiểm tra API Key còn hạn chưa tại aistudio.google.com.</li>
+                    <li>Khi dùng nhiều tài khoản Gmail: mỗi tài khoản có kho riêng biệt.</li>
+                  </ul>
+                </div>
+                <div style="background: rgba(56,189,248,0.08); border-left: 3px solid #38bdf8; padding: 12px 14px; border-radius: 0 8px 8px 0;">
+                  <div style="font-weight: 700; color: #38bdf8; margin-bottom: 6px;">🔄 Mẹo tạo nhiều mã đề</div>
+                  <ul style="padding-left: 16px; margin: 0;">
+                    <li>Bấm nút <strong>"🔀 Trộn 4 Mã Đề"</strong> trên topbar để xáo trộn nhanh.</li>
+                    <li>Vào Tab Xuất File → "Trọn Bộ 4 Mã Đề" để tải cả 4 mã đề cùng lúc.</li>
+                    <li>Thứ tự câu hỏi và A/B/C/D được đảo ngẫu nhiên, đáp án tự cập nhật.</li>
+                  </ul>
+                </div>
+                <div style="background: rgba(168,85,247,0.08); border-left: 3px solid #a855f7; padding: 12px 14px; border-radius: 0 8px 8px 0;">
+                  <div style="font-weight: 700; color: #c084fc; margin-bottom: 6px;">🔑 Về tài khoản PRO</div>
+                  <ul style="padding-left: 16px; margin: 0;">
+                    <li>Tài khoản thường: 10 lượt tạo đề miễn phí sau khi đăng nhập.</li>
+                    <li>Tài khoản PRO: không giới hạn lượt, sử dụng toàn bộ kho câu hỏi.</li>
+                    <li>Liên hệ admin để kích hoạt PRO: bấm <strong>"⭐ Bản Quyền PRO"</strong> trên sidebar.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- BẢNG CÁC LOẠI CÂU HỎI -->
+              <div style="margin-top: 20px; background: rgba(30,41,59,0.6); border: 1px solid #334155; border-radius: 10px; overflow: hidden;">
+                <div style="background: rgba(56,189,248,0.12); padding: 10px 16px; font-weight: 700; color: #38bdf8; font-size: 13px;">📊 Tóm Tắt Cấu Trúc Đề Thi Chuẩn (48 Câu — 90 Phút)</div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <thead>
+                    <tr style="background: rgba(255,255,255,0.05);">
+                      <th style="padding: 8px 12px; text-align: left; color: #94a3b8; font-weight: 600; border-bottom: 1px solid #1e293b;">Phần</th>
+                      <th style="padding: 8px 12px; text-align: center; color: #94a3b8; font-weight: 600; border-bottom: 1px solid #1e293b;">Số Câu</th>
+                      <th style="padding: 8px 12px; text-align: left; color: #94a3b8; font-weight: 600; border-bottom: 1px solid #1e293b;">Dạng Đáp Án</th>
+                      <th style="padding: 8px 12px; text-align: center; color: #94a3b8; font-weight: 600; border-bottom: 1px solid #1e293b;">Điểm</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                      <td style="padding: 8px 12px; color: #e2e8f0;">Phần I — Trắc nghiệm 4 lựa chọn</td>
+                      <td style="padding: 8px 12px; text-align: center; color: #38bdf8; font-weight: 700;">40 câu</td>
+                      <td style="padding: 8px 12px; color: #94a3b8;">1 đáp án duy nhất: A / B / C / D</td>
+                      <td style="padding: 8px 12px; text-align: center; color: #34d399; font-weight: 700;">6,0 đ</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px 12px; color: #e2e8f0;">Phần II — Trắc nghiệm Đúng/Sai</td>
+                      <td style="padding: 8px 12px; text-align: center; color: #38bdf8; font-weight: 700;">8 câu (32 lệnh hỏi)</td>
+                      <td style="padding: 8px 12px; color: #94a3b8;">Mỗi lệnh hỏi a/b/c/d = Đúng hoặc Sai</td>
+                      <td style="padding: 8px 12px; text-align: center; color: #34d399; font-weight: 700;">4,0 đ</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- FOOTER GUIDE -->
+          <div style="text-align: center; padding: 20px; color: #475569; font-size: 13px;">
+            <p>💬 Gặp vấn đề hoặc cần hỗ trợ thêm? Liên hệ qua bảng quản trị hoặc email quản trị viên hệ thống.</p>
+            <button class="btn btn-primary" onclick="switchTab('tab-generator')" style="margin-top: 8px;">🎯 Bắt Đầu Tạo Đề Thi Ngay</button>
+          </div>
+
+        </div>
+      </section>
+
     </main>
   </div>
 
   <!-- MODAL CHỈNH SỬA CÂU HỎI -->
+
   <div class="modal-overlay" id="edit-modal">
     <div class="modal-card">
       <div class="modal-header">
