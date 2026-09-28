@@ -470,33 +470,41 @@ def shuffle_exam(original_exam, num_codes=4):
         new_exam = copy.deepcopy(original_exam)
         new_exam["info"]["code"] = code_str
         
-        # Shuffle Part 1 questions
+        # Shuffle Part 1 questions (giữ nguyên cụm câu hỏi chùm đi liền nhau)
         shuffled_p1 = copy.deepcopy(original_exam["part1"])
         if i > 0:
-            random.shuffle(shuffled_p1)
+            shuffled_p1 = _reorder_with_clusters(shuffled_p1)
             
         for idx, q in enumerate(shuffled_p1, 1):
             q["exam_number"] = idx
-            # Also permute options A, B, C, D if desired
+            # Cập nhật số thứ tự câu hỏi trong header của câu chùm
+            if q.get("cluster_id") and q.get("cluster_order") == 1:
+                cluster_size = q.get("cluster_size", 2)
+                q["cluster_header_rendered"] = f"Đọc thông tin sau và trả lời câu hỏi từ câu {idx} đến câu {idx + cluster_size - 1}:"
+
+            # Đảo vị trí phương án A, B, C, D cho các mã đề 098, 099, 100
             if i > 0 and "options" in q:
                 old_opts = q["options"]
                 correct_ans = q.get("answer", "A")
                 correct_text = old_opts.get(correct_ans, "")
                 
                 keys = ["A", "B", "C", "D"]
-                texts = [old_opts[k] for k in keys if k in old_opts]
-                random.shuffle(texts)
-                
-                new_opts = {}
-                new_ans = "A"
-                for k, t in zip(keys, texts):
-                    new_opts[k] = t
-                    if t == correct_text:
-                        new_ans = k
-                q["options"] = new_opts
-                q["answer"] = new_ans
+                present_keys = [k for k in keys if k in old_opts]
+                if len(present_keys) >= 2 and correct_text:
+                    texts = [old_opts[k] for k in present_keys]
+                    random.shuffle(texts)
+                    
+                    new_opts = {}
+                    new_ans = correct_ans
+                    for k, t in zip(present_keys, texts):
+                        new_opts[k] = t
+                        if t == correct_text:
+                            new_ans = k
+                    q["options"] = new_opts
+                    q["answer"] = new_ans
                 
         new_exam["part1"] = shuffled_p1
+
         
         # For Part 2, keep statements logic intact but we can permute items order
         shuffled_p2 = copy.deepcopy(original_exam["part2"])
