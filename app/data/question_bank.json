@@ -162,8 +162,8 @@
         "C": "Quyền được pháp luật bảo hộ về danh dự, nhân phẩm.",
         "D": "Quyền được bảo đảm an toàn và bí mật về điện thoại."
       },
-      "answer": "A",
-      "explanation": "Căn cứ nội dung chuyên đề Một số quyền tự do cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
+      "answer": "B",
+      "explanation": "Anh N và anh M cùng lao vào đánh anh P khiến anh P bị thương, xâm phạm quyền được pháp luật bảo hộ về tính mạng, sức khỏe của công dân (Điều 19 Hiến pháp 2013).",
       "grade": 11,
       "topic": "Một số quyền tự do cơ bản của công dân",
       "level": "van_dung",
@@ -185,8 +185,8 @@
         "C": "Anh N và anh L.",
         "D": "Anh N và anh M."
       },
-      "answer": "A",
-      "explanation": "Căn cứ nội dung chuyên đề Một số quyền tự do cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
+      "answer": "C",
+      "explanation": "Anh L tự ý khóa cửa giữ 3 người trong phòng nửa ngày trái pháp luật; Anh N khóa trái cửa nhốt anh P tại văn phòng qua đêm đến ngất xỉu. Cả hai đều vi phạm quyền bất khả xâm phạm về thân thể của công dân.",
       "grade": 11,
       "topic": "Một số quyền tự do cơ bản của công dân",
       "level": "van_dung",
@@ -244,8 +244,8 @@
         "C": "Quyền được bảo hộ về danh dự, nhân phẩm.",
         "D": "Quyền khiếu nại, tố cáo của công dân."
       },
-      "answer": "A",
-      "explanation": "Căn cứ nội dung chuyên đề Một số quyền dân chủ cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
+      "answer": "D",
+      "explanation": "Viết đơn đề nghị cơ quan công an khởi tố hành vi trộm cắp tài sản của anh N là công dân thực hiện quyền khiếu nại, tố cáo (cụ thể là quyền tố cáo hành vi phạm tội).",
       "grade": 11,
       "topic": "Một số quyền dân chủ cơ bản của công dân",
       "level": "hieu",
@@ -267,8 +267,8 @@
         "C": "Anh N, chị V và anh S.",
         "D": "Chị P, anh D và anh N."
       },
-      "answer": "A",
-      "explanation": "Căn cứ nội dung chuyên đề Một số quyền tự do cơ bản của công dân theo quy định pháp luật và kiến thức GDKT&PL.",
+      "answer": "B",
+      "explanation": "Chị V và anh S tự ý vào nhà anh D khi chủ nhà đi vắng và có hành vi uy hiếp, bắt giữ chị P, vi phạm quyền bất khả xâm phạm về chỗ ở của công dân (Điều 22 Hiến pháp 2013).",
       "grade": 11,
       "topic": "Một số quyền tự do cơ bản của công dân",
       "level": "van_dung",
@@ -488,8 +488,8 @@
         "C": "Chị N đóng 1% tiền lương tháng và doanh nghiệp Y đóng 4,5% quỹ tiền lương tháng của chị N.",
         "D": "Chị N đóng 0,5% tiền lương tháng và doanh nghiệp Y đóng 3% quỹ tiền lương tháng của chị N."
       },
-      "answer": "A",
-      "explanation": "Căn cứ nội dung chuyên đề Bảo hiểm và an sinh xã hội theo quy định pháp luật và kiến thức GDKT&PL.",
+      "answer": "B",
+      "explanation": "Theo Điều 57 Luật Việc làm 2013, người lao động đóng bằng 1% tiền lương tháng và người sử dụng lao động đóng bằng 1% quỹ tiền lương tháng vào Quỹ bảo hiểm thất nghiệp.",
       "grade": 12,
       "topic": "Bảo hiểm và an sinh xã hội",
       "level": "van_dung",
@@ -511,8 +511,8 @@
         "C": "Hồ trợ học nghề.",
         "D": "Hỗ trợ đáp ứng nhu cầu cho người lao động"
       },
-      "answer": "A",
-      "explanation": "Căn cứ nội dung chuyên đề Bảo hiểm và an sinh xã hội theo quy định pháp luật và kiến thức GDKT&PL.",
+      "answer": "D",
+      "explanation": "Theo Điều 42 Luật Việc làm 2013, các chế độ BHTN bao gồm: Trợ cấp thất nghiệp; Hỗ trợ tư vấn, giới thiệu việc làm; Hỗ trợ học nghề; Hỗ trợ đào tạo bồi dưỡng nâng cao trình độ. Không có chế độ 'Hỗ trợ đáp ứng nhu cầu cho người lao động'.",
       "grade": 12,
       "topic": "Bảo hiểm và an sinh xã hội",
       "level": "van_dung",
@@ -1837,8 +1837,8 @@
         "C": "Anh P giám đốc công ty H đã làm đơn tố cáo.",
         "D": "Ông L tiếp nhận đơn và ra quyết định kỷ luật."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "C",
+      "explanation": "Anh P (giám đốc công ty H) làm đơn tố cáo hành vi nhận hối lộ của ông M là thể hiện quyền tố cáo của công dân theo quy định của pháp luật (công dân bình đẳng trong việc hưởng quyền - Điều 30 Hiến pháp 2013).",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_23_24",
       "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
@@ -1859,8 +1859,8 @@
         "C": "Trách nhiệm kỉ luật, trả lại số tiền đã nhận hối lộ và tù án treo.",
         "D": "Trách nhiệm kỉ luật và chịu hình phạt tù từ 2 năm đến 7 năm."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "D",
+      "explanation": "Hành vi nhận hối lộ 50 triệu đồng của ông M cấu thành tội Nhận hối lộ theo Khoản 1 Điều 354 BLHS 2015 với khung hình phạt tù từ 2 năm đến 7 năm, đồng thời phải chịu trách nhiệm kỷ luật cán bộ công chức.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_23_24",
       "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
@@ -1881,8 +1881,8 @@
         "C": "Anh P giám đốc công ty H đã làm đơn tố cáo.",
         "D": "Ông L tiếp nhận đơn và ra quyết định kỷ luật."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "C",
+      "explanation": "Anh P (giám đốc công ty H) làm đơn tố cáo hành vi sai phạm của ông M là thể hiện quyền tố cáo của công dân theo quy định của pháp luật (công dân bình đẳng trong việc hưởng quyền - Điều 30 Hiến pháp 2013).",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_17_18",
       "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
@@ -1904,7 +1904,7 @@
         "D": "Cơ quan chức năng tiếp nhận đơn tố cáo."
       },
       "answer": "A",
-      "explanation": "",
+      "explanation": "Đình chỉ công tác ông M để tiến hành điều tra thể hiện nguyên tắc mọi công dân dù giữ chức vụ gì khi vi phạm pháp luật đều phải chịu trách nhiệm pháp lý bình đẳng trước pháp luật.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_17_18",
       "cluster_passage": "Trên địa bàn thị trấn X có công ty H và công ty T cùng hoạt động kinh doanh. Trong đợt kiểm tra việc thực hiện pháp luật bảo vệ môi trường, đoàn kiểm tra phát hiện hai công ty đều chưa lắp đặt hệ thống xử lý chất thải. Đoàn kiểm tra đã lập biên bản vi phạm và trình lên Ủy ban nhân dân. Anh P, giám đốc công ty H không đồng ý với kết luận của đoàn kiểm tra nên làm đơn tố cáo lên cơ quan chức năng. Ông M, cán bộ nhận trình báo đã nhận hối lộ của công ty T và ra quyết định không xử phạt. Ông L, cán bộ tiếp nhận đơn tố cáo của anh P, đã tiến hành xác minh và ra quyết định kỷ luật buộc thôi việc đối với ông M.",
@@ -1925,8 +1925,8 @@
         "C": "Giúp rút ngắn khoảng cách giữa các dân tộc.",
         "D": "Nhằm khai thác triệt để nguồn tài nguyên."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "C",
+      "explanation": "Nội dung ngữ liệu nêu rõ mục tiêu trực tiếp của các chương trình, chính sách là nhằm thu hẹp và rút ngắn khoảng cách về phát triển giữa các nhóm đồng bào dân tộc thiểu số.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_19_20",
       "cluster_passage": "Với mục tiêu thu hẹp khoảng cách về phát triển giữa các nhóm đồng bào dân tộc thiểu số, phần lớn các chương trình của Nhà nước tập trung vào hỗ trợ sinh kế và tạo cơ hội xóa đói, giảm nghèo, như: Chương trình 143; Chương trình 135; Chương trình 134; Chương trình phân bổ đất rừng và trồng rừng; các chính sách về giáo dục, y tế,... Trong giai đoạn  2011 - 2018, có 205 chính sách hỗ trợ phát triển kinh tế - xã hội vùng dân tộc thiểu số và miền núi được ban hành. Nội dung các chính sách tập trung chủ yếu vào lĩnh vực giảm nghèo; phát triển sản xuất trong nông, lâm nghiệp, thủy sản; phát triển giáo dục - đào tạo, văn hóa, như: Chính sách hỗ trợ đất ở, đất sản xuất, nước sinh hoạt, phát triển sản xuất và ổn định đời sống cho người dân tộc thiểu số nghèo, hộ nghèo vùng đặc biệt khó khăn; ổn định cuộc sống cho người dân tộc thiểu số di cư tự phát.",
@@ -1948,7 +1948,7 @@
         "D": "quyền tự do đi lại của mỗi dân tộc."
       },
       "answer": "A",
-      "explanation": "",
+      "explanation": "Căn cứ Điều 5 Hiến pháp 2013 về quyền bình đẳng giữa các dân tộc và nguyên tắc mọi công dân đều bình đẳng trước pháp luật.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_19_20",
       "cluster_passage": "Với mục tiêu thu hẹp khoảng cách về phát triển giữa các nhóm đồng bào dân tộc thiểu số, phần lớn các chương trình của Nhà nước tập trung vào hỗ trợ sinh kế và tạo cơ hội xóa đói, giảm nghèo, như: Chương trình 143; Chương trình 135; Chương trình 134; Chương trình phân bổ đất rừng và trồng rừng; các chính sách về giáo dục, y tế,... Trong giai đoạn  2011 - 2018, có 205 chính sách hỗ trợ phát triển kinh tế - xã hội vùng dân tộc thiểu số và miền núi được ban hành. Nội dung các chính sách tập trung chủ yếu vào lĩnh vực giảm nghèo; phát triển sản xuất trong nông, lâm nghiệp, thủy sản; phát triển giáo dục - đào tạo, văn hóa, như: Chính sách hỗ trợ đất ở, đất sản xuất, nước sinh hoạt, phát triển sản xuất và ổn định đời sống cho người dân tộc thiểu số nghèo, hộ nghèo vùng đặc biệt khó khăn; ổn định cuộc sống cho người dân tộc thiểu số di cư tự phát.",
@@ -1969,8 +1969,8 @@
         "C": "Tiếp cận thị trường và tăng giá trị xuất khẩu là 124,6%.",
         "D": "Tạo việc làm và tăng thu nhập cho mọi tầng lớp dân cư."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "D",
+      "explanation": "Phương án A sai vì 'giảm giá trị', B sai vì 'nhập khẩu', C sai vì 124,6% là mức tăng về lượng chứ không phải giá trị. Phương án D là lợi ích kinh tế - xã hội chính xác của hoạt động xuất khẩu.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_35_36",
       "cluster_passage": "Hội nhập kinh tế quốc tế đã tạo điều kiện thu hút đầu tư cho Việt Nam tiếp cận thị trường toàn cầu. Một trong những mặt hàng có thể mạnh xuất khẩu lớn của Việt Nam hiện nay là sầu riêng. Bốn tháng đầu năm 2024, mặt hàng này đã xuất khẩu đạt khoảng 111.600 tấn với giá trị trên 470 triệu đô la Mỹ, tăng 124,6% về lượng và 145,8% về giá trị so với cùng kỳ năm trước. Bên cạnh đó, quan hệ hợp tác giữa Việt Nam với các quốc gia cũng được đẩy mạnh. Tháng 12/2022, Việt Nam - Hàn Quốc ra tuyên bố chung về nâng cấp quan hệ lên đối tác chiến lược toàn diện. Về thương mại, trong năm 2023, kim ngạch thương mại Việt Nam - Hàn Quốc đạt 76,1 tỷ USD, trong đó kim ngạch xuất khẩu của Việt Nam đạt 23,5 tỷ USD, kim ngạch nhập khẩu đạt 52,6 tỷ USD. Trong 4 tháng đầu năm 2024, tổng kim ngạch xuất nhập khẩu hai nước đạt 25,5 tỷ USD, tăng 4% so với cùng kỳ năm trước.",
@@ -1991,8 +1991,8 @@
         "C": "Chủ động hội nhập toàn diện, sâu rộng.",
         "D": "Tăng cường các biện pháp cải cách hành chính."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "C",
+      "explanation": "Tuyên bố chung nâng cấp quan hệ đối tác chiến lược toàn diện với Hàn Quốc và mở rộng thị trường xuất khẩu phản ánh đường lối chủ động hội nhập kinh tế quốc tế toàn diện, sâu rộng của Việt Nam.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_35_36",
       "cluster_passage": "Hội nhập kinh tế quốc tế đã tạo điều kiện thu hút đầu tư cho Việt Nam tiếp cận thị trường toàn cầu. Một trong những mặt hàng có thể mạnh xuất khẩu lớn của Việt Nam hiện nay là sầu riêng. Bốn tháng đầu năm 2024, mặt hàng này đã xuất khẩu đạt khoảng 111.600 tấn với giá trị trên 470 triệu đô la Mỹ, tăng 124,6% về lượng và 145,8% về giá trị so với cùng kỳ năm trước. Bên cạnh đó, quan hệ hợp tác giữa Việt Nam với các quốc gia cũng được đẩy mạnh. Tháng 12/2022, Việt Nam - Hàn Quốc ra tuyên bố chung về nâng cấp quan hệ lên đối tác chiến lược toàn diện. Về thương mại, trong năm 2023, kim ngạch thương mại Việt Nam - Hàn Quốc đạt 76,1 tỷ USD, trong đó kim ngạch xuất khẩu của Việt Nam đạt 23,5 tỷ USD, kim ngạch nhập khẩu đạt 52,6 tỷ USD. Trong 4 tháng đầu năm 2024, tổng kim ngạch xuất nhập khẩu hai nước đạt 25,5 tỷ USD, tăng 4% so với cùng kỳ năm trước.",
@@ -2014,7 +2014,7 @@
         "D": "bộ phận thủ quỹ của các doanh nghiệp."
       },
       "answer": "A",
-      "explanation": "",
+      "explanation": "Doanh nghiệp / đơn vị sử dụng lao động là chủ thể pháp lý có nghĩa vụ đóng bảo hiểm xã hội, bảo hiểm thất nghiệp cho người lao động theo quy định của Luật Bảo hiểm xã hội và Luật Việc làm.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_33_34",
       "cluster_passage": "Theo báo cáo của Bộ Lao động, Thương binh và Xã hội, tính đến hết tháng 10/2023, tổng số tiền chậm đóng, trốn đóng bảo hiểm xã hội, bảo hiểm thất nghiệp (BHTN) khoảng 14.650 tỉ đồng. Trong đó, số tiền chậm đóng tại các đơn vị không có khả năng thu hồi là 4.164 tỉ đồng. Nguyên nhân được lý giải là do những năm gần đây nhiều doanh nghiệp gặp khó khăn trong sản xuất, kinh doanh dẫn tới khó khăn trong việc đóng BHXH cho người lao động. Bên cạnh đó còn có tình trạng nhiều doanh nghiệp chưa chấp hành nghiêm các quy định pháp luật, thiếu quan tâm đến quyền lợi của người lao động. Các quy định về chế tài xử lý hành vi nợ bảo hiểm xã hội chưa đủ sức răn đe.",
@@ -2035,8 +2035,8 @@
         "C": "Người lao động.",
         "D": "Thủ trưởng đơn vị."
       },
-      "answer": "A",
-      "explanation": "",
+      "answer": "C",
+      "explanation": "Hành vi chậm đóng, trốn đóng BHXH, BHTN xâm phạm trực tiếp đến quyền và lợi ích hợp pháp về an sinh xã hội, chế độ ốm đau, thai sản, thất nghiệp của người lao động.",
       "source": "Dạng câu hỏi trùm.docx",
       "cluster_id": "cluster_chum_33_34",
       "cluster_passage": "Theo báo cáo của Bộ Lao động, Thương binh và Xã hội, tính đến hết tháng 10/2023, tổng số tiền chậm đóng, trốn đóng bảo hiểm xã hội, bảo hiểm thất nghiệp (BHTN) khoảng 14.650 tỉ đồng. Trong đó, số tiền chậm đóng tại các đơn vị không có khả năng thu hồi là 4.164 tỉ đồng. Nguyên nhân được lý giải là do những năm gần đây nhiều doanh nghiệp gặp khó khăn trong sản xuất, kinh doanh dẫn tới khó khăn trong việc đóng BHXH cho người lao động. Bên cạnh đó còn có tình trạng nhiều doanh nghiệp chưa chấp hành nghiêm các quy định pháp luật, thiếu quan tâm đến quyền lợi của người lao động. Các quy định về chế tài xử lý hành vi nợ bảo hiểm xã hội chưa đủ sức răn đe.",
@@ -2131,6 +2131,40 @@
       "cluster_header": "Đọc thông tin sau và trả lời các câu hỏi:",
       "cluster_order": 2,
       "cluster_size": 2
+    },
+    {
+      "id": "gdktpl_hinh_thuc_thuc_hien_pl_01",
+      "type": "part1",
+      "grade": 10,
+      "level": "van_dung",
+      "topic": "Thực hiện pháp luật",
+      "stem": "Trong các nhận định dưới đây:\na) Cứ sáng chủ nhật hằng tuần, nhân dân ở tổ dân phố K lại tập trung làm vệ sinh đường phố.\nb) Cơ sở sản xuất bản G xả nước thải chưa qua xử lí ra môi trường làm ô nhiễm nguồn nước, không khí, ảnh hưởng tới cuộc sống của người dân xung quanh. Cảnh sát môi trường đã lập biên bản và xử phạt vi phạm hành chính.\nc) Phát hiện một hộ gia đình trồng cây thuốc phiện, chị D đã tố cáo với cơ quan có thẩm quyền để kiểm tra và kịp thời ngăn chặn.\nd) Một số học sinh nam lớp 12 Trường Trung học phổ thông H xin nghỉ một buổi học để đi đăng kí nghĩa vụ quân sự ở địa phương.\ne) Giám đốc Sở Giáo dục và Đào tạo tỉnh S ban hành quyết định điều chuyển cán bộ từ phòng A sang phòng B.\ng) Sau khi tốt nghiệp Trung học phổ thông, V ở nhà làm nghề truyền thống dệt vải của gia đình.\nh) Học xong Trung học phổ thông, G đã gửi hồ sơ đến Sở Kế hoạch và Đầu tư đăng kí kinh doanh thức ăn nhanh.\ni) Toà án nhân dân thành phố D vừa tuyên án Trần Xuân I với mức án 2 năm tù giam về tội buôn bán động vật hoang dã trái phép.\nk) Anh C chở S đi học bằng xe máy. Đến ngã tư, khi có tín hiệu đèn đỏ, thấy đường vắng S bảo anh vượt đèn đỏ để đến trường cho nhanh nhưng anh C không nghe mà dừng lại chờ đèn bật xanh mới đi.\n\nNhận định nào dưới đây thể hiện hình thức SỬ DỤNG PHÁP LUẬT?",
+      "options": {
+        "A": "(a) và (d).",
+        "B": "(c), (g) và (h).",
+        "C": "(b), (e) và (i).",
+        "D": "(k)."
+      },
+      "answer": "B",
+      "explanation": "Sử dụng pháp luật là các cá nhân, tổ chức sử dụng đúng đắn các quyền của mình, làm những gì mà pháp luật cho phép làm: (c) chị D thực hiện quyền tố cáo; (g) V thực hiện quyền tự do kinh doanh; (h) G nộp hồ sơ đăng ký kinh doanh. (a và d là thi hành pháp luật; b, e, i là áp dụng pháp luật; k là tuân thủ pháp luật).",
+      "source": "Đề thi HSG - Thực hiện pháp luật"
+    },
+    {
+      "id": "gdktpl_hinh_thuc_thuc_hien_pl_02",
+      "type": "part1",
+      "grade": 10,
+      "level": "van_dung",
+      "topic": "Thực hiện pháp luật",
+      "stem": "Trong các nhận định dưới đây:\na) Cứ sáng chủ nhật hằng tuần, nhân dân ở tổ dân phố K lại tập trung làm vệ sinh đường phố.\nb) Cơ sở sản xuất bản G xả nước thải chưa qua xử lí ra môi trường làm ô nhiễm nguồn nước, không khí, ảnh hưởng tới cuộc sống của người dân xung quanh. Cảnh sát môi trường đã lập biên bản và xử phạt vi phạm hành chính.\nc) Phát hiện một hộ gia đình trồng cây thuốc phiện, chị D đã tố cáo với cơ quan có thẩm quyền để kiểm tra và kịp thời ngăn chặn.\nd) Một số học sinh nam lớp 12 Trường Trung học phổ thông H xin nghỉ một buổi học để đi đăng kí nghĩa vụ quân sự ở địa phương.\ne) Giám đốc Sở Giáo dục và Đào tạo tỉnh S ban hành quyết định điều chuyển cán bộ từ phòng A sang phòng B.\ng) Sau khi tốt nghiệp Trung học phổ thông, V ở nhà làm nghề truyền thống dệt vải của gia đình.\nh) Học xong Trung học phổ thông, G đã gửi hồ sơ đến Sở Kế hoạch và Đầu tư đăng kí kinh doanh thức ăn nhanh.\ni) Toà án nhân dân thành phố D vừa tuyên án Trần Xuân I với mức án 2 năm tù giam về tội buôn bán động vật hoang dã trái phép.\nk) Anh C chở S đi học bằng xe máy. Đến ngã tư, khi có tín hiệu đèn đỏ, thấy đường vắng S bảo anh vượt đèn đỏ để đến trường cho nhanh nhưng anh C không nghe mà dừng lại chờ đèn bật xanh mới đi.\n\nNhận định nào dưới đây thể hiện hình thức ÁP DỤNG PHÁP LUẬT?",
+      "options": {
+        "A": "(a) và (d).",
+        "B": "(c), (g) và (h).",
+        "C": "(b), (e) và (i).",
+        "D": "(k)."
+      },
+      "answer": "C",
+      "explanation": "Áp dụng pháp luật là cơ quan, cán bộ nhà nước có thẩm quyền căn cứ vào pháp luật để ra quyết định làm phát sinh, thay đổi hoặc chấm dứt quyền, nghĩa vụ cụ thể của công dân, tổ chức: (b) Cảnh sát môi trường xử phạt vi phạm hành chính; (e) Giám đốc Sở GD&ĐT ban hành quyết định điều chuyển cán bộ; (i) Tòa án nhân dân tuyên án phạt tù.",
+      "source": "Đề thi HSG - Thực hiện pháp luật"
     }
   ],
   "part2": [

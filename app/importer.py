@@ -165,8 +165,7 @@ def parse_p1_options(opts_str: str) -> dict:
     curr_pos = 0
     for letter in letters:
         p = re.compile(
-            rf'(?:^|(?<=\n)\s*|(?<=\t)\s*|(?<=\s\s)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?<!cô\s)(?<!thầy\s)(?:^|[\s\n])){letter}[\.\:\)]\s+',
-            re.IGNORECASE
+            rf'(?:^|(?<=\n)\s*|(?<=\t)\s*|(?<=\s\s)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?<!cô\s)(?<!thầy\s)(?<!bác\s)(?:^|[\s\n])){letter}[\.\:\)]\s+'
         )
         m = p.search(opts_str[curr_pos:])
         if m:
@@ -194,6 +193,42 @@ def parse_p1_options(opts_str: str) -> dict:
             options[l] = f"(Phương án {l})"
             
     return options
+
+def find_p1_options_start(text: str):
+    """
+    Xác định vị trí bắt đầu của khối phương án trắc nghiệm A, B, C, D (chữ in HOA).
+    Một câu hỏi được coi là Trắc nghiệm Phần I nếu tìm thấy phương án A và sau đó là B, C
+    (hoặc ít nhất A, B, C hoa).
+    Trả về vị trí bắt đầu của phương án A nếu hợp lệ, ngược lại trả về None.
+    """
+    p_a = re.compile(
+        r'(?:^|(?<=\n)\s*|(?<=\s\s)\s*|(?<=\t)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?<!cô\s)(?<!thầy\s)(?<!bác\s)(?:^|[\s\n]))A[\.\:\)]\s+'
+    )
+    m_a = p_a.search(text)
+    if not m_a:
+        return None
+    
+    pos_a = m_a.start()
+    after_a = text[m_a.end():]
+    
+    p_b = re.compile(
+        r'(?:^|(?<=\n)\s*|(?<=\s\s)\s*|(?<=\t)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?<!cô\s)(?<!thầy\s)(?<!bác\s)(?:^|[\s\n]))B[\.\:\)]\s+'
+    )
+    m_b = p_b.search(after_a)
+    if not m_b:
+        return None
+        
+    pos_b = m_a.end() + m_b.end()
+    after_b = text[pos_b:]
+    
+    p_c = re.compile(
+        r'(?:^|(?<=\n)\s*|(?<=\s\s)\s*|(?<=\t)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?<!cô\s)(?<!thầy\s)(?<!bác\s)(?:^|[\s\n]))C[\.\:\)]\s+'
+    )
+    m_c = p_c.search(after_b)
+    if not m_c:
+        return None
+        
+    return pos_a
 
 def detect_text_clusters(text: str):
     """
@@ -257,87 +292,32 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
         # Chuyển bảng số liệu
         q_body = _table_markers_to_html(q_body)
 
-        # Check if it has a), b), c), d) — câu Phần II
-        stmt_matches = list(re.finditer(
-            r'(?:^|\n)\s*([a-d])\)\s*(.*?)(?=(?:\n\s*[a-d]\))|$)',
-            q_body, re.DOTALL
-        ))
-        if len(stmt_matches) >= 3:
-            stem = _clean_passage_bleed(q_body[:stmt_matches[0].start()].strip())
-            grade, topic, level = classify_text(stem)
-            statements = []
-            found_any_answer_marker = False
-            for sm in stmt_matches:
-                lbl = sm.group(1)
-                st_text = _clean_passage_bleed(sm.group(2).strip())
-                s_grade, s_topic, s_level = classify_text(st_text)
-                
-                st_lower = st_text.lower()
-                # Ưu tiên: tìm marker đánh dấu đúng/sai trong văn bản
-                if re.search(r'[\(\[\s](?:đúng|đ|true|T)[\)\]\s\.]*$', st_lower):
-                    ans_bool = True
-                    found_any_answer_marker = True
-                elif re.search(r'[\(\[\s](?:sai|s|false|F)[\)\]\s\.]*$', st_lower):
-                    ans_bool = False
-                    found_any_answer_marker = True
-                else:
-                    # Không có marker → KHÔNG đoán mò, đặt False là placeholder
-                    # needs_review sẽ được gán bên dưới cho cả câu hỏi
-                    ans_bool = False
+        # 1. ƯU TIÊN KIỂM TRA PHẦN I (TRẮC NGHIỆM 4 PHƯƠNG ÁN A, B, C, D HOA)
+        # Bất kể câu hỏi có liệt kê các ý nhỏ a), b), c), d), e), g), h)... trong thân câu hỏi,
+        # nếu ở cuối có phương án A, B, C, D thì 100% LÀ PHẦN I (không bao giờ nhầm sang Đúng/Sai).
+        p1_opt_start = find_p1_options_start(q_body)
 
-                statements.append({
-                    "label": lbl,
-                    "text": st_text,
-                    "answer": ans_bool,
-                    "level": s_level,
-                    "grade": s_grade,
-                    "topic": s_topic,
-                    "explanation": f"Căn cứ nội dung chuyên đề {s_topic}."
-                })
-            if stem:
-                p2_item = {
-                    "id": f"imported_p2_{uuid.uuid4().hex[:8]}",
-                    "type": "part2",
-                    "stem": stem,
-                    "statements": statements,
-                    "grade": grade,
-                    "topic": topic,
-                    "level": level,
-                    "source": source_name
-                }
-                # Gắn cờ cần kiểm tra nếu không phát hiện được marker đúng/sai
-                if not found_any_answer_marker:
-                    p2_item["needs_review"] = True
-                p2_items.append(p2_item)
-        else:
-            # Câu Phần I: tìm vị trí bắt đầu của phương án đầu tiên (A. hoặc A) hoặc A:)
-            opt_match = re.search(r'(?:^|(?<=\n)\s*|(?<=\s\s)\s*|(?<=\t)\s*|(?<!anh\s)(?<!chị\s)(?<!ông\s)(?<!bà\s)(?:^|[\s\n]))A[\.\:\)]\s+', q_body, re.IGNORECASE)
-            if opt_match:
-                stem = _clean_passage_bleed(q_body[:opt_match.start()].strip())
-                opts_str = q_body[opt_match.start():]
-                
-                # Bóc tách 4 phương án bằng bộ phân tích tuần tự thông minh
-                opts = parse_p1_options(opts_str)
-                
-                # Bỏ qua nếu stem rỗng hoặc không trích xuất được phương án thực sự
-                if not stem or not opts.get("A") or opts.get("A") == "(Phương án A)":
-                    continue
-                        
+        if p1_opt_start is not None:
+            stem = _clean_passage_bleed(q_body[:p1_opt_start].strip())
+            opts_str = q_body[p1_opt_start:]
+            opts = parse_p1_options(opts_str)
+            
+            if stem and opts.get("A") and opts.get("A") != "(Phương án A)":
                 grade, topic, level = classify_text(stem, " ".join(opts.values()))
                 
                 needs_review = False
                 ans = ans_map.get(q_num)
                 if not ans:
-                    inline_match = re.search(r'(?:Đáp án|Chọn|Key|Đ/A)[\s:\.]+([A-D])', q_body, re.IGNORECASE)
+                    # Tìm đáp án inline dạng "Đáp án: C", "Key: C", "Chọn C", "Đ/A: C"
+                    inline_match = re.search(r'(?:Đáp\s*án|Chọn|Key|Đ/?A|D/?A)[\s:\.\-\(]+([A-D])(?!\w)', q_body, re.IGNORECASE)
                     if inline_match:
                         ans = inline_match.group(1).upper()
                     else:
-                        # Kiểm tra option có đánh dấu * (A*. hoặc A.)
-                        star_match = re.search(r'([A-D])\*\.', q_body)
+                        # Kiểm tra option có đánh dấu * (A*. hoặc A* hoặc A.)
+                        star_match = re.search(r'([A-D])[\*]\.?', q_body)
                         if star_match:
                             ans = star_match.group(1)
                         else:
-                            # Không tìm được đáp án → mặc định A nhưng gắn cờ cần kiểm tra
                             ans = "A"
                             needs_review = True
 
@@ -364,6 +344,60 @@ def parse_questions_from_text(text, source_name="Tài liệu tải lên"):
                     p1_item["cluster_size"] = cinfo["cluster_size"]
 
                 p1_items.append(p1_item)
+                continue
+
+        # 2. NẾU KHÔNG CÓ PHƯƠNG ÁN A, B, C, D HOA -> MỚI XÉT ĐẾN CÂU ĐÚNG/SAI (PHẦN II)
+        stmt_matches = list(re.finditer(
+            r'(?:^|\n)\s*([a-d])\)\s*(.*?)(?=(?:\n\s*[a-d]\))|$)',
+            q_body, re.DOTALL
+        ))
+        if len(stmt_matches) >= 3:
+            stem = _clean_passage_bleed(q_body[:stmt_matches[0].start()].strip())
+            grade, topic, level = classify_text(stem)
+            statements = []
+            found_any_answer_marker = False
+            for sm in stmt_matches:
+                lbl = sm.group(1)
+                st_text = _clean_passage_bleed(sm.group(2).strip())
+                s_grade, s_topic, s_level = classify_text(st_text)
+                
+                st_lower = st_text.lower()
+                # Ưu tiên: tìm marker đánh dấu đúng/sai trong văn bản
+                if re.search(r'[\(\[\s](?:đúng|đ|true|T)[\)\]\s\.]*$', st_lower):
+                    ans_bool = True
+                    found_any_answer_marker = True
+                elif re.search(r'[\(\[\s](?:sai|s|false|F)[\)\]\s\.]*$', st_lower):
+                    ans_bool = False
+                    found_any_answer_marker = True
+                else:
+                    # Không có marker → KHÔNG đoán mò, đặt False là placeholder
+                    ans_bool = False
+
+                statements.append({
+                    "label": lbl,
+                    "text": st_text,
+                    "answer": ans_bool,
+                    "level": s_level,
+                    "grade": s_grade,
+                    "topic": s_topic,
+                    "explanation": f"Căn cứ nội dung chuyên đề {s_topic}."
+                })
+            if stem:
+                p2_item = {
+                    "id": f"imported_p2_{uuid.uuid4().hex[:8]}",
+                    "type": "part2",
+                    "stem": stem,
+                    "statements": statements,
+                    "grade": grade,
+                    "topic": topic,
+                    "level": level,
+                    "source": source_name
+                }
+                # Gắn cờ cần kiểm tra nếu không phát hiện được marker đúng/sai
+                if not found_any_answer_marker:
+                    p2_item["needs_review"] = True
+                p2_items.append(p2_item)
+
                 
     return p1_items, p2_items
 
